@@ -31,7 +31,7 @@ export default function MyQR() {
   const { toast } = useToast();
   const [user] = useState(mockUser);
   
-  const qrData = `oopsie://user/${user.id}`;
+  const qrData = `Pic://user/${user.id}`;
 
   const handleDownload = () => {
     toast({
@@ -44,7 +44,7 @@ export default function MyQR() {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'Mi código QR de Oopsie',
+          title: 'Mi código QR de Pic',
           text: 'Escanea este código para enviarme multas sociales',
           url: qrData
         });

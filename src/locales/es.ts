@@ -2,7 +2,7 @@
 export const es = {
   // Header
   app: {
-    name: "Oopsie",
+    name: "Pic",
     subtitle: "Entre amigos"
   },
   
@@ -248,8 +248,8 @@ export const es = {
   // Invite
   invite: {
     title: "Invitar Amigos",
-    description: "Invita a tus amigos a usar Oopsie",
-    shareText: "¡Únete a Oopsie y gestiona multas sociales entre amigos! 🎉",
+    description: "Invita a tus amigos a usar Pic",
+    shareText: "¡Únete a Pic y gestiona multas sociales entre amigos! 🎉",
     copyLink: "Copiar enlace",
     linkCopied: "¡Enlace copiado!",
     sendInvite: "Enviar invitación"

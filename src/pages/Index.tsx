@@ -221,7 +221,7 @@ export default function Index() {
     },
     {
       title: t.nav.invite,
-      description: "Invitar amigos a Oopsie",
+      description: "Invitar amigos a Pic",
       icon: UserPlus,
       color: "from-pink-500 to-rose-500",
       onClick: () => setIsInviteModalOpen(true)

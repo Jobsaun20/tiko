@@ -25,7 +25,7 @@ export const InviteModal = ({ isOpen, onClose }: InviteModalProps) => {
   const { toast } = useToast();
   const [email, setEmail] = useState("");
   
-  const inviteLink = "https://oopsie.app/invite/abc123";
+  const inviteLink = "https://Pic.app/invite/abc123";
   const shareText = t.invite.shareText;
 
   const handleCopyLink = () => {
@@ -40,7 +40,7 @@ export const InviteModal = ({ isOpen, onClose }: InviteModalProps) => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'Únete a Oopsie',
+          title: 'Únete a Pic',
           text: shareText,
           url: inviteLink
         });

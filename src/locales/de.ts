@@ -2,7 +2,7 @@
 export const de = {
   // Header
   app: {
-    name: "Oopsie",
+    name: "Pic",
     subtitle: "Among friends"
   },
   
@@ -248,8 +248,8 @@ export const de = {
   // Invite
   invite: {
     title: "Invite Friends",
-    description: "Invite your friends to use Oopsie",
-    shareText: "Join Oopsie and manage social fines among friends! 🎉",
+    description: "Invite your friends to use Pic",
+    shareText: "Join Pic and manage social fines among friends! 🎉",
     copyLink: "Copy link",
     linkCopied: "Link copied!",
     sendInvite: "Send invitation"
