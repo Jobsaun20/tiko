@@ -14,12 +14,11 @@ import { useAuthContext } from "@/contexts/AuthContext";
 import { useBadgeModal } from "@/contexts/BadgeModalContext";
 import { checkAndAwardBadge } from "@/utils/checkAndAwardBadge";
 
-
 export default function History() {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { profile: user, updateProfile } = useUserProfile(); // Usar updateProfile
+  const { profile: user, updateProfile } = useUserProfile();
   const { user: authUser, session } = useAuthContext();
   const { showBadges } = useBadgeModal();
   const { fines, loading, payFine } = useFines();
@@ -55,27 +54,29 @@ export default function History() {
           description: `Multa de ${selectedFine.amount} CHF pagada correctamente`,
         });
 
-        // --------- CHEQUEAR BADGES (misma key que Index) ---------
+        // --------- CHEQUEAR BADGES ---------
         if (authUser && session?.access_token) {
           const badges = await checkAndAwardBadge(
             authUser.id,
-            "pay_qr", // Usa la key de acción correspondiente a tu lógica de badges
-            { amount: selectedFine.amount, fine_id: selectedFine.id, lang: language || "en" },
+            "pay_qr",
+            { amount: selectedFine.amount, fine_id: selectedFine.id, lang: language },
             session.access_token
           );
           if (badges && badges.length > 0) {
-            showBadges(badges);
+            showBadges(badges, language);
 
-            // --- Sumar XP y mostrar toast para el primero ganado
+            // Sumar XP y mostrar toast
             let gainedXp = 0;
             badges.forEach((badge: any) => {
               gainedXp += badge.xp_reward || badge.xpReward || 0;
             });
             if (gainedXp > 0 && user) {
-              updateProfile({ xp: (user.xp || 0) + gainedXp });
+              await updateProfile({ xp: (user.xp || 0) + gainedXp });
               toast({
-                title: "¡Has ganado experiencia!",
-                description: `Has ganado ${gainedXp} XP por tu acción.`,
+                title: t.achievements.title || "¡Has ganado experiencia!",
+                description: t.achievements.xpGained
+                  ? t.achievements.xpGained.replace("{xp}", String(gainedXp))
+                  : `Has ganado ${gainedXp} XP por tu acción.`,
                 variant: "default",
               });
             }
