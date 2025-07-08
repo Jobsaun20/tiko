@@ -27,7 +27,11 @@ interface CreateFineModalProps {
   onSubmit: (fine: any) => void;
   preselectedContact?: Contact | null;
   contacts: Contact[];
-  currentUser: { id: string; name: string; email: string };
+  currentUser: {
+  id: string;
+  name?: string;
+  email?: string;
+}
   currentUserUsername: string; // <- obligatorio
 }
 

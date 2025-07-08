@@ -2,12 +2,14 @@ import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/supabaseClient";
 import { useAuthContext } from "@/contexts/AuthContext";
 
-type UserProfile = {
+// Definición del tipo UserProfile
+export type UserProfile = {
   id: string;
   email?: string;
-  name?: string; // opcional, si tienes un campo de nombre
+  name?: string;
   username?: string;
   avatar_url?: string;
+  phone?: string;
   level?: number;
   xp?: number;
   badges?: any[];
@@ -18,8 +20,7 @@ type UserProfile = {
   totalReceived?: number;
   totalPaid?: number;
   totalEarned?: number;
-  phone?: string; // opcional, si tienes un campo de teléfono
-  // agrega otros campos si es necesario
+  // Agrega aquí otros campos personalizados si los necesitas
 };
 
 type UpdateProfileResult = {
@@ -32,7 +33,7 @@ export function useUserProfile() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // 1. Función para recargar el perfil (puedes llamarla tras cualquier update si quieres refrescar al instante)
+  // Recargar el perfil del usuario desde la BD
   const fetchProfile = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -53,12 +54,14 @@ export function useUserProfile() {
       setError(error.message);
       setProfile(null);
     } else if (!data) {
-      // Si no hay perfil, crea uno por defecto (opcional: crea también en la BD)
+      // Si no hay perfil, crea uno por defecto en el frontend (opcional: crea también en la BD)
       const defaultProfile: UserProfile = {
         id: user.id,
         email: user.email,
+        name: "",
         username: "",
         avatar_url: "",
+        phone: "",
         level: 1,
         xp: 0,
         badges: [],
@@ -80,17 +83,17 @@ export function useUserProfile() {
     setLoading(false);
   }, [user]);
 
-  // 2. Recarga el perfil cuando cambia el usuario (login/logout)
+  // Recargar el perfil cada vez que cambia el usuario (login/logout)
   useEffect(() => {
     fetchProfile();
   }, [fetchProfile]);
 
-  // 3. Función para actualizar el perfil y recargar (importante: mergea con estado actual)
+  // Actualizar el perfil y refrescar datos desde la BD
   async function updateProfile(fields: Partial<UserProfile>): Promise<UpdateProfileResult> {
     if (!user) return { error: "No hay usuario logueado" };
     setLoading(true);
 
-    // Update DB
+    // Actualiza la base de datos
     const { error } = await supabase
       .from("users")
       .update(fields)
@@ -100,7 +103,7 @@ export function useUserProfile() {
     await fetchProfile();
     setLoading(false);
 
-    // DEVUELVE SIEMPRE UN OBJETO CON error (sea string o null)
+    // Devuelve el resultado como objeto con error o null
     return { error: error ? error.message : null };
   }
 
