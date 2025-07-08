@@ -98,6 +98,7 @@ export default function Contacts() {
             variant: "default"
           });
           if (fetchProfile) fetchProfile();
+           await new Promise(res => setTimeout(res, 600));
         }
       }
 
