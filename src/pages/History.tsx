@@ -44,7 +44,7 @@ export default function History() {
     prevReceivedRef.current = received.length;
   }, [fines, user, toast]);
 
-  // Pago de multa - con chequeo de logros y modal global
+  // Pago de multa - suma XP siempre
   const handlePayment = async () => {
     if (selectedFine) {
       try {
@@ -54,7 +54,11 @@ export default function History() {
           description: `Multa de ${selectedFine.amount} CHF pagada correctamente`,
         });
 
-        // --------- CHEQUEAR BADGES ---------
+        // --- SIEMPRE SUMA AL MENOS 2 XP POR PAGO ---
+        const BASE_XP = 2;
+        let gainedXp = BASE_XP;
+
+        // --------- CHEQUEAR BADGES (XP extra si corresponde) ---------
         if (authUser && session?.access_token) {
           const badges = await checkAndAwardBadge(
             authUser.id,
@@ -64,53 +68,38 @@ export default function History() {
           );
           if (badges && badges.length > 0) {
             showBadges(badges, language);
-
-            // Sumar XP y mostrar toast
-            let gainedXp = 0;
             badges.forEach((badge: any) => {
               gainedXp += badge.xp_reward || badge.xpReward || 0;
             });
-
-            if (gainedXp > 0 && user) {
-              // DEBUG: Mostrar datos enviados al updateProfile
-              console.log(
-                "[XP][updateProfile] Old XP:",
-                user.xp,
-                "Gained:",
-                gainedXp,
-                "New:",
-                (user.xp || 0) + gainedXp,
-                "UserID:",
-                user.id
-              );
-
-              // Sumar los XP correctamente y actualizar en Supabase
-              const nuevoXP = (user.xp || 0) + gainedXp;
-              const result = await updateProfile({ xp: nuevoXP });
-
-              if (result.error) {
-                console.error("Error al actualizar XP en Supabase:", result.error);
-                toast({
-                  title: "Error XP",
-                  description: "No se pudo actualizar la experiencia: " + result.error,
-                  variant: "destructive",
-                });
-                alert("No se pudo actualizar la experiencia: " + result.error);
-              } else {
-                console.log("XP actualizado correctamente. Nuevo XP:", nuevoXP);
-                toast({
-                  title: t.achievements.title || "¡Has ganado experiencia!",
-                  description: t.achievements.xpGained
-                    ? t.achievements.xpGained.replace("{xp}", String(gainedXp))
-                    : `Has ganado ${gainedXp} XP por tu acción.`,
-                  variant: "default",
-                });
-                // ¡Importante! Refrescar el perfil para mostrar el nuevo XP actualizado en el frontend:
-                fetchProfile();
-              }
-            }
           }
         }
+
+        // --- ACTUALIZAR XP SIEMPRE, TENGA BADGE O NO ---
+        if (gainedXp > 0 && user) {
+          const nuevoXP = (user.xp || 0) + gainedXp;
+          const result = await updateProfile({ xp: nuevoXP });
+
+          if (result.error) {
+            console.error("Error al actualizar XP en Supabase:", result.error);
+            toast({
+              title: "Error XP",
+              description: "No se pudo actualizar la experiencia: " + result.error,
+              variant: "destructive",
+            });
+            alert("No se pudo actualizar la experiencia: " + result.error);
+          } else {
+            console.log("XP actualizado correctamente. Nuevo XP:", nuevoXP);
+            toast({
+              title: t.achievements.title || "¡Has ganado experiencia!",
+              description: t.achievements.xpGained
+                ? t.achievements.xpGained.replace("{xp}", String(gainedXp))
+                : `Has ganado ${gainedXp} XP por tu acción.`,
+              variant: "default",
+            });
+            fetchProfile(); // Refresca el perfil para mostrar el nuevo XP actualizado
+          }
+        }
+
       } catch (err: any) {
         toast({
           title: "Error",
