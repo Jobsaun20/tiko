@@ -21,7 +21,6 @@ import PhoneModal from "@/components/PhoneModal";
 import { supabase } from "@/supabaseClient";
 import { isValidSwissPhone, normalizeSwissPhone } from "@/utils/validateSwissPhone";
 import { useFines } from "@/hooks/useFines";
-// --- INTEGRACIÓN DE LOGROS ---
 import { useBadgeModal } from "@/contexts/BadgeModalContext";
 import { checkAndAwardBadge } from "@/utils/checkAndAwardBadge";
 
@@ -29,12 +28,11 @@ export default function Index() {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { user, session } = useAuthContext(); // <-- asegúrate de que tienes session o access_token
-  const { profile, loading, updateProfile } = useUserProfile();
+  const { user, session } = useAuthContext();
+  const { profile, loading, updateProfile, fetchProfile } = useUserProfile();
   const { fines, payFine } = useFines();
   const { showBadges } = useBadgeModal();
 
-  // Estados para modales y multas
   const [isCreateFineModalOpen, setIsCreateFineModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
@@ -62,10 +60,8 @@ export default function Index() {
   };
 
   const userId = userData.id;
-  // Usa SIEMPRE fines del hook global
   const finesList = Array.isArray(fines) ? fines : [];
 
-  // Multas (calculadas en tiempo real)
   const pendingFines = finesList.filter(
     (f: any) =>
       f.status === "pending" &&
@@ -111,34 +107,80 @@ export default function Index() {
     setPaymentModalOpen(true);
   };
 
-  // MARCAR MULTA COMO PAGADA y refrescar local y en la BD (usando payFine)
-  // --------- MODIFICADO PARA CHEQUEAR Y MOSTRAR LOGROS ---------
+  // --------- FUNCIÓN DE PAGO CON XP Y BADGES ---------
   const handlePayment = async () => {
     if (selectedFine) {
       try {
         await payFine(selectedFine.id);
         toast({
           title: t.fines.finePaid,
-          description: `Multa de ${selectedFine.amount} CHF pagada correctamente`
+          description: `Multa de ${selectedFine.amount} CHF pagada correctamente`,
         });
-        // --------- CHEQUEAR BADGES ---------
+
+        // --------- CHEQUEAR BADGES Y SUMAR XP ---------
         if (user && session?.access_token) {
           const badges = await checkAndAwardBadge(
             user.id,
-            "pay_qr", // Usa la key correspondiente a tu acción
+            "pay_qr",
             { amount: selectedFine.amount, fine_id: selectedFine.id },
             session.access_token
           );
+
+          let gainedXp = 0;
           if (badges && badges.length > 0) {
             showBadges(badges);
+            badges.forEach((badge: any) => {
+              gainedXp += badge.xp_reward || badge.xpReward || 0;
+            });
+          }
+
+          // Sumar XP adicional por cada pago si lo quieres (ejemplo: +2 XP por pago siempre)
+          gainedXp += 2;
+
+          if (gainedXp > 0 && profile) {
+            console.log(
+              "[XP][updateProfile] Old XP:",
+              profile.xp,
+              "Gained:",
+              gainedXp,
+              "New:",
+              (profile.xp || 0) + gainedXp,
+              "UserID:",
+              profile.id
+            );
+
+            const nuevoXP = (profile.xp || 0) + gainedXp;
+            const result = await updateProfile({ xp: nuevoXP });
+
+            if (result.error) {
+              console.error("Error al actualizar XP en Supabase:", result.error);
+              toast({
+                title: "Error XP",
+                description: "No se pudo actualizar la experiencia: " + result.error,
+                variant: "destructive",
+              });
+              alert("No se pudo actualizar la experiencia: " + result.error);
+            } else {
+              console.log("XP actualizado correctamente. Nuevo XP:", nuevoXP);
+              toast({
+                title: t.achievements.title || "¡Has ganado experiencia!",
+                description: t.achievements.xpGained
+                  ? t.achievements.xpGained.replace("{xp}", String(gainedXp))
+                  : `Has ganado ${gainedXp} XP por tu acción.`,
+                variant: "default",
+              });
+              // Refresca perfil para ver el nuevo XP en frontend
+              if (typeof fetchProfile === "function") fetchProfile();
+            }
           }
         }
       } catch (err: any) {
         toast({
           title: "Error",
-          description: err.message,
-          variant: "destructive"
+          description: err?.message || "Error desconocido",
+          variant: "destructive",
         });
+        console.error("[XP][handlePayment] Error:", err);
       }
     }
     setPaymentModalOpen(false);
@@ -285,7 +327,7 @@ export default function Index() {
             ) : (
               userBadges.slice(0, 3).map((badge) => (
                 <Badge key={badge.id} variant="secondary" className="bg-yellow-100 text-yellow-800">
-                  {badge.icon} {badge.name}
+                  {badge.icon} {badge.name.es || badge.name.en || badge.name.de}
                 </Badge>
               ))
             )}
@@ -450,7 +492,7 @@ export default function Index() {
               <div className="flex flex-wrap gap-2">
                 {userBadges.slice(0, 3).map((badge) => (
                   <Badge key={badge.id} variant="secondary" className="bg-yellow-100 text-yellow-800">
-                    {badge.icon} {badge.name}
+                    {badge.icon} {badge.name.es || badge.name.en || badge.name.de}
                   </Badge>
                 ))}
               </div>

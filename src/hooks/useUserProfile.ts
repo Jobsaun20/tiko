@@ -20,6 +20,7 @@ export type UserProfile = {
   totalReceived?: number;
   totalPaid?: number;
   totalEarned?: number;
+  contacts?: any[];
   // Agrega aquí otros campos personalizados si los necesitas
 };
 
