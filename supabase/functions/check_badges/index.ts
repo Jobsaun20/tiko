@@ -3,9 +3,22 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { serve } from "jsr:@std/server";
 import { createClient } from "@supabase/supabase-js";
 
+// ---------------------- CORS HEADERS ------------------------
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*", // Cambia "*" por tu dominio en producción si lo deseas.
+  "Access-Control-Allow-Headers": "Authorization, Content-Type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Content-Type": "application/json",
+};
 
-// Configura y sirve la función Edge
 serve(async (req: Request) => {
+  // --- SOPORTE CORS: Responder a preflight/OPTIONS ---
+  if (req.method === "OPTIONS") {
+    return new Response(null, {
+      headers: CORS_HEADERS,
+    });
+  }
+
   // 1. Recoge los datos de la acción enviada por el frontend
   const { user_id, action, action_data } = await req.json();
 
@@ -19,7 +32,7 @@ serve(async (req: Request) => {
   // 3. Carga todos los badges
   const { data: allBadges, error: errorBadges } = await supabase.from("badges").select("*");
   if (errorBadges) {
-    return new Response(JSON.stringify({ error: errorBadges.message }), { status: 500 });
+    return new Response(JSON.stringify({ error: errorBadges.message }), { status: 500, headers: CORS_HEADERS });
   }
 
   // 4. Carga los badges que el usuario YA TIENE
@@ -28,7 +41,7 @@ serve(async (req: Request) => {
     .select("badge_id")
     .eq("user_id", user_id);
   if (errorUserBadges) {
-    return new Response(JSON.stringify({ error: errorUserBadges.message }), { status: 500 });
+    return new Response(JSON.stringify({ error: errorUserBadges.message }), { status: 500, headers: CORS_HEADERS });
   }
   const ownedBadgeIds = userBadges?.map(b => b.badge_id) || [];
 
@@ -94,6 +107,6 @@ serve(async (req: Request) => {
   // 7. Devuelve los logros desbloqueados
   return new Response(
     JSON.stringify({ success: true, newlyEarned }),
-    { headers: { "Content-Type": "application/json" } }
+    { headers: CORS_HEADERS }
   );
 });
