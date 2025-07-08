@@ -84,8 +84,16 @@ export default function History() {
                 user.id
               );
 
-              // --- CORRECCIÓN: Aseguramos que updateProfile retorna objeto con error ---
-              const result = await updateProfile({ xp: (user.xp || 0) + gainedXp });
+            // Sumar los XP correctamente y actualizar en Supabase
+const nuevoXP = (user.xp || 0) + gainedXp;
+const result = await updateProfile({ xp: nuevoXP });
+
+if (result.error) {
+  console.error("Error al actualizar XP en Supabase:", result.error);
+  alert("No se pudo actualizar la experiencia: " + result.error);
+} else {
+  console.log("XP actualizado correctamente. Nuevo XP:", nuevoXP);
+}
 
               // Si updateProfile NO retorna objeto, ajustar en el hook correspondiente.
               if (result && typeof result === "object" && "error" in result && result.error) {
