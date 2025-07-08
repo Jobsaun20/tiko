@@ -18,7 +18,7 @@ export default function History() {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { profile: user, updateProfile } = useUserProfile();
+  const { profile: user, updateProfile, fetchProfile } = useUserProfile();
   const { user: authUser, session } = useAuthContext();
   const { showBadges } = useBadgeModal();
   const { fines, loading, payFine } = useFines();
@@ -84,25 +84,20 @@ export default function History() {
                 user.id
               );
 
-            // Sumar los XP correctamente y actualizar en Supabase
-const nuevoXP = (user.xp || 0) + gainedXp;
-const result = await updateProfile({ xp: nuevoXP });
+              // Sumar los XP correctamente y actualizar en Supabase
+              const nuevoXP = (user.xp || 0) + gainedXp;
+              const result = await updateProfile({ xp: nuevoXP });
 
-if (result.error) {
-  console.error("Error al actualizar XP en Supabase:", result.error);
-  alert("No se pudo actualizar la experiencia: " + result.error);
-} else {
-  console.log("XP actualizado correctamente. Nuevo XP:", nuevoXP);
-}
-
-              // Si updateProfile NO retorna objeto, ajustar en el hook correspondiente.
-              if (result && typeof result === "object" && "error" in result && result.error) {
+              if (result.error) {
+                console.error("Error al actualizar XP en Supabase:", result.error);
                 toast({
                   title: "Error XP",
                   description: "No se pudo actualizar la experiencia: " + result.error,
                   variant: "destructive",
                 });
+                alert("No se pudo actualizar la experiencia: " + result.error);
               } else {
+                console.log("XP actualizado correctamente. Nuevo XP:", nuevoXP);
                 toast({
                   title: t.achievements.title || "¡Has ganado experiencia!",
                   description: t.achievements.xpGained
@@ -110,6 +105,8 @@ if (result.error) {
                     : `Has ganado ${gainedXp} XP por tu acción.`,
                   variant: "default",
                 });
+                // ¡Importante! Refrescar el perfil para mostrar el nuevo XP actualizado en el frontend:
+                fetchProfile();
               }
             }
           }
