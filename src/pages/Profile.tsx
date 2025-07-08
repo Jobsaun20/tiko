@@ -45,7 +45,7 @@ export default function Profile() {
 
   // Si es nuevo, todos los campos vacíos
   const user = profile || {
-    name: "",
+    username: "",
     email: "",
     avatar_url: "",
     xp: 0,
@@ -77,7 +77,7 @@ export default function Profile() {
   // Guardar perfil
   const handleSaveProfile = async (updatedUser: any) => {
     await updateProfile({
-      name: updatedUser.name,
+      username: updatedUser.name,
       avatar_url: updatedUser.avatar_url,
       // puedes añadir aquí phone, etc si tu modal lo permite
     });
@@ -203,7 +203,7 @@ const res = await fetch(endpoint, {
                 <div className="flex flex-wrap gap-2 justify-center sm:justify-start mb-4">
                   {userBadges.slice(0, 2).map((badge) => (
                     <Badge key={badge.id} variant="secondary" className={getRarityColor(badge.rarity)}>
-                      {badge.icon} {badge.name}
+                      {badge.icon} {badge.name.es || badge.name.en || badge.name.de}
                     </Badge>
                   ))}
                 </div>
@@ -307,13 +307,13 @@ const res = await fetch(endpoint, {
                   <div className="flex items-center gap-3 mb-2">
                     <span className="text-2xl">{badge.icon}</span>
                     <div className="flex-1">
-                      <h3 className="font-semibold">{badge.name}</h3>
+                      <h3 className="font-semibold">{badge.name.es || badge.name.en || badge.name.de}</h3>
                       <Badge variant="secondary" className={getRarityColor(badge.rarity)}>
                         {badge.rarity}
                       </Badge>
                     </div>
                   </div>
-                  <p className="text-sm text-gray-600">{badge.description}</p>
+                  <p className="text-sm text-gray-600">{badge.description.es || badge.name.en || badge.name.de}</p>
                 </div>
               ))}
             </div>

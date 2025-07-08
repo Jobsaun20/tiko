@@ -78,7 +78,7 @@ export default function Contacts() {
         recipient_id: recipientId,
         recipient_name: recipient.name,
         recipient_email: recipient.email,
-        sender_name: currentUser?.username || currentUser?.name || currentUser?.email,
+        sender_name: currentUser?.username || currentUser?.username || currentUser?.email,
         sender_phone: currentUser?.phone ?? "",
         type: "sent",
       });

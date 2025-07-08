@@ -5,7 +5,8 @@ import { useAuthContext } from "@/contexts/AuthContext";
 type UserProfile = {
   id: string;
   email?: string;
-  name?: string;
+  name?: string; // opcional, si tienes un campo de nombre
+  username?: string;
   avatar_url?: string;
   level?: number;
   xp?: number;
@@ -17,6 +18,7 @@ type UserProfile = {
   totalReceived?: number;
   totalPaid?: number;
   totalEarned?: number;
+  phone?: string; // opcional, si tienes un campo de teléfono
   // agrega otros campos si es necesario
 };
 
@@ -55,7 +57,7 @@ export function useUserProfile() {
       const defaultProfile: UserProfile = {
         id: user.id,
         email: user.email,
-        name: "",
+        username: "",
         avatar_url: "",
         level: 1,
         xp: 0,
