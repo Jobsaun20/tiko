@@ -80,9 +80,7 @@ function AppRoutes() {
 
 function App() {
   // Muestra el valor actual de la variable de entorno en la consola del navegador
-  useEffect(() => {
-    console.log("VITE_SUPABASE_URL:", import.meta.env.VITE_SUPABASE_URL);
-  }, []);
+ 
 
   return (
     <LanguageProvider>
