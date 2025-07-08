@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { es } from '@/locales/es';
 import { en } from '@/locales/en';
@@ -6,6 +5,7 @@ import { de } from '@/locales/de';
 import { fr } from '@/locales/fr';
 import { it } from '@/locales/it';
 
+// --- Define aquí todos los tipos, incluyendo achievements en los archivos de idioma ---
 export type Language = 'es' | 'en' | 'de' | 'fr' | 'it';
 
 type Translations = typeof es;
@@ -15,7 +15,7 @@ const translations: Record<Language, Translations> = {
   en,
   de,
   fr,
-  it
+  it,
 };
 
 interface LanguageContextType {
@@ -40,24 +40,24 @@ interface LanguageProviderProps {
 
 export const LanguageProvider = ({ children }: LanguageProviderProps) => {
   const [language, setLanguage] = useState<Language>(() => {
-    // Try to get saved language from localStorage
-    const saved = localStorage.getItem('app-language');
+    // Obtener idioma guardado
+    const saved = typeof window !== "undefined" ? localStorage.getItem('app-language') : null;
     if (saved && ['es', 'en', 'de', 'fr', 'it'].includes(saved)) {
       return saved as Language;
     }
-    
-    // Detect browser language
-    const browserLang = navigator.language.split('-')[0];
+    // Detectar idioma del navegador
+    const browserLang = typeof navigator !== "undefined" ? navigator.language.split('-')[0] : '';
     if (['es', 'en', 'de', 'fr', 'it'].includes(browserLang)) {
       return browserLang as Language;
     }
-    
-    // Default to Spanish
+    // Por defecto español
     return 'es';
   });
 
   useEffect(() => {
-    localStorage.setItem('app-language', language);
+    if (typeof window !== "undefined") {
+      localStorage.setItem('app-language', language);
+    }
   }, [language]);
 
   const value = {

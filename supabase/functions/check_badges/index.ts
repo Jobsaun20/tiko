@@ -1,7 +1,7 @@
 // index.ts - Supabase Edge Function para verificar y otorgar badges
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { serve } from "jsr:@std/server";
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 // ---------------------- CORS HEADERS ------------------------
 const CORS_HEADERS = {

@@ -31,7 +31,7 @@ export function useUserProfile() {
         setProfile(null);
       } else if (!data) {
         // No hay perfil (usuario nuevo): crea un objeto por defecto
-        setProfile({
+        const defaultProfile = {
           id: user.id,
           email: user.email,
           name: "",
@@ -46,8 +46,12 @@ export function useUserProfile() {
           totalReceived: 0,
           totalPaid: 0,
           totalEarned: 0,
-        });
+        };
+        setProfile(defaultProfile);
         setError(null);
+
+        // Si quieres crear el perfil en la base de datos al vuelo:
+        // await supabase.from("users").insert([defaultProfile]);
       } else {
         setProfile(data);
         setError(null);
@@ -57,13 +61,22 @@ export function useUserProfile() {
     fetchProfile();
   }, [user]);
 
+  // Permite actualizar el perfil (incluye suma de XP si se desea)
   async function updateProfile(fields: any) {
     if (!user) return;
     setLoading(true);
+
+    // Si los campos incluyen suma de XP, calcula el nuevo XP
+    let updatedFields = { ...fields };
+    if (fields.xp !== undefined && profile && typeof fields.xp === "number") {
+      updatedFields.xp = fields.xp;
+    }
+
     const { error } = await supabase
       .from("users")
-      .update(fields)
+      .update(updatedFields)
       .eq("id", user.id);
+
     if (error) setError(error.message);
 
     // Vuelve a buscar el perfil actualizado, usando maybeSingle
@@ -77,5 +90,6 @@ export function useUserProfile() {
     setLoading(false);
   }
 
-  return { profile, loading, error, updateProfile };
+  // Devuelve también setProfile por si quieres feedback instantáneo en el cliente
+  return { profile, setProfile, loading, error, updateProfile };
 }

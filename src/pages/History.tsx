@@ -10,20 +10,19 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useToast } from "@/hooks/use-toast";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useFines } from "@/hooks/useFines";
-// --- INTEGRACIÓN DE LOGROS ---
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useBadgeModal } from "@/contexts/BadgeModalContext";
 import { checkAndAwardBadge } from "@/utils/checkAndAwardBadge";
 
+
 export default function History() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { profile: user } = useUserProfile();
+  const { profile: user, updateProfile } = useUserProfile(); // Usar updateProfile
   const { user: authUser, session } = useAuthContext();
   const { showBadges } = useBadgeModal();
-  // Usar payFine del hook
-  const { fines, loading, error, setFines, payFine } = useFines();
+  const { fines, loading, payFine } = useFines();
   const [filter, setFilter] = useState<string>("all");
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [selectedFine, setSelectedFine] = useState<any>(null);
@@ -55,16 +54,31 @@ export default function History() {
           title: t.fines.finePaid,
           description: `Multa de ${selectedFine.amount} CHF pagada correctamente`,
         });
+
         // --------- CHEQUEAR BADGES (misma key que Index) ---------
         if (authUser && session?.access_token) {
           const badges = await checkAndAwardBadge(
             authUser.id,
             "pay_qr", // Usa la key de acción correspondiente a tu lógica de badges
-            { amount: selectedFine.amount, fine_id: selectedFine.id },
+            { amount: selectedFine.amount, fine_id: selectedFine.id, lang: language || "en" },
             session.access_token
           );
           if (badges && badges.length > 0) {
             showBadges(badges);
+
+            // --- Sumar XP y mostrar toast para el primero ganado
+            let gainedXp = 0;
+            badges.forEach((badge: any) => {
+              gainedXp += badge.xp_reward || badge.xpReward || 0;
+            });
+            if (gainedXp > 0 && user) {
+              updateProfile({ xp: (user.xp || 0) + gainedXp });
+              toast({
+                title: "¡Has ganado experiencia!",
+                description: `Has ganado ${gainedXp} XP por tu acción.`,
+                variant: "default",
+              });
+            }
           }
         }
       } catch (err: any) {

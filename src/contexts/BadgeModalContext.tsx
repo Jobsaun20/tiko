@@ -1,15 +1,9 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { BadgeUnlockedModal } from "@/components/BadgeUnlockedModal";
-
-interface Badge {
-  id: string;
-  icon: string;
-  name: Record<string, string>;
-  description: Record<string, string>;
-}
+import { Badge } from "@/types/badge"; // <--- Usa SIEMPRE el tipo único
 
 interface BadgeModalContextType {
-  showBadges: (badges: Badge[]) => void;
+  showBadges: (badges: Badge[], lang?: string) => void;
 }
 
 const BadgeModalContext = createContext<BadgeModalContextType | undefined>(undefined);
@@ -20,10 +14,19 @@ export const useBadgeModal = () => {
   return ctx;
 };
 
-export const BadgeModalProvider = ({ children }: { children: ReactNode }) => {
+export const BadgeModalProvider = ({
+  children,
+}: {
+  children: ReactNode;
+}) => {
   const [badges, setBadges] = useState<Badge[] | null>(null);
+  const [lang, setLang] = useState<string>("es"); // Idioma por defecto
 
-  const showBadges = (newBadges: Badge[]) => setBadges(newBadges);
+  // Puedes pasar el idioma manualmente al mostrar el modal (o desde tu contexto global)
+  const showBadges = (newBadges: Badge[], badgeLang?: string) => {
+    setBadges(newBadges);
+    if (badgeLang) setLang(badgeLang);
+  };
 
   const handleClose = () => setBadges(null);
 
@@ -31,7 +34,7 @@ export const BadgeModalProvider = ({ children }: { children: ReactNode }) => {
     <BadgeModalContext.Provider value={{ showBadges }}>
       {children}
       {badges && (
-        <BadgeUnlockedModal badges={badges} onClose={handleClose} />
+        <BadgeUnlockedModal badges={badges} onClose={handleClose} lang={lang} />
       )}
     </BadgeModalContext.Provider>
   );
