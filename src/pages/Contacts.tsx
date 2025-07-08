@@ -16,10 +16,6 @@ import { AddContactModal } from "@/components/AddContactModal";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { supabase } from "@/supabaseClient";
 
-// --- XP y BADGES ---
-import { useBadgeModal } from "@/contexts/BadgeModalContext";
-import { checkAndAwardBadge } from "@/utils/checkAndAwardBadge";
-
 async function getUserIdByEmail(email: string): Promise<string | null> {
   const { data, error } = await supabase
     .from("users")
@@ -31,14 +27,13 @@ async function getUserIdByEmail(email: string): Promise<string | null> {
 }
 
 export default function Contacts() {
-  const { user, session } = useAuthContext();
+  const { user } = useAuthContext();
   const { profile: currentUser, updateProfile, fetchProfile } = useUserProfile();
   const { t } = useLanguage();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { contacts, loading, addContact, updateContact, deleteContact } = useContacts();
   const { createFine } = useFines();
-  const { showBadges } = useBadgeModal();
 
   const [isCreateFineModalOpen, setIsCreateFineModalOpen] = useState(false);
   const [isAddContactModalOpen, setIsAddContactModalOpen] = useState(false);
@@ -60,7 +55,7 @@ export default function Contacts() {
     setIsCreateFineModalOpen(true);
   };
 
-  // --- NUEVO: Crear multa y subir XP ---
+  // --- Ganar XP SIEMPRE al crear una multa ---
   const handleCreateFine = async (fineData: any) => {
     try {
       const recipient = contacts.find(c => c.id === (fineData.recipient_id || fineData.recipient_Id));
@@ -85,28 +80,10 @@ export default function Contacts() {
         type: "sent",
       });
 
-      // --- Lógica de XP y badges ---
-      let gainedXp = 0;
-
-      if (user && session?.access_token) {
-        const badges = await checkAndAwardBadge(
-          user.id,
-          "create_fine", // Usa la key correspondiente a tu acción en la tabla de badges
-          { amount: fineData.amount },
-          session.access_token
-        );
-        if (badges && badges.length > 0) {
-          showBadges(badges);
-          badges.forEach((badge: any) => {
-            gainedXp += badge.xp_reward || badge.xpReward || 0;
-          });
-        }
-      }
-      // XP fijo por crear multa (por ejemplo: +2)
-      gainedXp += 2;
-
-      if (gainedXp > 0 && currentUser) {
-        const nuevoXP = (currentUser.xp || 0) + gainedXp;
+      // XP FIJO (por ejemplo +2)
+      const XP_GANADO = 2;
+      if (currentUser) {
+        const nuevoXP = (currentUser.xp || 0) + XP_GANADO;
         const result = await updateProfile({ xp: nuevoXP });
         if (result.error) {
           toast({
@@ -116,10 +93,8 @@ export default function Contacts() {
           });
         } else {
           toast({
-            title: t.achievements?.title || "¡Has ganado experiencia!",
-            description: t.achievements?.xpGained
-              ? t.achievements.xpGained.replace("{xp}", String(gainedXp))
-              : `Has ganado ${gainedXp} XP por crear una multa.`,
+            title: "¡Has ganado experiencia!",
+            description: `Has ganado ${XP_GANADO} XP por crear una multa.`,
             variant: "default"
           });
           if (fetchProfile) fetchProfile();
