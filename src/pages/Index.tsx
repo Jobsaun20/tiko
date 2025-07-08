@@ -340,14 +340,39 @@ export default function Index() {
               <CardTitle className="text-lg text-orange-800">Última Multa Recibida</CardTitle>
             </CardHeader>
             <CardContent>
-              <FineCard
-                fine={latestReceivedFine}
-                onPay={() => handlePayFine(latestReceivedFine)}
-                showPayButton={latestReceivedFine.status === "pending"}
-              />
+              <div className="flex flex-row items-stretch gap-2">
+                {/* Info multa */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="rounded-full bg-gradient-to-br from-purple-400 to-pink-500 h-10 w-10 flex items-center justify-center text-white font-bold text-xl">
+                      {latestReceivedFine.sender_name?.charAt(0)?.toUpperCase() || "U"}
+                    </div>
+                    <div>
+                      <div className="font-semibold">De {latestReceivedFine.sender_name}</div>
+                      <span className="inline-block bg-orange-100 text-orange-700 text-xs px-2 py-0.5 rounded font-semibold">
+                        {latestReceivedFine.status === "pending" ? "Pendiente" : "Pagada"}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="text-gray-600 text-sm mb-1">{latestReceivedFine.reason}</div>
+                  <div className="text-gray-400 text-xs mb-2">{latestReceivedFine.date ? new Date(latestReceivedFine.date).toLocaleDateString() : ""}</div>
+                </div>
+                {/* Precio y botón alineados a la derecha */}
+                <div className="flex flex-col items-end justify-between">
+                  <div className="text-2xl font-bold text-purple-700 mb-2">{latestReceivedFine.amount} CHF</div>
+                  {latestReceivedFine.status === "pending" && (
+                    <Button
+                      className="bg-green-500 hover:bg-green-600 text-white font-bold px-5"
+                      onClick={() => handlePayFine(latestReceivedFine)}
+                    >
+                      Pagar
+                    </Button>
+                  )}
+                </div>
+              </div>
             </CardContent>
           </Card>
-        ) : (
+        ) : ( 
           <Card className="border-green-200 bg-gradient-to-r from-green-50 to-emerald-50">
             <CardContent className="p-8 text-center">
               <CheckCircle className="h-16 w-16 mx-auto text-green-600 mb-4" />
@@ -458,20 +483,48 @@ export default function Index() {
             <CardContent className="space-y-4">
               {receivedFines.length > 0 ? (
                 receivedFines.slice(0, 3).map((fine) => (
-                  <FineCard
+                  <div
                     key={fine.id}
-                    fine={fine}
-                    onPay={() => handlePayFine(fine)}
-                    showPayButton={fine.status === "pending"}
-                  />
+                    className="flex flex-row items-stretch gap-2 rounded-lg bg-white/80 shadow-sm px-4 py-3 border"
+                  >
+                    {/* Info multa */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="rounded-full bg-gradient-to-br from-purple-400 to-pink-500 h-9 w-9 flex items-center justify-center text-white font-bold text-lg">
+                          {fine.sender_name?.charAt(0)?.toUpperCase() || "U"}
+                        </div>
+                        <div>
+                          <div className="font-semibold">De {fine.sender_name}</div>
+                          <span className="inline-block bg-orange-100 text-orange-700 text-xs px-2 py-0.5 rounded font-semibold">
+                            {fine.status === "pending" ? "Pendiente" : "Pagada"}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="text-gray-600 text-sm mb-1">{fine.reason}</div>
+                      <div className="text-gray-400 text-xs mb-2">{fine.date ? new Date(fine.date).toLocaleDateString() : ""}</div>
+                    </div>
+                    {/* Precio y botón alineados a la derecha */}
+                    <div className="flex flex-col items-end justify-between">
+                      <div className="text-xl sm:text-2xl font-bold text-purple-700 mb-2">{fine.amount} CHF</div>
+                      {fine.status === "pending" && (
+                        <Button
+                          className="bg-green-500 hover:bg-green-600 text-white font-bold px-4"
+                          onClick={() => handlePayFine(fine)}
+                          size="sm"
+                        >
+                          Pagar
+                        </Button>
+                      )}
+                    </div>
+                  </div>
                 ))
               ) : (
                 <p className="text-center text-gray-500 py-8">No has recibido multas</p>
               )}
               {receivedFines.length > 3 && (
-                <Button 
-                  variant="outline" 
-                  className="w-full" 
+                <Button
+                  variant="outline"
+                  className="w-full"
                   onClick={() => handleStatsCardClick("received")}
                 >
                   Ver todas las recibidas

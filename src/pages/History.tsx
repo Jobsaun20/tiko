@@ -238,13 +238,48 @@ export default function History() {
             <div className="text-center text-gray-400 py-8">Cargando...</div>
           ) : filteredFines.length > 0 ? (
             filteredFines.map((fine: any) => (
-              <FineCard
+              <div
                 key={fine.id}
-                fine={fine}
-                onPay={() => handlePayFine(fine)}
-                showPayButton={fine.recipient_id === user.id && fine.status === "pending"}
-                userId={user.id}
-              />
+                className="flex flex-row items-stretch gap-2 rounded-lg bg-white/80 shadow-sm px-4 py-3 border"
+              >
+                {/* Info multa */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="rounded-full bg-gradient-to-br from-purple-400 to-pink-500 h-9 w-9 flex items-center justify-center text-white font-bold text-lg">
+                      {fine.sender_name?.charAt(0)?.toUpperCase() || "U"}
+                    </div>
+                    <div>
+                      <div className="font-semibold">
+                        {fine.sender_id === user.id ? `A ${fine.recipient_name}` : `De ${fine.sender_name}`}
+                      </div>
+                      <span className={
+                        fine.status === "paid"
+                          ? "inline-block bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded font-semibold"
+                          : "inline-block bg-orange-100 text-orange-700 text-xs px-2 py-0.5 rounded font-semibold"
+                      }>
+                        {fine.status === "pending" ? "Pendiente" : "Pagada"}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="text-gray-600 text-sm mb-1">{fine.reason}</div>
+                  <div className="text-gray-400 text-xs mb-2">
+                    {fine.date ? new Date(fine.date).toLocaleDateString() : ""}
+                  </div>
+                </div>
+                {/* Precio y botón alineados a la derecha */}
+                <div className="flex flex-col items-end justify-between">
+                  <div className="text-xl sm:text-2xl font-bold text-purple-700 mb-2">{fine.amount} CHF</div>
+                  {fine.recipient_id === user.id && fine.status === "pending" && (
+                    <Button
+                      className="bg-green-500 hover:bg-green-600 text-white font-bold px-4"
+                      onClick={() => handlePayFine(fine)}
+                      size="sm"
+                    >
+                      Pagar
+                    </Button>
+                  )}
+                </div>
+              </div>
             ))
           ) : (
             <Card className="text-center py-12">
