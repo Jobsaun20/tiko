@@ -70,24 +70,49 @@ export default function History() {
             badges.forEach((badge: any) => {
               gainedXp += badge.xp_reward || badge.xpReward || 0;
             });
+
             if (gainedXp > 0 && user) {
-              await updateProfile({ xp: (user.xp || 0) + gainedXp });
-              toast({
-                title: t.achievements.title || "¡Has ganado experiencia!",
-                description: t.achievements.xpGained
-                  ? t.achievements.xpGained.replace("{xp}", String(gainedXp))
-                  : `Has ganado ${gainedXp} XP por tu acción.`,
-                variant: "default",
-              });
+              // DEBUG: Mostrar datos enviados al updateProfile
+              console.log(
+                "[XP][updateProfile] Old XP:",
+                user.xp,
+                "Gained:",
+                gainedXp,
+                "New:",
+                (user.xp || 0) + gainedXp,
+                "UserID:",
+                user.id
+              );
+
+              // --- CORRECCIÓN: Aseguramos que updateProfile retorna objeto con error ---
+              const result = await updateProfile({ xp: (user.xp || 0) + gainedXp });
+
+              // Si updateProfile NO retorna objeto, ajustar en el hook correspondiente.
+              if (result && typeof result === "object" && "error" in result && result.error) {
+                toast({
+                  title: "Error XP",
+                  description: "No se pudo actualizar la experiencia: " + result.error,
+                  variant: "destructive",
+                });
+              } else {
+                toast({
+                  title: t.achievements.title || "¡Has ganado experiencia!",
+                  description: t.achievements.xpGained
+                    ? t.achievements.xpGained.replace("{xp}", String(gainedXp))
+                    : `Has ganado ${gainedXp} XP por tu acción.`,
+                  variant: "default",
+                });
+              }
             }
           }
         }
       } catch (err: any) {
         toast({
           title: "Error",
-          description: err.message,
+          description: err?.message || "Error desconocido",
           variant: "destructive",
         });
+        console.error("[XP][handlePayment] Error:", err);
       }
     }
     setPaymentModalOpen(false);
@@ -128,8 +153,10 @@ export default function History() {
       .filter((fine: any) => {
         if (type === "sent") return fine.sender_id === user.id;
         if (type === "received") return fine.recipient_id === user.id;
-        if (type === "paid") return fine.status === "paid" && (fine.sender_id === user.id || fine.recipient_id === user.id);
-        if (type === "pending") return fine.status === "pending" && (fine.sender_id === user.id || fine.recipient_id === user.id);
+        if (type === "paid")
+          return fine.status === "paid" && (fine.sender_id === user.id || fine.recipient_id === user.id);
+        if (type === "pending")
+          return fine.status === "pending" && (fine.sender_id === user.id || fine.recipient_id === user.id);
         return true;
       })
       .length;
@@ -171,7 +198,7 @@ export default function History() {
                 { key: "sent", label: t.pages.history.sent },
                 { key: "received", label: t.pages.history.received },
                 { key: "paid", label: t.pages.history.paid },
-                { key: "pending", label: t.pages.history.pending }
+                { key: "pending", label: t.pages.history.pending },
               ].map((filterOption) => (
                 <Button
                   key={filterOption.key}

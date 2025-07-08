@@ -2,9 +2,31 @@ import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/supabaseClient";
 import { useAuthContext } from "@/contexts/AuthContext";
 
+type UserProfile = {
+  id: string;
+  email?: string;
+  name?: string;
+  avatar_url?: string;
+  level?: number;
+  xp?: number;
+  badges?: any[];
+  groups?: any[];
+  achievements?: any[];
+  fines?: any[];
+  totalSent?: number;
+  totalReceived?: number;
+  totalPaid?: number;
+  totalEarned?: number;
+  // agrega otros campos si es necesario
+};
+
+type UpdateProfileResult = {
+  error: string | null;
+};
+
 export function useUserProfile() {
   const { user } = useAuthContext();
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -30,7 +52,7 @@ export function useUserProfile() {
       setProfile(null);
     } else if (!data) {
       // Si no hay perfil, crea uno por defecto (opcional: crea también en la BD)
-      const defaultProfile = {
+      const defaultProfile: UserProfile = {
         id: user.id,
         email: user.email,
         name: "",
@@ -62,24 +84,22 @@ export function useUserProfile() {
   }, [fetchProfile]);
 
   // 3. Función para actualizar el perfil y recargar (importante: mergea con estado actual)
-  async function updateProfile(fields: any) {
-    if (!user) return;
+  async function updateProfile(fields: Partial<UserProfile>): Promise<UpdateProfileResult> {
+    if (!user) return { error: "No hay usuario logueado" };
     setLoading(true);
-
-    // Sumar XP si viene en fields.xp (opcional: mergear badges, etc.)
-    let updatedFields = { ...fields };
 
     // Update DB
     const { error } = await supabase
       .from("users")
-      .update(updatedFields)
+      .update(fields)
       .eq("id", user.id);
-
-    if (error) setError(error.message);
 
     // Refresca siempre el perfil tras update
     await fetchProfile();
     setLoading(false);
+
+    // DEVUELVE SIEMPRE UN OBJETO CON error (sea string o null)
+    return { error: error ? error.message : null };
   }
 
   return { profile, setProfile, loading, error, updateProfile, fetchProfile };
