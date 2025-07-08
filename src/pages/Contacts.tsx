@@ -5,18 +5,20 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useToast } from "@/hooks/use-toast";
 import { useContacts } from "@/hooks/useContacts";
 import { useFines } from "@/hooks/useFines";
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Users, UserPlus, ArrowLeft, Mail, Phone, Edit, Trash2, X } from "lucide-react";
-
 import { Header } from "@/components/Header";
 import { CreateFineModal } from "@/components/CreateFineModal";
 import { AddContactModal } from "@/components/AddContactModal";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { supabase } from "@/supabaseClient";
+
+// --- XP y BADGES ---
+import { useBadgeModal } from "@/contexts/BadgeModalContext";
+import { checkAndAwardBadge } from "@/utils/checkAndAwardBadge";
 
 async function getUserIdByEmail(email: string): Promise<string | null> {
   const { data, error } = await supabase
@@ -29,20 +31,19 @@ async function getUserIdByEmail(email: string): Promise<string | null> {
 }
 
 export default function Contacts() {
-  const { user } = useAuthContext();
-  const { profile: currentUser } = useUserProfile();
+  const { user, session } = useAuthContext();
+  const { profile: currentUser, updateProfile, fetchProfile } = useUserProfile();
   const { t } = useLanguage();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { contacts, loading, addContact, updateContact, deleteContact } = useContacts();
   const { createFine } = useFines();
+  const { showBadges } = useBadgeModal();
 
   const [isCreateFineModalOpen, setIsCreateFineModalOpen] = useState(false);
   const [isAddContactModalOpen, setIsAddContactModalOpen] = useState(false);
   const [selectedContact, setSelectedContact] = useState<any>(null);
   const [editingContact, setEditingContact] = useState<any>(null);
-
-  // Barra de búsqueda de contactos
   const [search, setSearch] = useState("");
 
   // FILTRADO de contactos en tiempo real
@@ -59,6 +60,7 @@ export default function Contacts() {
     setIsCreateFineModalOpen(true);
   };
 
+  // --- NUEVO: Crear multa y subir XP ---
   const handleCreateFine = async (fineData: any) => {
     try {
       const recipient = contacts.find(c => c.id === (fineData.recipient_id || fineData.recipient_Id));
@@ -78,10 +80,52 @@ export default function Contacts() {
         recipient_id: recipientId,
         recipient_name: recipient.name,
         recipient_email: recipient.email,
-        sender_name: currentUser?.username || currentUser?.username || currentUser?.email,
+        sender_name: currentUser?.username || currentUser?.email,
         sender_phone: currentUser?.phone ?? "",
         type: "sent",
       });
+
+      // --- Lógica de XP y badges ---
+      let gainedXp = 0;
+
+      if (user && session?.access_token) {
+        const badges = await checkAndAwardBadge(
+          user.id,
+          "create_fine", // Usa la key correspondiente a tu acción en la tabla de badges
+          { amount: fineData.amount },
+          session.access_token
+        );
+        if (badges && badges.length > 0) {
+          showBadges(badges);
+          badges.forEach((badge: any) => {
+            gainedXp += badge.xp_reward || badge.xpReward || 0;
+          });
+        }
+      }
+      // XP fijo por crear multa (por ejemplo: +2)
+      gainedXp += 2;
+
+      if (gainedXp > 0 && currentUser) {
+        const nuevoXP = (currentUser.xp || 0) + gainedXp;
+        const result = await updateProfile({ xp: nuevoXP });
+        if (result.error) {
+          toast({
+            title: "Error XP",
+            description: "No se pudo actualizar la experiencia: " + result.error,
+            variant: "destructive"
+          });
+        } else {
+          toast({
+            title: t.achievements?.title || "¡Has ganado experiencia!",
+            description: t.achievements?.xpGained
+              ? t.achievements.xpGained.replace("{xp}", String(gainedXp))
+              : `Has ganado ${gainedXp} XP por crear una multa.`,
+            variant: "default"
+          });
+          if (fetchProfile) fetchProfile();
+        }
+      }
+
       toast({
         title: t.createFine.created,
         description: t.createFine.sentTo
@@ -139,7 +183,6 @@ export default function Contacts() {
     }
   };
 
-  // Limpia el campo de búsqueda
   const clearSearch = () => setSearch("");
 
   return (
