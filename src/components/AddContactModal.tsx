@@ -39,11 +39,7 @@ export const AddContactModal = ({
   const { t } = useLanguage();
   const { toast } = useToast();
 
-    useEffect(() => {
-    supabase.from("users").select("*").then(({ data, error }) => {
-      console.log("Test users:", { data, error });
-    });
-  }, []);
+    
 
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState<UserSuggestion[]>([]);

@@ -21,12 +21,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Depuración: log en cada cambio
   const logSession = (tag: string, session: Session | null) => {
     // eslint-disable-next-line no-console
-    console.log(`[AuthContext][${tag}] session:`, session);
+    
     // eslint-disable-next-line no-console
-    console.log(`[AuthContext][${tag}] user:`, session?.user ?? null);
+    
     if (session?.access_token) {
       // eslint-disable-next-line no-console
-      console.log(`[AuthContext][${tag}] access_token:`, session.access_token);
+      
     }
   };
 
