@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,8 +13,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Users, Upload, QrCode } from "lucide-react";
+import { Users, Upload, QrCode, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useContacts } from "@/hooks/useContacts"; // <-- Asegúrate de tener el hook de contactos
 
 interface CreateGroupModalProps {
   isOpen: boolean;
@@ -25,6 +25,7 @@ interface CreateGroupModalProps {
 
 export const CreateGroupModal = ({ isOpen, onClose, onSubmit }: CreateGroupModalProps) => {
   const { toast } = useToast();
+  const { contacts = [] } = useContacts(); // <-- Toma los contactos del usuario
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -32,9 +33,30 @@ export const CreateGroupModal = ({ isOpen, onClose, onSubmit }: CreateGroupModal
     twintQR: ""
   });
 
+  // --- CONTACTOS SELECCIONADOS Y BUSCADOR ---
+  const [search, setSearch] = useState("");
+  const [selectedContacts, setSelectedContacts] = useState<any[]>([]);
+
+  // Filtra contactos según búsqueda y que no estén ya seleccionados
+  const filteredContacts = contacts.filter(
+    (c) =>
+      (c.name?.toLowerCase().includes(search.toLowerCase()) ||
+        c.email?.toLowerCase().includes(search.toLowerCase())) &&
+      !selectedContacts.find((sc) => sc.id === c.id)
+  );
+
+  const handleAddContact = (contact: any) => {
+    setSelectedContacts([...selectedContacts, contact]);
+    setSearch("");
+  };
+
+  const handleRemoveContact = (contactId: string) => {
+    setSelectedContacts(selectedContacts.filter((c) => c.id !== contactId));
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.name.trim()) {
       toast({
         title: "Error",
@@ -53,14 +75,16 @@ export const CreateGroupModal = ({ isOpen, onClose, onSubmit }: CreateGroupModal
       return;
     }
 
-    onSubmit(formData);
+    // ENVÍA también los IDs/emails de los contactos seleccionados
+    onSubmit({ ...formData, members: selectedContacts });
     setFormData({
       name: "",
       description: "",
       paymentMode: "direct",
       twintQR: ""
     });
-    
+    setSelectedContacts([]);
+
     toast({
       title: "¡Grupo creado!",
       description: `El grupo "${formData.name}" ha sido creado exitosamente`
@@ -74,22 +98,23 @@ export const CreateGroupModal = ({ isOpen, onClose, onSubmit }: CreateGroupModal
       paymentMode: "direct",
       twintQR: ""
     });
+    setSelectedContacts([]);
     onClose();
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5" />
-            Crear Nuevo Grupo
-          </DialogTitle>
-          <DialogDescription>
-            Configura tu grupo para gestionar multas sociales entre miembros
-          </DialogDescription>
-        </DialogHeader>
-
+      <DialogContent className=" w-full max-w-[95vw] sm:max-w-[500px] px-2 sm:px-8 py-4 rounded-lg max-h-[90vh] overflow-y-auto !min-h-0">
+      <DialogHeader>
+        <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl">
+          <Users className="h-5 w-5" />
+          Crear Nuevo Grupo
+        </DialogTitle>
+        <DialogDescription className="text-xs sm:text-sm">
+          Configura tu grupo para gestionar multas sociales entre miembros
+        </DialogDescription>
+      </DialogHeader> 
+      
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Group Avatar */}
           <div className="flex items-center space-x-4">
@@ -129,6 +154,52 @@ export const CreateGroupModal = ({ isOpen, onClose, onSubmit }: CreateGroupModal
             </div>
           </div>
 
+          {/* --- Nuevo Selector de Miembros --- */}          
+          <div className="space-y-2">
+            <Label>Miembros del grupo</Label>
+            <Input
+              placeholder="Buscar contacto por nombre o email"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className="mb-2"
+            />
+            {search.trim() && filteredContacts.length > 0 && (
+              <div className="max-h-32 overflow-auto border rounded p-2 bg-white shadow">
+                {filteredContacts.map((contact) => (
+                  <div
+                    key={contact.id}
+                    className="flex items-center justify-between px-2 py-1 hover:bg-gray-50 cursor-pointer rounded"
+                    onClick={() => handleAddContact(contact)}
+                  >
+                    <span>{contact.name || contact.email}</span>
+                    <span className="text-xs text-gray-400">{contact.email}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Chips de seleccionados */}
+            {selectedContacts.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-2">
+                {selectedContacts.map((contact) => (
+                  <span
+                    key={contact.id}
+                    className="flex items-center gap-1 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm"
+                  >
+                    {contact.name || contact.email}
+                    <button
+                      type="button"
+                      className="ml-1"
+                      onClick={() => handleRemoveContact(contact.id)}
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+
           {/* Payment Mode */}
           <div className="space-y-4">
             <Label>Modo de Pago</Label>
@@ -160,7 +231,6 @@ export const CreateGroupModal = ({ isOpen, onClose, onSubmit }: CreateGroupModal
                 <QrCode className="h-5 w-5 text-blue-600" />
                 <Label>Configuración TWINT del Grupo</Label>
               </div>
-              
               <div className="text-center p-4 border-2 border-dashed border-blue-300 rounded-lg">
                 <QrCode className="h-12 w-12 mx-auto text-blue-400 mb-2" />
                 <p className="text-sm text-blue-700 mb-2">
@@ -171,7 +241,6 @@ export const CreateGroupModal = ({ isOpen, onClose, onSubmit }: CreateGroupModal
                   Subir QR TWINT
                 </Button>
               </div>
-              
               <div className="space-y-2">
                 <Label htmlFor="twintQR">O ingresa el enlace TWINT</Label>
                 <Input
@@ -181,7 +250,6 @@ export const CreateGroupModal = ({ isOpen, onClose, onSubmit }: CreateGroupModal
                   placeholder="twint://pay?amount=..."
                 />
               </div>
-              
               <p className="text-xs text-blue-600">
                 Al activar este modo, todas las multas del grupo mostrarán este QR para el pago
               </p>

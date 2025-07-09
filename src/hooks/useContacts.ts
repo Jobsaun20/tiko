@@ -10,6 +10,7 @@ export interface Contact {
   phone?: string;
   avatar?: string;
   status?: string;
+  user_supabase_id?: string | null; // Nuevo campo: id del usuario registrado, si existe
 }
 
 export function useContacts() {
@@ -44,12 +45,24 @@ export function useContacts() {
       });
   }, [user]);
 
-  // Añadir contacto
-  async function addContact(contact: Omit<Contact, "id" | "user_id">) {
+  // Añadir contacto (busca si es usuario registrado)
+  async function addContact(contact: Omit<Contact, "id" | "user_id" | "user_supabase_id">) {
     if (!user) return;
+
+    // Busca el usuario registrado por email (en tabla users de supabase)
+    let userSupabaseId: string | null = null;
+    if (contact.email) {
+      const { data: foundUser } = await supabase
+        .from("users")
+        .select("id")
+        .eq("email", contact.email)
+        .maybeSingle();
+      userSupabaseId = foundUser?.id || null;
+    }
+
     const { data, error } = await supabase
       .from("contacts")
-      .insert([{ ...contact, user_id: user.id }])
+      .insert([{ ...contact, user_id: user.id, user_supabase_id: userSupabaseId }])
       .select()
       .maybeSingle();
     if (error) throw new Error(error.message);
@@ -57,11 +70,21 @@ export function useContacts() {
     return data;
   }
 
-  // Editar contacto
+  // Editar contacto (si cambia el email, actualiza user_supabase_id)
   async function updateContact(contact: Contact) {
+    let userSupabaseId: string | null = contact.user_supabase_id || null;
+    // Busca usuario registrado si el email ha cambiado o es nuevo
+    if (contact.email) {
+      const { data: foundUser } = await supabase
+        .from("users")
+        .select("id")
+        .eq("email", contact.email)
+        .maybeSingle();
+      userSupabaseId = foundUser?.id || null;
+    }
     const { data, error } = await supabase
       .from("contacts")
-      .update(contact)
+      .update({ ...contact, user_supabase_id: userSupabaseId })
       .eq("id", contact.id)
       .select()
       .maybeSingle();

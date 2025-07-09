@@ -4,22 +4,71 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Users, Plus, ArrowLeft, Settings, UserMinus, Trash2, Crown } from "lucide-react";
+import {
+  Users,
+  Plus,
+  ArrowLeft,
+  Settings,
+  UserMinus,
+  Trash2,
+  Crown,
+  UserPlus
+} from "lucide-react";
 import { Header } from "@/components/Header";
 import { CreateGroupModal } from "@/components/CreateGroupModal";
+import { AddGroupMemberModal } from "@/components/AddGroupMemberModal";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useToast } from "@/hooks/use-toast";
 import { useGroups } from "@/hooks/useGroups";
-import { useUserProfile } from "@/hooks/useUserProfile"; // <-- IMPORTANTE
+import { useUserProfile } from "@/hooks/useUserProfile";
+import { useContacts } from "@/hooks/useContacts";
+
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export default function Groups() {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { groups, loading, error, addGroup, deleteGroup, leaveGroup } = useGroups();
-  const { profile: user } = useUserProfile(); // <-- USUARIO ACTUAL
+  const {
+    groups,
+    loading,
+    error,
+    addGroup,
+    deleteGroup,
+    leaveGroup,
+    addMemberToGroup,
+  } = useGroups();
+  const { profile: user } = useUserProfile();
+  const { contacts } = useContacts();
 
   const [isCreateGroupModalOpen, setIsCreateGroupModalOpen] = useState(false);
+  const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
+  const [showAddMemberModal, setShowAddMemberModal] = useState(false);
+
+  // Dialog de confirmación de borrado
+  const [confirmDelete, setConfirmDelete] = useState<null | string>(null);
+
+  // Handler para agregar miembro a un grupo
+  const handleAddMember = (groupId: string) => {
+    setSelectedGroupId(groupId);
+    setShowAddMemberModal(true);
+  };
+
+  // Handler para el modal de agregar miembro
+  const handleSubmitAddMember = async (selectedUserId: string) => {
+    if (!selectedGroupId) return;
+    try {
+      await addMemberToGroup(selectedGroupId, selectedUserId, "member");
+      toast({
+        title: "Integrante agregado",
+        description: "El nuevo miembro ha sido añadido correctamente.",
+      });
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    }
+    setShowAddMemberModal(false);
+    setSelectedGroupId(null);
+  };
 
   const handleCreateGroup = () => setIsCreateGroupModalOpen(true);
 
@@ -29,11 +78,9 @@ export default function Groups() {
       return;
     }
     try {
-      // Solo name y description. ¡NO incluyas manualmente members, totalFines, pendingFines, user_id ni role!
       await addGroup({
         name: groupData.name,
         description: groupData.description,
-        
       });
       setIsCreateGroupModalOpen(false);
       toast({
@@ -71,16 +118,31 @@ export default function Groups() {
     }
   };
 
-  const handleDeleteGroup = async (groupId: string) => {
+  // 1. Lanza confirmación (solo admin puede ver botón y lanzar esto)
+  const launchDeleteConfirm = (groupId: string) => {
+    setConfirmDelete(groupId);
+  };
+
+  // 2. Ejecuta el borrado tras confirmación
+  const handleDeleteGroup = async () => {
+    if (!confirmDelete) return;
     try {
-      await deleteGroup(groupId);
+      await deleteGroup(confirmDelete);
       toast({
         title: t.pages.groups.groupDeleted,
         description: "El grupo ha sido eliminado correctamente.",
       });
+      setConfirmDelete(null);
     } catch (err: any) {
       toast({ title: "Error", description: err.message, variant: "destructive" });
     }
+  };
+
+  // Filtra contactos que NO están en el grupo actual
+  const getAvailableContacts = (groupMembers: any[]) => {
+    return contacts.filter(
+      (c) => !groupMembers.some((m: any) => m.id === c.id)
+    );
   };
 
   return (
@@ -109,17 +171,14 @@ export default function Groups() {
         </div>
         {/* Action Buttons */}
         <div className="flex flex-wrap gap-4 mb-6">
-          <Button 
+          <Button
             className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
             onClick={handleCreateGroup}
           >
             <Plus className="h-4 w-4 mr-2" />
             {t.pages.groups.createGroup}
           </Button>
-          <Button 
-            variant="outline"
-            onClick={handleJoinGroup}
-          >
+          <Button variant="outline" onClick={handleJoinGroup}>
             <Users className="h-4 w-4 mr-2" />
             {t.pages.groups.joinGroup}
           </Button>
@@ -149,7 +208,9 @@ export default function Groups() {
                     </div>
                     <div className="flex items-center gap-2">
                       <Badge variant={group.role === "admin" ? "default" : "secondary"}>
-                        {group.role === "admin" ? t.pages.groups.admin : t.pages.groups.member}
+                        {group.role === "admin"
+                          ? t.pages.groups.admin
+                          : t.pages.groups.member}
                       </Badge>
                       {group.role === "admin" ? (
                         <div className="flex gap-2">
@@ -163,7 +224,7 @@ export default function Groups() {
                           <Button
                             variant="destructive"
                             size="sm"
-                            onClick={() => handleDeleteGroup(group.id)}
+                            onClick={() => launchDeleteConfirm(group.id)}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -183,23 +244,32 @@ export default function Groups() {
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-blue-600">{group.members.length}</div>
+                      <div className="text-2xl font-bold text-blue-600">
+                        {group.members.length}
+                      </div>
                       <div className="text-sm text-gray-600">{t.pages.groups.members}</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-green-600">{group.totalFines}</div>
+                      <div className="text-2xl font-bold text-green-600">
+                        {group.totalFines}
+                      </div>
                       <div className="text-sm text-gray-600">Total multas</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-orange-600">{group.pendingFines}</div>
+                      <div className="text-2xl font-bold text-orange-600">
+                        {group.pendingFines}
+                      </div>
                       <div className="text-sm text-gray-600">Pendientes</div>
                     </div>
                   </div>
                   <div>
                     <h4 className="font-semibold mb-3">Miembros:</h4>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2 mb-3">
                       {group.members.slice(0, 5).map((member: any) => (
-                        <div key={member.id} className="flex items-center gap-2 bg-gray-50 rounded-full px-3 py-1">
+                        <div
+                          key={member.id}
+                          className="flex items-center gap-2 bg-gray-50 rounded-full px-3 py-1"
+                        >
                           <Avatar className="h-6 w-6">
                             <AvatarImage src={member.avatar} alt={member.name} />
                             <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs">
@@ -214,10 +284,24 @@ export default function Groups() {
                       ))}
                       {group.members.length > 5 && (
                         <div className="flex items-center justify-center bg-gray-100 rounded-full px-3 py-1">
-                          <span className="text-sm text-gray-600">+{group.members.length - 5}</span>
+                          <span className="text-sm text-gray-600">
+                            +{group.members.length - 5}
+                          </span>
                         </div>
                       )}
                     </div>
+                    {/* SOLO ADMIN puede agregar miembros */}
+                    {group.role === "admin" && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex items-center gap-1"
+                        onClick={() => handleAddMember(group.id)}
+                      >
+                        <UserPlus className="h-4 w-4" />
+                        Agregar miembro
+                      </Button>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -233,17 +317,14 @@ export default function Groups() {
                   Crea un grupo o únete a uno existente para empezar
                 </p>
                 <div className="flex justify-center gap-4">
-                  <Button 
+                  <Button
                     className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
                     onClick={handleCreateGroup}
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     {t.pages.groups.createGroup}
                   </Button>
-                  <Button 
-                    variant="outline"
-                    onClick={handleJoinGroup}
-                  >
+                  <Button variant="outline" onClick={handleJoinGroup}>
                     <Users className="h-4 w-4 mr-2" />
                     {t.pages.groups.joinGroup}
                   </Button>
@@ -253,11 +334,50 @@ export default function Groups() {
           )}
         </div>
       </div>
+      {/* Modal de creación de grupo */}
       <CreateGroupModal
         isOpen={isCreateGroupModalOpen}
         onClose={() => setIsCreateGroupModalOpen(false)}
         onSubmit={handleSubmitGroup}
       />
+      {/* Modal para agregar miembro */}
+      <AddGroupMemberModal
+        isOpen={showAddMemberModal}
+        onClose={() => setShowAddMemberModal(false)}
+        onSubmit={handleSubmitAddMember}
+        contacts={
+          selectedGroupId
+            ? getAvailableContacts(
+                groups.find((g) => g.id === selectedGroupId)?.members || []
+              )
+            : []
+        }
+      />
+      {/* Dialog de confirmación de borrado */}
+      <Dialog open={!!confirmDelete} onOpenChange={() => setConfirmDelete(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>¿Estás seguro que deseas eliminar este grupo?</DialogTitle>
+          </DialogHeader>
+          <p className="mb-4 text-gray-700">
+            Esta acción es irreversible. Solo los administradores pueden eliminar un grupo.
+          </p>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setConfirmDelete(null)}
+            >
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDeleteGroup}
+            >
+              Eliminar Grupo
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
