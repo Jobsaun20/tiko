@@ -2,21 +2,26 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/supabaseClient";
 import { useAuthContext } from "@/contexts/AuthContext";
 
-/**
- * useNotifications
- * - unreadCount: número de notificaciones no leídas.
- * - notifications: array con todas las notificaciones del usuario.
- * - loading: booleano de carga.
- * - markAllAsRead: función para marcar todas como leídas.
- * - markAsRead: función para marcar una como leída.
- */
+// Tipado de notificación (puedes expandir según tus tipos)
+export interface Notification {
+  id: string;
+  user_id: string;
+  type: string;
+  title?: string | null;
+  message?: string | null;
+  link?: string | null;
+  data?: any;
+  read: boolean;
+  created_at: string;
+}
+
 export function useNotifications() {
   const { user } = useAuthContext();
   const [unreadCount, setUnreadCount] = useState(0);
-  const [notifications, setNotifications] = useState<any[]>([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Carga notificaciones y contador
+  // Cargar notificaciones y contador
   const fetchNotifications = async () => {
     if (!user) {
       setUnreadCount(0);
@@ -33,7 +38,7 @@ export function useNotifications() {
       .order("created_at", { ascending: false });
 
     if (!error) {
-      setNotifications(data || []);
+      setNotifications((data as Notification[]) || []);
       setUnreadCount((data || []).filter((n: any) => !n.read).length);
     }
     setLoading(false);

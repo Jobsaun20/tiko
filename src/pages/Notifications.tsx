@@ -52,6 +52,8 @@ export default function Notifications() {
         return "💰";
       case "group_invite":
         return "👥";
+      case "group_rule_proposed":
+        return "⏳";
       default:
         return "🔔";
     }
@@ -136,14 +138,24 @@ export default function Notifications() {
             </Card>
           ) : notifications.length > 0 ? (
             notifications.map((notification) => {
-              // Obtiene la plantilla traducida según el tipo (fine_received, etc)
-              const template =
+              // Determina el mensaje según tipo
+              let template =
                 t?.pages?.notifications?.[notification.type] ||
                 notification.message ||
                 "";
 
-              // El texto final con los datos reemplazados
+              // Por defecto para las reglas de grupo si no tienes traducción aún:
+              if (notification.type === "group_rule_proposed" && !template) {
+                template = "Nueva regla propuesta: {{rule_description}}";
+              }
+
               const message = renderNotificationText(template, notification.data);
+
+              // Para las reglas de grupo puedes personalizar el título si quieres
+              const notifTitle =
+                notification.title ||
+                t?.pages?.notifications?.[notification.type + "_title"] ||
+                (notification.type === "group_rule_proposed" ? "Nueva regla propuesta" : "");
 
               return (
                 <Card
@@ -165,9 +177,7 @@ export default function Notifications() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
                           <h4 className="font-semibold text-gray-800">
-                            {notification.title ||
-                              t?.pages?.notifications?.[notification.type + "_title"] ||
-                              ""}
+                            {notifTitle}
                           </h4>
                           {!notification.read && (
                             <div className="w-2 h-2 bg-purple-500 rounded-full flex-shrink-0"></div>

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/supabaseClient";
 import { useAuthContext } from "@/contexts/AuthContext";
 
+// Tipos para miembros y grupos
 export interface GroupMember {
   id: string;
   name: string;
@@ -19,11 +20,13 @@ export interface Group {
   role: "admin" | "member";
   totalFines: number;
   pendingFines: number;
+  avatar?: string;
 }
 
 type NewGroupInput = {
   name: string;
   description?: string;
+  avatar?: string;
 };
 
 export function useGroups() {
@@ -32,7 +35,7 @@ export function useGroups() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Carga los grupos y todos los miembros de cada grupo
+  // ---------- Cargar todos los grupos y sus miembros ----------
   async function fetchGroups() {
     if (!user) {
       setGroups([]);
@@ -40,8 +43,9 @@ export function useGroups() {
       return;
     }
     setLoading(true);
+    setError(null);
 
-    // 1. Busca los grupos donde el usuario actual es miembro
+    // 1. Tus membresías
     const { data: memberships, error: err1 } = await supabase
       .from("memberships")
       .select("*, groups(*)")
@@ -54,7 +58,7 @@ export function useGroups() {
       return;
     }
 
-    // 2. Saca los group_ids
+    // 2. IDs de todos los grupos
     const groupIds = memberships.map((m: any) => m.group_id);
     if (groupIds.length === 0) {
       setGroups([]);
@@ -62,40 +66,62 @@ export function useGroups() {
       return;
     }
 
-    // 3. Trae TODOS los miembros de cada grupo donde el usuario es miembro
-    const { data: allMembers, error: err2 } = await supabase
+    // 3. Todas las membresías de esos grupos
+    const { data: allMemberships, error: err2 } = await supabase
       .from("memberships")
-      .select("group_id, role, user_id, name, avatar, email")
+      .select("group_id, role, user_id")
       .in("group_id", groupIds);
 
-    if (err2) {
-      setError(err2.message);
+    if (err2 || !allMemberships) {
+      setError(err2?.message ?? "Error cargando miembros");
       setGroups([]);
       setLoading(false);
       return;
     }
 
-    // 4. Agrupa miembros por grupo
+    // 4. IDs únicos de usuarios
+    const uniqueUserIds = Array.from(new Set(allMemberships.map((m: any) => m.user_id)));
+
+    // 5. Datos de usuarios
+    const { data: users, error: err3 } = await supabase
+      .from("users")
+      .select("id, username, name, email, avatar_url")
+      .in("id", uniqueUserIds);
+
+    if (err3 || !users) {
+      setError(err3?.message ?? "Error cargando usuarios");
+      setGroups([]);
+      setLoading(false);
+      return;
+    }
+
+    // 6. Relacionar membresías con usuario
     const membersByGroup: Record<string, GroupMember[]> = {};
-    allMembers?.forEach((m: any) => {
+    allMemberships.forEach((m: any) => {
       if (!membersByGroup[m.group_id]) membersByGroup[m.group_id] = [];
+      const userData = users.find((u: any) => u.id === m.user_id);
       membersByGroup[m.group_id].push({
-        id: m.user_id,
-        name: m.name || "",
+        id: userData?.id || m.user_id || "",
+        name:
+          (userData?.name?.trim() ||
+            userData?.username?.trim() ||
+            userData?.email?.trim() ||
+            "Miembro"),
         role: m.role,
-        avatar: m.avatar || "",
-        email: m.email || "",
+        avatar: userData?.avatar_url || "",
+        email: userData?.email || "",
       });
     });
 
-    // 5. Monta la estructura final con TODOS los miembros
+    // 7. Montar resultado final
     const result: Group[] = memberships.map((m: any) => ({
       id: m.group_id,
       name: m.groups?.name,
       description: m.groups?.description,
       admin_id: m.groups?.admin_id,
+      avatar: m.groups?.avatar || "",
       members: membersByGroup[m.group_id] || [],
-      role: m.role, // el rol de este usuario en este grupo
+      role: m.role,
       totalFines: m.groups?.totalfines || 0,
       pendingFines: m.groups?.pendingfines || 0,
     }));
@@ -104,23 +130,25 @@ export function useGroups() {
     setLoading(false);
   }
 
+  // Fetch al montar o cambiar usuario
   useEffect(() => {
     fetchGroups();
     // eslint-disable-next-line
   }, [user]);
 
+  // ---------- Crear grupo ----------
   async function addGroup(group: NewGroupInput) {
     if (!user) throw new Error("Usuario no autenticado");
 
     const { data: groupData, error: err1 } = await supabase
       .from("groups")
-      .insert([{ name: group.name, description: group.description, admin_id: user.id }])
+      .insert([{ name: group.name, description: group.description, admin_id: user.id, avatar: group.avatar }])
       .select()
       .maybeSingle();
 
     if (err1 || !groupData) throw new Error(err1?.message || "Error creando grupo");
 
-    // Saca los datos reales del usuario (tabla users) para rellenar en memberships
+    // Buscar datos del usuario
     const { data: dbUser, error: userError } = await supabase
       .from("users")
       .select("username, name, email, avatar_url")
@@ -129,10 +157,11 @@ export function useGroups() {
 
     if (userError || !dbUser) throw new Error("No se pudo obtener datos del usuario actual");
 
-    const userName = dbUser.username || dbUser.name || dbUser.email || "";
+    const userName = dbUser.name?.trim() || dbUser.username?.trim() || dbUser.email?.trim() || "Admin";
     const userAvatar = dbUser.avatar_url || "";
     const userEmail = dbUser.email || "";
 
+    // Insertar membresía como admin
     const { error: err2 } = await supabase
       .from("memberships")
       .insert([{
@@ -143,25 +172,34 @@ export function useGroups() {
         avatar: userAvatar,
         email: userEmail,
       }]);
-
     if (err2) throw new Error(err2.message);
 
     await fetchGroups();
     return groupData;
   }
 
-  async function deleteGroup(groupId: string) {
-    // Borra el grupo (ON DELETE CASCADE borra membresías)
-    const { error } = await supabase.from("groups").delete().eq("id", groupId);
-
-    if (error) {
-      console.error("Error al eliminar grupo:", error.message);
-      throw new Error(error.message);
-    }
-
+  // ---------- Editar grupo ----------
+  async function editGroup(groupId: string, changes: { name?: string; description?: string; avatar?: string; }) {
+    const { error } = await supabase
+      .from("groups")
+      .update({
+        ...(changes.name !== undefined ? { name: changes.name } : {}),
+        ...(changes.description !== undefined ? { description: changes.description } : {}),
+        ...(changes.avatar !== undefined ? { avatar: changes.avatar } : {})
+      })
+      .eq("id", groupId);
+    if (error) throw new Error(error.message);
     await fetchGroups();
   }
 
+  // ---------- Eliminar grupo ----------
+  async function deleteGroup(groupId: string) {
+    const { error } = await supabase.from("groups").delete().eq("id", groupId);
+    if (error) throw new Error(error.message);
+    await fetchGroups();
+  }
+
+  // ---------- Abandonar grupo ----------
   async function leaveGroup(groupId: string) {
     if (!user) throw new Error("Usuario no autenticado");
     const { error } = await supabase
@@ -173,36 +211,31 @@ export function useGroups() {
     await fetchGroups();
   }
 
-  /**
-   * Añade un usuario registrado al grupo (copia sus datos en la membresía)
-   * Debe recibir como newUserId el user.id real de supabase del usuario invitado
-   */
+  // ---------- Añadir miembro ----------
   async function addMemberToGroup(
     groupId: string,
     newUserId: string,
     role: "member" | "admin" = "member"
   ) {
-    // Verifica si ya es miembro
+    // Comprobar si ya es miembro
     const { data: existing, error: fetchError } = await supabase
       .from("memberships")
       .select("*")
       .eq("group_id", groupId)
       .eq("user_id", newUserId)
       .maybeSingle();
-
     if (fetchError) throw new Error(fetchError.message);
     if (existing) throw new Error("El usuario ya es miembro de este grupo.");
 
-    // Busca los datos del usuario
+    // Datos del usuario
     const { data: targetUser, error: userError } = await supabase
       .from("users")
       .select("username, name, email, avatar_url")
       .eq("id", newUserId)
       .maybeSingle();
-
     if (userError || !targetUser) throw new Error("No se pudo obtener el usuario a agregar.");
 
-    const memberName = targetUser.username || targetUser.name || targetUser.email || "";
+    const memberName = targetUser.name?.trim() || targetUser.username?.trim() || targetUser.email?.trim() || "Miembro";
 
     const { error } = await supabase
       .from("memberships")
@@ -219,5 +252,27 @@ export function useGroups() {
     await fetchGroups();
   }
 
-  return { groups, loading, error, addGroup, deleteGroup, leaveGroup, addMemberToGroup };
+  // ---------- Eliminar miembro de grupo ----------
+  async function removeMemberFromGroup(groupId: string, userId: string) {
+    const { error } = await supabase
+      .from("memberships")
+      .delete()
+      .eq("group_id", groupId)
+      .eq("user_id", userId);
+    if (error) throw new Error(error.message);
+    await fetchGroups();
+  }
+
+  // ---------- Exporta funciones y datos ----------
+  return {
+    groups,
+    loading,
+    error,
+    addGroup,
+    editGroup,
+    deleteGroup,
+    leaveGroup,
+    addMemberToGroup,
+    removeMemberFromGroup,
+  };
 }

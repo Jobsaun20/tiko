@@ -8,11 +8,11 @@ import {
   Users,
   Plus,
   ArrowLeft,
-  Settings,
-  UserMinus,
   Trash2,
   Crown,
-  UserPlus
+  Edit,
+  UserMinus,
+  Hourglass,
 } from "lucide-react";
 import { Header } from "@/components/Header";
 import { CreateGroupModal } from "@/components/CreateGroupModal";
@@ -22,8 +22,10 @@ import { useToast } from "@/hooks/use-toast";
 import { useGroups } from "@/hooks/useGroups";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useContacts } from "@/hooks/useContacts";
-
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { EditGroupModal } from "@/contexts/EditGroupModal";
+import { GroupRulesModal } from "@/components/GroupRulesModal";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { CreateFineModal } from "@/components/CreateFineModal";
 
 export default function Groups() {
   const { t } = useLanguage();
@@ -32,44 +34,33 @@ export default function Groups() {
   const {
     groups,
     loading,
-    error,
     addGroup,
     deleteGroup,
     leaveGroup,
+    editGroup,
+    removeMemberFromGroup,
     addMemberToGroup,
   } = useGroups();
   const { profile: user } = useUserProfile();
   const { contacts } = useContacts();
 
+  // Modales y popovers
   const [isCreateGroupModalOpen, setIsCreateGroupModalOpen] = useState(false);
+  const [editGroupData, setEditGroupData] = useState<any>(null);
+  const [openRulesGroupId, setOpenRulesGroupId] = useState<string | null>(null);
+
+  // Para agregar miembro desde edición
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
 
-  // Dialog de confirmación de borrado
-  const [confirmDelete, setConfirmDelete] = useState<null | string>(null);
+  // Para el popover, usar userId + groupId para contexto único
+  const [selectedPopover, setSelectedPopover] = useState<{ userId: string, groupId: string } | null>(null);
 
-  // Handler para agregar miembro a un grupo
-  const handleAddMember = (groupId: string) => {
-    setSelectedGroupId(groupId);
-    setShowAddMemberModal(true);
-  };
+  // Estado para el modal de multa
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [showSendFineModal, setShowSendFineModal] = useState(false);
 
-  // Handler para el modal de agregar miembro
-  const handleSubmitAddMember = async (selectedUserId: string) => {
-    if (!selectedGroupId) return;
-    try {
-      await addMemberToGroup(selectedGroupId, selectedUserId, "member");
-      toast({
-        title: "Integrante agregado",
-        description: "El nuevo miembro ha sido añadido correctamente.",
-      });
-    } catch (err: any) {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
-    }
-    setShowAddMemberModal(false);
-    setSelectedGroupId(null);
-  };
-
+  // Modal handlers
   const handleCreateGroup = () => setIsCreateGroupModalOpen(true);
 
   const handleSubmitGroup = async (groupData: any) => {
@@ -92,20 +83,6 @@ export default function Groups() {
     }
   };
 
-  const handleJoinGroup = () => {
-    toast({
-      title: "Función próximamente",
-      description: "La función de unirse a grupos estará disponible pronto.",
-    });
-  };
-
-  const handleGroupSettings = (groupId: string) => {
-    toast({
-      title: "Función próximamente",
-      description: "La configuración de grupos estará disponible pronto.",
-    });
-  };
-
   const handleLeaveGroup = async (groupId: string) => {
     try {
       await leaveGroup(groupId);
@@ -118,37 +95,80 @@ export default function Groups() {
     }
   };
 
-  // 1. Lanza confirmación (solo admin puede ver botón y lanzar esto)
-  const launchDeleteConfirm = (groupId: string) => {
-    setConfirmDelete(groupId);
-  };
-
-  // 2. Ejecuta el borrado tras confirmación
-  const handleDeleteGroup = async () => {
-    if (!confirmDelete) return;
+  const handleDeleteGroup = async (groupId: string) => {
     try {
-      await deleteGroup(confirmDelete);
+      await deleteGroup(groupId);
       toast({
         title: t.pages.groups.groupDeleted,
         description: "El grupo ha sido eliminado correctamente.",
       });
-      setConfirmDelete(null);
     } catch (err: any) {
       toast({ title: "Error", description: err.message, variant: "destructive" });
     }
   };
 
-  // Filtra contactos que NO están en el grupo actual
-  const getAvailableContacts = (groupMembers: any[]) => {
-    return contacts.filter(
-      (c) => !groupMembers.some((m: any) => m.id === c.id)
-    );
+  const handleEditGroup = (group: any) => setEditGroupData(group);
+
+  const handleSaveEditGroup = async (changes: any) => {
+    if (!editGroupData) return;
+    try {
+      await editGroup(editGroupData.id, changes);
+      toast({
+        title: "Grupo actualizado",
+        description: "Los cambios se han guardado correctamente.",
+      });
+      setEditGroupData(null);
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    }
+  };
+
+  const handleRemoveMember = async (groupId: string, userId: string) => {
+    try {
+      await removeMemberFromGroup(groupId, userId);
+      toast({
+        title: "Miembro eliminado",
+        description: "El usuario ha sido eliminado del grupo.",
+      });
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    }
+  };
+
+  // Agregar miembro desde edición
+  const handleAddMember = (groupId: string) => {
+    setSelectedGroupId(groupId);
+    setShowAddMemberModal(true);
+  };
+  const handleSubmitAddMember = async (selectedUserId: string) => {
+    if (!selectedGroupId) return;
+    try {
+      await addMemberToGroup(selectedGroupId, selectedUserId, "member");
+      toast({
+        title: "Integrante agregado",
+        description: "El nuevo miembro ha sido añadido correctamente.",
+      });
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    }
+    setShowAddMemberModal(false);
+    setSelectedGroupId(null);
+  };
+
+  // Popover handlers usando userId+groupId
+  const handleOpenSendFinePopover = (member: any, group: any) =>
+    setSelectedPopover({ userId: member.id, groupId: group.id });
+  const handleCloseSendFinePopover = () => setSelectedPopover(null);
+
+  const handleSendFine = (member: any, group: any) => {
+    setSelectedUser({ ...member, group });
+    setShowSendFineModal(true);
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
       <Header />
-      <div className="container mx-auto max-w-4xl px-4 py-6">
+      <div className="w-full px-2 sm:px-4 py-4 max-w-3xl mx-auto">
         {/* Back Button for mobile */}
         <div className="md:hidden mb-4">
           <Button
@@ -162,12 +182,12 @@ export default function Groups() {
           </Button>
         </div>
         {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 flex items-center gap-3">
-            <Users className="h-8 w-8" />
+        <div className="mb-4">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-2 flex items-center gap-3">
+            <Users className="h-7 w-7 sm:h-8 sm:w-8" />
             {t.pages.groups.title}
           </h1>
-          <p className="text-gray-600">{t.pages.groups.description}</p>
+          <p className="text-gray-600 text-sm sm:text-base">{t.pages.groups.description}</p>
         </div>
         {/* Action Buttons */}
         <div className="flex flex-wrap gap-4 mb-6">
@@ -178,130 +198,130 @@ export default function Groups() {
             <Plus className="h-4 w-4 mr-2" />
             {t.pages.groups.createGroup}
           </Button>
-          <Button variant="outline" onClick={handleJoinGroup}>
-            <Users className="h-4 w-4 mr-2" />
-            {t.pages.groups.joinGroup}
-          </Button>
         </div>
         {/* Groups List */}
-        <div className="space-y-6">
+        <div className="flex flex-col gap-6 w-full">
           {loading ? (
             <div className="text-center text-gray-400 py-8">Cargando...</div>
           ) : groups.length > 0 ? (
             groups.map((group) => (
-              <Card key={group.id} className="hover:shadow-md transition-shadow">
+              <Card key={group.id} className="hover:shadow-md transition-shadow w-full max-w-full">
                 <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="h-12 w-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                        <Users className="h-6 w-6 text-white" />
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                    <div className="flex items-center gap-3 w-full">
+                      <div className="h-10 w-10 sm:h-12 sm:w-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                        <Users className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                       </div>
-                      <div>
-                        <CardTitle className="flex items-center gap-2">
+                      <div className="min-w-0">
+                        <CardTitle className="flex items-center gap-2 truncate">
                           {group.name}
                           {group.role === "admin" && (
                             <Crown className="h-4 w-4 text-yellow-500" />
                           )}
                         </CardTitle>
-                        <p className="text-sm text-gray-600">{group.description}</p>
+                        <p className="text-xs sm:text-sm text-gray-600 truncate">{group.description}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 mt-2 sm:mt-0">
                       <Badge variant={group.role === "admin" ? "default" : "secondary"}>
                         {group.role === "admin"
                           ? t.pages.groups.admin
                           : t.pages.groups.member}
                       </Badge>
-                      {group.role === "admin" ? (
-                        <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleGroupSettings(group.id)}
-                          >
-                            <Settings className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => launchDeleteConfirm(group.id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      ) : (
+                      <div className="flex gap-2">
+                        {group.role === "admin" && (
+                          <>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleEditGroup(group)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => handleDeleteGroup(group.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </>
+                        )}
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => handleLeaveGroup(group.id)}
+                          className="flex items-center gap-1"
+                          onClick={() => setOpenRulesGroupId(group.id)}
                         >
-                          <UserMinus className="h-4 w-4" />
+                          <Hourglass className="h-4 w-4" />
+                          Reglas
                         </Button>
-                      )}
+                        {group.role !== "admin" && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleLeaveGroup(group.id)}
+                          >
+                            <UserMinus className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-blue-600">
-                        {group.members.length}
-                      </div>
-                      <div className="text-sm text-gray-600">{t.pages.groups.members}</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-green-600">
-                        {group.totalFines}
-                      </div>
-                      <div className="text-sm text-gray-600">Total multas</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-orange-600">
-                        {group.pendingFines}
-                      </div>
-                      <div className="text-sm text-gray-600">Pendientes</div>
-                    </div>
-                  </div>
                   <div>
-                    <h4 className="font-semibold mb-3">Miembros:</h4>
+                    <h4 className="font-semibold mb-3 text-sm sm:text-base">
+                      Miembros ({group.members.length}):
+                    </h4>
                     <div className="flex flex-wrap gap-2 mb-3">
-                      {group.members.slice(0, 5).map((member: any) => (
-                        <div
-                          key={member.id}
-                          className="flex items-center gap-2 bg-gray-50 rounded-full px-3 py-1"
+                      {group.members.map((member: any) => (
+                        <Popover
+                          key={member.id + group.id}
+                          open={
+                            selectedPopover?.userId === member.id &&
+                            selectedPopover?.groupId === group.id
+                          }
+                          onOpenChange={(open) =>
+                            open
+                              ? handleOpenSendFinePopover(member, group)
+                              : handleCloseSendFinePopover()
+                          }
                         >
-                          <Avatar className="h-6 w-6">
-                            <AvatarImage src={member.avatar} alt={member.name} />
-                            <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs">
-                              {member.name.charAt(0).toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                          <span className="text-sm">{member.name}</span>
-                          {member.role === "admin" && (
-                            <Crown className="h-3 w-3 text-yellow-500" />
-                          )}
-                        </div>
+                          <PopoverTrigger asChild>
+                            <div
+                              className="flex items-center gap-2 bg-gray-50 rounded-full px-3 py-1 max-w-[90vw] cursor-pointer transition-all hover:shadow-md"
+                              tabIndex={0}
+                              role="button"
+                              onClick={() => handleOpenSendFinePopover(member, group)}
+                            >
+                              <Avatar className="h-5 w-5 sm:h-6 sm:w-6">
+                                <AvatarImage src={member.avatar} alt={member.name} />
+                                <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs">
+                                  {member.name.charAt(0).toUpperCase()}
+                                </AvatarFallback>
+                              </Avatar>
+                              <span className="text-xs sm:text-sm truncate">{member.name}</span>
+                              {member.role === "admin" && (
+                                <Crown className="h-3 w-3 text-yellow-500" />
+                              )}
+                            </div>
+                          </PopoverTrigger>
+                          <PopoverContent align="center" side="top" className="w-40 p-2">
+                            <Button
+                              className="w-full"
+                              size="sm"
+                              onClick={() => {
+                                handleSendFine(member, group);
+                                handleCloseSendFinePopover();
+                              }}
+                            >
+                              Enviar multa
+                            </Button>
+                          </PopoverContent>
+                        </Popover>
                       ))}
-                      {group.members.length > 5 && (
-                        <div className="flex items-center justify-center bg-gray-100 rounded-full px-3 py-1">
-                          <span className="text-sm text-gray-600">
-                            +{group.members.length - 5}
-                          </span>
-                        </div>
-                      )}
                     </div>
-                    {/* SOLO ADMIN puede agregar miembros */}
-                    {group.role === "admin" && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex items-center gap-1"
-                        onClick={() => handleAddMember(group.id)}
-                      >
-                        <UserPlus className="h-4 w-4" />
-                        Agregar miembro
-                      </Button>
-                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -314,7 +334,7 @@ export default function Groups() {
                   {t.pages.groups.noGroups}
                 </h3>
                 <p className="text-gray-600 mb-4">
-                  Crea un grupo o únete a uno existente para empezar
+                  Crea un grupo para empezar
                 </p>
                 <div className="flex justify-center gap-4">
                   <Button
@@ -324,60 +344,70 @@ export default function Groups() {
                     <Plus className="h-4 w-4 mr-2" />
                     {t.pages.groups.createGroup}
                   </Button>
-                  <Button variant="outline" onClick={handleJoinGroup}>
-                    <Users className="h-4 w-4 mr-2" />
-                    {t.pages.groups.joinGroup}
-                  </Button>
                 </div>
               </CardContent>
             </Card>
           )}
         </div>
       </div>
+
       {/* Modal de creación de grupo */}
       <CreateGroupModal
         isOpen={isCreateGroupModalOpen}
         onClose={() => setIsCreateGroupModalOpen(false)}
         onSubmit={handleSubmitGroup}
       />
-      {/* Modal para agregar miembro */}
+
+      {/* Modal para agregar miembro desde edición */}
       <AddGroupMemberModal
         isOpen={showAddMemberModal}
         onClose={() => setShowAddMemberModal(false)}
         onSubmit={handleSubmitAddMember}
-        contacts={
-          selectedGroupId
-            ? getAvailableContacts(
-                groups.find((g) => g.id === selectedGroupId)?.members || []
-              )
-            : []
-        }
+        contacts={contacts}
       />
-      {/* Dialog de confirmación de borrado */}
-      <Dialog open={!!confirmDelete} onOpenChange={() => setConfirmDelete(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>¿Estás seguro que deseas eliminar este grupo?</DialogTitle>
-          </DialogHeader>
-          <p className="mb-4 text-gray-700">
-            Esta acción es irreversible. Solo los administradores pueden eliminar un grupo.
-          </p>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setConfirmDelete(null)}
-            >
-              Cancelar
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleDeleteGroup}
-            >
-              Eliminar Grupo
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+
+      {/* Modal de edición de grupo */}
+      {editGroupData && (
+        <EditGroupModal
+          isOpen={!!editGroupData}
+          group={editGroupData}
+          onClose={() => setEditGroupData(null)}
+          onSave={handleSaveEditGroup}
+          isAdmin={editGroupData.role === "admin"}
+          onAddMember={() => handleAddMember(editGroupData.id)}
+          onRemoveMember={handleRemoveMember}
+          currentUserId={user?.id}
+        />
+      )}
+
+      {/* Modal de reglas de grupo */}
+      {openRulesGroupId && (
+        <GroupRulesModal
+          isOpen={!!openRulesGroupId}
+          onClose={() => setOpenRulesGroupId(null)}
+          group={groups.find(g => g.id === openRulesGroupId)!}
+        />
+      )}
+
+      {/* Modal de enviar multa */}
+      {showSendFineModal && selectedUser && (
+        <CreateFineModal
+          isOpen={showSendFineModal}
+          onClose={() => setShowSendFineModal(false)}
+          preselectedContact={selectedUser}
+          contacts={selectedUser.group.members}
+          currentUser={{
+            id: user?.id ?? "",
+            name: user?.name,
+            email: user?.email,
+          }}
+          currentUserUsername={user?.name ?? ""}
+          onSubmit={(fine) => {
+            // aquí tu lógica para enviar multa
+            setShowSendFineModal(false);
+          }}
+        />
+      )}
     </div>
   );
 }

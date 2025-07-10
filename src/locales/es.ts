@@ -241,7 +241,20 @@ export const es = {
   daysAgo: "Hace {days} días",
   marked: "Notificaciones marcadas",
   allRead: "Todas las notificaciones han sido marcadas como leídas",
-  emptyMessage: "Cuando tengas notificaciones, aparecerán aquí"
+  emptyMessage: "Cuando tengas notificaciones, aparecerán aquí",
+   fine_received_title: "Multa recibida",
+      
+
+      payment_received_title: "Pago recibido",
+      
+
+      group_invite_title: "Invitación a grupo",
+      
+
+      group_rule_proposed_title: "Nueva regla propuesta",
+      group_rule_proposed: "Se ha propuesto una nueva regla en tu grupo: \"{{rule_description}}\". Revisa y acepta o rechaza.",
+    back: "Atrás",
+    loading: "Cargando..."
     }
   },
   
