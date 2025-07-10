@@ -219,13 +219,13 @@ export default function Index() {
       color: "from-green-500 to-emerald-500",
       onClick: () => navigate("/groups")
     },
-    {
+    /* {
       title: t.nav.invite,
       description: "Invitar amigos a Pic",
       icon: UserPlus,
       color: "from-pink-500 to-rose-500",
       onClick: () => setIsInviteModalOpen(true)
-    }
+    } */
   ];
 
   // ----------- LOGIN O DASHBOARD ------------
@@ -374,80 +374,69 @@ export default function Index() {
           </Card>
         ) : ( 
           <Card className="border-green-200 bg-gradient-to-r from-green-50 to-emerald-50">
-            <CardContent className="p-8 text-center">
-              <CheckCircle className="h-16 w-16 mx-auto text-green-600 mb-4" />
-              <h3 className="text-2xl font-bold text-green-800 mb-2">
-                ¡Enhorabuena! 🎉
-              </h3>
-              <p className="text-green-700 text-lg">
-                No tienes multas pendientes
-              </p>
-              <p className="text-green-600 mt-2">
-                Mantén este buen comportamiento
-              </p>
-            </CardContent>
-          </Card>
+  <CardContent className="px-3 py-4 sm:p-6 text-center flex flex-col items-center">
+    <CheckCircle className="h-10 w-10 sm:h-16 sm:w-16 mx-auto text-green-600 mb-2 sm:mb-4" />
+    <h3 className="text-lg sm:text-2xl font-bold text-green-800 mb-1 flex items-center justify-center gap-2">
+      ¡Enhorabuena! <span className="text-base sm:text-2xl">🎉</span>
+    </h3>
+    <p className="text-green-700 text-base sm:text-lg mb-0.5">No tienes multas pendientes</p>
+    <p className="text-green-600 text-xs sm:text-base mt-1">
+      Mantén este buen comportamiento
+    </p>
+  </CardContent>
+</Card>
         )}
+       
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <Card 
-            className="bg-gradient-to-r from-red-50 to-pink-50 border-red-200 cursor-pointer hover:shadow-md transition-shadow"
-            onClick={() => handleStatsCardClick("pending")}
-          >
-            <CardContent className="p-4 sm:p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-red-600">Pendientes</p>
-                  <div className="flex items-baseline gap-2">
-                    <p className="text-2xl sm:text-3xl font-bold text-red-700">{pendingFines.length}</p>
-                    <p className="text-xs sm:text-sm text-red-600">multas</p>
-                  </div>
-                </div>
-                <Badge className="bg-red-100 text-red-800 border-red-200 px-2 py-1">
-                  {pendingAmount} CHF
-                </Badge>
-              </div>
-            </CardContent>
-          </Card>
-          <Card 
-            className="bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200 cursor-pointer hover:shadow-md transition-shadow"
-            onClick={() => handleStatsCardClick("sent")}
-          >
-            <CardContent className="p-4 sm:p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-blue-600">Enviadas</p>
-                  <div className="flex items-baseline gap-2">
-                    <p className="text-2xl sm:text-3xl font-bold text-blue-700">{sentFines.length}</p>
-                    <p className="text-xs sm:text-sm text-blue-600">total enviado</p>
-                  </div>
-                </div>
-                <Badge className="bg-blue-100 text-blue-800 border-blue-200 px-2 py-1">
-                  {sentAmount} CHF
-                </Badge>
-              </div>
-            </CardContent>
-          </Card>
-          <Card 
-            className="bg-gradient-to-r from-green-50 to-emerald-50 border-green-200 cursor-pointer hover:shadow-md transition-shadow"
-            onClick={() => handleStatsCardClick("received")}
-          >
-            <CardContent className="p-4 sm:p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-green-600">Recibidas</p>
-                  <div className="flex items-baseline gap-2">
-                    <p className="text-2xl sm:text-3xl font-bold text-green-700">{receivedFines.length}</p>
-                    <p className="text-xs sm:text-sm text-green-600">total recibido</p>
-                  </div>
-                </div>
-                <Badge className="bg-green-100 text-green-800 border-green-200 px-2 py-1">
-                  {receivedAmount} CHF
-                </Badge>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+<div className="grid grid-cols-3 gap-2 mb-4">
+  <Card 
+    className="bg-gradient-to-r from-red-50 to-pink-50 border-red-200 cursor-pointer hover:shadow-md transition-shadow h-full flex flex-col justify-center items-center"
+    onClick={() => handleStatsCardClick("pending")}
+  >
+    <CardContent className="p-2 flex flex-col items-center justify-center">
+      <p className="text-xs font-semibold text-red-600 mb-0.5">Pendientes</p>
+      <div className="flex items-baseline gap-1 mb-0.5">
+        <p className="text-xl font-bold text-red-700">{pendingFines.length}</p>
+        <p className="text-xs text-red-600"></p>
+      </div>
+      <Badge className="bg-red-100 text-red-800 border-red-200 px-1 py-0.5 text-xs">
+        {pendingAmount} CHF
+      </Badge>
+    </CardContent>
+  </Card>
+  <Card 
+    className="bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200 cursor-pointer hover:shadow-md transition-shadow h-full flex flex-col justify-center items-center"
+    onClick={() => handleStatsCardClick("sent")}
+  >
+    <CardContent className="p-2 flex flex-col items-center justify-center">
+      <p className="text-xs font-semibold text-blue-600 mb-0.5">Enviadas</p>
+      <div className="flex items-baseline gap-1 mb-0.5">
+        <p className="text-xl font-bold text-blue-700">{sentFines.length}</p>
+        <p className="text-xs text-blue-600"></p>
+      </div>
+      <Badge className="bg-blue-100 text-blue-800 border-blue-200 px-1 py-0.5 text-xs">
+        {sentAmount} CHF
+      </Badge>
+    </CardContent>
+  </Card>
+  <Card 
+    className="bg-gradient-to-r from-green-50 to-emerald-50 border-green-200 cursor-pointer hover:shadow-md transition-shadow h-full flex flex-col justify-center items-center"
+    onClick={() => handleStatsCardClick("received")}
+  >
+    <CardContent className="p-2 flex flex-col items-center justify-center">
+      <p className="text-xs font-semibold text-green-600 mb-0.5">Recibidas</p>
+      <div className="flex items-baseline gap-1 mb-0.5">
+        <p className="text-xl font-bold text-green-700">{receivedFines.length}</p>
+        <p className="text-xs text-green-600"></p>
+      </div>
+      <Badge className="bg-green-100 text-green-800 border-green-200 px-1 py-0.5 text-xs">
+        {receivedAmount} CHF
+      </Badge>
+    </CardContent>
+  </Card>
+</div>
+
+
         {/* Acciones rápidas */}
         <Card>
           <CardHeader>

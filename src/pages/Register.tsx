@@ -167,6 +167,22 @@ export default function Register() {
         </Button>
         {error && <div className="text-red-500 text-sm">{error}</div>}
       </form>
+      {/* AVISO LEGAL AL CREAR LA CUENTA */}
+      <div className="text-xs text-gray-600 mt-4 text-center px-2 leading-tight">
+        Al crear una cuenta, aceptas automáticamente nuestros{" "}
+        <Link to="/legal/agb" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">
+          AGB
+        </Link>
+        ,{" "}
+        <Link to="/legal/datenschutz" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">
+          Datenschutz
+        </Link>
+        {" "}y{" "}
+        <Link to="/legal/haftungsausschluss" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">
+          Haftungsausschluss
+        </Link>
+        .
+      </div>
       <div className="text-center text-sm mt-2">
         ¿Ya tienes cuenta?{" "}
         <Link to="/login" className="text-blue-600 underline">Inicia sesión</Link>

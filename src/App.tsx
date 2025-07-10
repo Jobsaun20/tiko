@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { Toaster } from '@/components/ui/toaster';
@@ -8,7 +7,7 @@ import { useAuthContext } from '@/contexts/AuthContext';
 // CONTEXTO GLOBAL DE LOGROS (MODAL BADGES)
 import { BadgeModalProvider } from '@/contexts/BadgeModalContext';
 
-// Páginas
+// Páginas principales
 import Index from '@/pages/Index';
 import History from '@/pages/History';
 import Profile from '@/pages/Profile';
@@ -20,6 +19,12 @@ import Notifications from '@/pages/Notifications';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 
+// Páginas legales públicas
+import AGBPage from '@/pages/legal/agb';
+import DatenschutzPage from '@/pages/legal/Datenschutz';
+import HaftungsausschlussPage from '@/pages/legal/haftungsausschluss';
+import ImpressumPage from '@/pages/legal/Impressum';
+
 function AppRoutes() {
   const { user, loading } = useAuthContext();
 
@@ -30,6 +35,12 @@ function AppRoutes() {
       {/* Páginas públicas */}
       <Route path="/login" element={!user ? <Login /> : <Navigate to="/" replace />} />
       <Route path="/register" element={!user ? <Register /> : <Navigate to="/" replace />} />
+
+      {/* Páginas legales públicas */}
+      <Route path="/legal/agb" element={<AGBPage />} />
+      <Route path="/legal/datenschutz" element={<DatenschutzPage />} />
+      <Route path="/legal/haftungsausschluss" element={<HaftungsausschlussPage />} />
+      <Route path="/legal/impressum" element={<ImpressumPage />} />
 
       {/* Páginas protegidas */}
       <Route path="/" element={
@@ -79,9 +90,6 @@ function AppRoutes() {
 }
 
 function App() {
-  // Muestra el valor actual de la variable de entorno en la consola del navegador
- 
-
   return (
     <LanguageProvider>
       <Router>

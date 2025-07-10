@@ -385,7 +385,7 @@ const res = await fetch(endpoint, {
         </Card>
 
         {/* Código QR TWINT */}
-        <Card>
+        {/* <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <QrCode className="h-5 w-5" />
@@ -408,7 +408,7 @@ const res = await fetch(endpoint, {
               Compartir QR
             </Button>
           </CardContent>
-        </Card>
+        </Card> */}
 
         {/* Modal editar perfil */}
         <EditProfileModal
