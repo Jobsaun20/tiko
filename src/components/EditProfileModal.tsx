@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,6 +13,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Upload, User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/supabaseClient";
 
 interface EditProfileModalProps {
   isOpen: boolean;
@@ -21,25 +22,68 @@ interface EditProfileModalProps {
   onSave: (userData: any) => void;
 }
 
-export const EditProfileModal = ({ 
-  isOpen, 
-  onClose, 
-  user, 
-  onSave 
+export const EditProfileModal = ({
+  isOpen,
+  onClose,
+  user,
+  onSave
 }: EditProfileModalProps) => {
   const [formData, setFormData] = useState({
     email: user?.email || "user@example.com",
     phone: user?.phone || "+41 76 123 45 67"
   });
-  
-  const [tempAvatar, setTempAvatar] = useState(user?.avatar || "");
+
+  // Usar avatar_url, forzar recarga con timestamp
+  const [avatarUrl, setAvatarUrl] = useState(user?.avatar_url || "");
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { toast } = useToast();
 
+  // Mostrar selector archivo
+  const handlePhotoUpload = () => {
+    if (fileInputRef.current) fileInputRef.current.click();
+  };
+
+  // Subir a storage y obtener url pública
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!user?.id) {
+      toast({ title: "No se pudo identificar usuario", variant: "destructive" });
+      return;
+    }
+    setUploading(true);
+    const fileExt = file.name.split('.').pop();
+    // Agrega timestamp para romper caché y sobreescribir anterior
+    const timestamp = Date.now();
+    const filePath = `users/${user.id}/avatar_${timestamp}.${fileExt}`;
+
+    // Subir al bucket avatars
+    const { error: uploadError } = await supabase.storage
+      .from("avatars")
+      .upload(filePath, file, { upsert: true });
+
+    if (uploadError) {
+      toast({ title: "Error subiendo avatar", description: uploadError.message, variant: "destructive" });
+      setUploading(false);
+      return;
+    }
+
+    // Obtener URL pública
+    const { data } = supabase.storage.from("avatars").getPublicUrl(filePath);
+    const publicUrl = data.publicUrl;
+    // Añade un query param para forzar recarga de imagen (cache bust)
+    setAvatarUrl(publicUrl + "?r=" + timestamp);
+
+    setUploading(false);
+    toast({ title: "Foto subida correctamente. ¡No olvides guardar!" });
+  };
+
   const handleSave = () => {
-    const updatedUser = { 
-      ...user, 
+    const updatedUser = {
+      ...user,
       ...formData,
-      avatar: tempAvatar
+      avatar_url: avatarUrl,
     };
     onSave(updatedUser);
     toast({
@@ -50,31 +94,12 @@ export const EditProfileModal = ({
   };
 
   const handleCancel = () => {
-    // Reset form data to original values
     setFormData({
       email: user?.email || "user@example.com",
       phone: user?.phone || "+41 76 123 45 67"
     });
-    setTempAvatar(user?.avatar || "");
+    setAvatarUrl(user?.avatar_url || "");
     onClose();
-  };
-
-  const handlePhotoUpload = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.onchange = (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const result = e.target?.result as string;
-          setTempAvatar(result);
-        };
-        reader.readAsDataURL(file);
-      }
-    };
-    input.click();
   };
 
   return (
@@ -89,20 +114,34 @@ export const EditProfileModal = ({
             Actualiza tu información personal y foto de perfil
           </DialogDescription>
         </DialogHeader>
-        
+
         <div className="space-y-6">
           {/* Profile Picture */}
           <div className="flex flex-col items-center space-y-4">
             <Avatar className="h-24 w-24">
-              <AvatarImage src={tempAvatar} alt={user?.username || "Usuario"} />
+              <AvatarImage src={avatarUrl} alt={user?.username || "Usuario"} />
               <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white text-2xl">
                 {(user?.username?.charAt(0) || "U").toUpperCase()}
               </AvatarFallback>
+              {uploading && (
+                <div className="absolute inset-0 flex items-center justify-center bg-white/50 rounded-full">
+                  <Upload className="w-8 h-8 text-blue-500 animate-spin" />
+                </div>
+              )}
             </Avatar>
-            <Button variant="outline" size="sm" onClick={handlePhotoUpload}>
+            <Button variant="outline" size="sm" onClick={handlePhotoUpload} disabled={uploading}>
               <Upload className="h-4 w-4 mr-2" />
-              Cambiar Foto
+              {uploading ? "Subiendo..." : "Cambiar Foto"}
             </Button>
+            {/* input oculto */}
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              ref={fileInputRef}
+              onChange={handleAvatarChange}
+              disabled={uploading}
+            />
           </div>
 
           {/* Form Fields */}

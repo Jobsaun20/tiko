@@ -6,7 +6,7 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  login: (email?: string, password?: string, provider?: 'google') => Promise<{ error: any }>;
+  login: (email: string, password: string) => Promise<{ error: any }>;
   register: (email: string, password: string) => Promise<{ error: any }>;
   logout: () => Promise<void>;
 }
@@ -18,20 +18,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Depuración: log en cada cambio
+  // Debug log for session changes
   const logSession = (tag: string, session: Session | null) => {
-    // eslint-disable-next-line no-console
-    
-    // eslint-disable-next-line no-console
-    
-    if (session?.access_token) {
-      // eslint-disable-next-line no-console
-      
+    if (import.meta.env.DEV) {
+      // Uncomment if you want to log sessions for debugging:
+      // console.log(`[AuthContext][${tag}]`, session);
     }
   };
 
   useEffect(() => {
-    // 1. Cargar sesión inicial
+    // Load initial session
     const setData = async () => {
       try {
         const { data } = await supabase.auth.getSession();
@@ -48,7 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
     setData();
 
-    // 2. Escuchar cambios de sesión (login/logout)
+    // Listen to session changes (login/logout)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
@@ -61,17 +57,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const login: AuthContextType['login'] = async (email, password, provider) => {
+  const login: AuthContextType['login'] = async (email, password) => {
     setLoading(true);
     let error = null;
     try {
-      if (provider === 'google') {
-        const { error: providerError } = await supabase.auth.signInWithOAuth({ provider: 'google' });
-        error = providerError;
-      } else {
-        const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-        error = signInError;
-      }
+      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      error = signInError;
     } catch (err) {
       error = err;
       if (import.meta.env.DEV) console.error('[AuthContext] Error en login:', err);

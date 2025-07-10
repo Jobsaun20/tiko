@@ -179,18 +179,31 @@ export function useGroups() {
   }
 
   // ---------- Editar grupo ----------
-  async function editGroup(groupId: string, changes: { name?: string; description?: string; avatar?: string; }) {
-    const { error } = await supabase
-      .from("groups")
-      .update({
-        ...(changes.name !== undefined ? { name: changes.name } : {}),
-        ...(changes.description !== undefined ? { description: changes.description } : {}),
-        ...(changes.avatar !== undefined ? { avatar: changes.avatar } : {})
-      })
-      .eq("id", groupId);
-    if (error) throw new Error(error.message);
-    await fetchGroups();
-  }
+  // src/hooks/useGroups.ts
+
+async function editGroup(
+  groupId: string,
+  changes: { name?: string; description?: string; avatar_url?: string }
+) {
+  // Cambia 'avatar_url' a 'avatar' para el update (según el nombre del campo en la base de datos)
+  const updatePayload: any = {};
+
+  if (changes.name !== undefined) updatePayload.name = changes.name;
+  if (changes.description !== undefined) updatePayload.description = changes.description;
+  // Admite avatar_url o avatar para máxima compatibilidad
+  if (changes.avatar_url !== undefined) updatePayload.avatar = changes.avatar_url;
+  if ((changes as any).avatar !== undefined) updatePayload.avatar = (changes as any).avatar;
+
+  const { error } = await supabase
+    .from("groups")
+    .update(updatePayload)
+    .eq("id", groupId);
+
+  if (error) throw new Error(error.message);
+
+  await fetchGroups();
+}
+
 
   // ---------- Eliminar grupo ----------
   async function deleteGroup(groupId: string) {

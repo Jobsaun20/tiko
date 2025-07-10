@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Dialog,
   DialogContent,
@@ -11,7 +11,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { UserPlus, Trash2 } from "lucide-react";
+import { UserPlus, Trash2, Upload } from "lucide-react";
+import { supabase } from "@/supabaseClient";
+import { useToast } from "@/hooks/use-toast";
 
 export interface EditGroupModalProps {
   isOpen: boolean;
@@ -36,15 +38,51 @@ export function EditGroupModal({
 }: EditGroupModalProps) {
   const [name, setName] = useState(group?.name || "");
   const [description, setDescription] = useState(group?.description || "");
-  const [avatarUrl, setAvatarUrl] = useState(group?.avatar || "");
+  const [avatarUrl, setAvatarUrl] = useState(group?.avatar_url || group?.avatar || "");
   const [tab, setTab] = useState("general");
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     setName(group?.name || "");
     setDescription(group?.description || "");
-    setAvatarUrl(group?.avatar || "");
+    setAvatarUrl(group?.avatar_url || group?.avatar || "");
   }, [group]);
+
+  // Subida de imagen solo si eres admin
+  const handleAvatarUpload = () => {
+    if (isAdmin && fileInputRef.current) fileInputRef.current.click();
+  };
+
+  // Subida de imagen a Supabase
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !group?.id) return;
+    setUploading(true);
+
+    const fileExt = file.name.split('.').pop();
+    const filePath = `groups/${group.id}/avatar_${Date.now()}.${fileExt}`;
+
+    // Subir al bucket avatars
+    const { error: uploadError } = await supabase.storage
+      .from("avatars")
+      .upload(filePath, file, { upsert: true });
+
+    if (uploadError) {
+      toast({ title: "Error subiendo imagen", description: uploadError.message, variant: "destructive" });
+      setUploading(false);
+      return;
+    }
+
+    // Obtener la URL pública
+    const { data } = supabase.storage.from("avatars").getPublicUrl(filePath);
+    setAvatarUrl(data.publicUrl);
+
+    setUploading(false);
+    toast({ title: "Imagen subida correctamente. ¡No olvides guardar!" });
+  };
 
   const handleSave = async () => {
     setSaving(true);
@@ -52,18 +90,9 @@ export function EditGroupModal({
       ...group,
       name,
       description,
-      avatar: avatarUrl,
+      avatar: avatarUrl,  // Usa avatar_url como estándar en tu base de datos
     });
     setSaving(false);
-  };
-
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => setAvatarUrl(reader.result as string);
-      reader.readAsDataURL(file);
-    }
   };
 
   return (
@@ -96,22 +125,47 @@ export function EditGroupModal({
           {/* AVATAR (Imagen) */}
           <TabsContent value="avatar" className="flex flex-col items-center gap-4 px-2 py-4">
             <label className="block font-semibold text-sm w-full text-center">Imagen del grupo</label>
-            <Avatar className="h-16 w-16 mb-2">
+            <Avatar
+              className={`h-16 w-16 mb-2 ${isAdmin ? "cursor-pointer hover:ring-2 ring-blue-400 transition-all" : ""}`}
+              onClick={handleAvatarUpload}
+              title={isAdmin ? "Haz clic para cambiar la imagen" : ""}
+            >
               <AvatarImage src={avatarUrl} />
               <AvatarFallback className="bg-gray-200 text-gray-700 font-bold text-2xl">
                 {name?.slice(0, 2).toUpperCase() || "GR"}
               </AvatarFallback>
+              {uploading && (
+                <div className="absolute inset-0 flex items-center justify-center bg-white/60 rounded-full">
+                  <Upload className="w-8 h-8 text-blue-500 animate-spin" />
+                </div>
+              )}
             </Avatar>
-            <Input
-              type="file"
-              accept="image/*"
-              onChange={handleAvatarChange}
-              className="block w-full max-w-xs mx-auto text-sm file:mr-4 file:py-2 file:px-4
-                file:rounded-full file:border-0 file:text-sm file:font-semibold
-                file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
-            />
+            {/* Input oculto solo para admin */}
+            {isAdmin && (
+              <>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleAvatarUpload}
+                  disabled={uploading}
+                >
+                  <Upload className="h-4 w-4 mr-2" />
+                  {uploading ? "Subiendo..." : "Cambiar imagen"}
+                </Button>
+                <input
+                  type="file"
+                  accept="image/*"
+                  ref={fileInputRef}
+                  className="hidden"
+                  onChange={handleAvatarChange}
+                  disabled={uploading}
+                />
+              </>
+            )}
             <div className="text-xs text-gray-400 text-center mt-2">
-              (Función demo: implementa subida a Supabase Storage si quieres guardar la imagen)
+              {isAdmin
+                ? "(Solo el admin puede cambiar la imagen. Haz clic o usa el botón para subir una nueva foto.)"
+                : "Solo el admin puede cambiar la imagen del grupo."}
             </div>
           </TabsContent>
 

@@ -95,12 +95,12 @@ export default function Notifications() {
           </Button>
         </div>
 
-        {/* Header de notificaciones */}
+        {/* Header de notificaciones adaptativo */}
         <div className="mb-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 flex items-center gap-3">
-                <Bell className="h-8 w-8" />
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <Bell className="h-8 w-8" />
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 flex items-center gap-2">
                 {t?.pages?.notifications?.title || "Notificaciones"}
                 {unreadCount > 0 && (
                   <Badge variant="destructive" className="ml-2">
@@ -108,21 +108,21 @@ export default function Notifications() {
                   </Badge>
                 )}
               </h1>
-              <p className="text-gray-600">
-                {t?.pages?.notifications?.description || "Tus notificaciones recientes"}
-              </p>
             </div>
             {unreadCount > 0 && (
               <Button
                 variant="outline"
                 onClick={handleMarkAllAsRead}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 w-full sm:w-auto mt-3 sm:mt-0"
               >
                 <Check className="h-4 w-4" />
                 {t?.pages?.notifications?.markAllRead || "Marcar todas como leídas"}
               </Button>
             )}
           </div>
+          <p className="text-gray-600 mt-2">
+            {t?.pages?.notifications?.description || "Tus notificaciones recientes"}
+          </p>
         </div>
 
         {/* Lista de notificaciones */}

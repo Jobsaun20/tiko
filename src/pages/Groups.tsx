@@ -28,6 +28,9 @@ import { GroupRulesModal } from "@/components/GroupRulesModal";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CreateFineModal } from "@/components/CreateFineModal";
 
+// Fallback por si no hay avatar (URL o base64)
+const DEFAULT_GROUP_AVATAR = "https://ui-avatars.com/api/?background=6552F5&color=fff&name=GR";
+
 export default function Groups() {
   const { t } = useLanguage();
   const navigate = useNavigate();
@@ -211,6 +214,28 @@ export default function Groups() {
     setSelectedContact(null);
   };
 
+  // FUNCION PARA RENDERIZAR AVATAR DE GRUPO (Base64 o URL o fallback)
+  const renderGroupAvatar = (group: any) => {
+    const avatar = group.avatar || ""; // Campo de la tabla groups
+    return (
+      <Avatar className="h-10 w-10 sm:h-12 sm:w-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+        <AvatarImage
+          src={
+            avatar.startsWith("http")
+              ? avatar // URL storage
+              : avatar.startsWith("data:image")
+              ? avatar // Base64
+              : DEFAULT_GROUP_AVATAR
+          }
+          alt={group.name}
+        />
+        <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs font-bold">
+          {group.name?.charAt(0)?.toUpperCase() || "G"}
+        </AvatarFallback>
+      </Avatar>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
       <Header />
@@ -255,9 +280,8 @@ export default function Groups() {
                 <CardHeader>
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                     <div className="flex items-center gap-3 w-full">
-                      <div className="h-10 w-10 sm:h-12 sm:w-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                        <Users className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
-                      </div>
+                      {/* Aquí se muestra el avatar real */}
+                      {renderGroupAvatar(group)}
                       <div className="min-w-0">
                         <CardTitle className="flex items-center gap-2 truncate">
                           {group.name}
@@ -448,7 +472,7 @@ export default function Groups() {
           id: user?.id ?? "",
           name: user?.name,
           email: user?.email,
-          phone: user?.phone,         // <<--- Importante para CreateFineModal (si lo necesita)
+          phone: user?.phone,
         }}
         currentUserUsername={user?.name ?? ""}
         onSubmit={handleCreateFine}

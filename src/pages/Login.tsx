@@ -12,13 +12,6 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
 
-  // Login Social (Google)
-  const handleGoogleLogin = async () => {
-    setError(null);
-    const { error } = await login(email, password, "google");
-    if (error) setError(error.message);
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -57,29 +50,10 @@ export default function Login() {
         </Button>
         {error && <div className="text-red-500 text-sm">{error}</div>}
       </form>
-      {/* Login social: Google */}
-      <div className="my-4 text-center">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={async () => {
-            setError(null);
-            const { error } = await login(undefined, undefined, "google");
-            if (error) setError(error.message);
-          }}
-        >
-          <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5 mr-2" />
-          Iniciar sesión con Google
-        </Button>
-      </div>
       <div className="text-center text-sm mt-2">
         ¿No tienes cuenta?{" "}
         <Link to="/register" className="text-blue-600 underline">Regístrate</Link>
       </div>
     </div>
-    
   );
-  
 }
-
-
