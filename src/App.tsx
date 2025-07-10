@@ -21,9 +21,10 @@ import Register from '@/pages/Register';
 
 // Páginas legales públicas
 import AGBPage from '@/pages/legal/agb';
-import DatenschutzPage from '@/pages/legal/Datenschutz';
+import DatenschutzPage from './pages/legal/Datenschutz';
 import HaftungsausschlussPage from '@/pages/legal/haftungsausschluss';
-import ImpressumPage from '@/pages/legal/Impressum';
+import ImpressumPage from "./pages/legal/Impressum";
+
 
 function AppRoutes() {
   const { user, loading } = useAuthContext();
