@@ -86,35 +86,37 @@ export function EditGroupModal({
           </TabsList>
 
           {/* GENERAL */}
-          <TabsContent value="general" className="space-y-4">
+          <TabsContent value="general" className="space-y-4 px-2">
             <label className="block font-semibold text-sm">Nombre del grupo</label>
             <Input value={name} onChange={e => setName(e.target.value)} />
             <label className="block font-semibold text-sm">Descripción</label>
             <Input value={description} onChange={e => setDescription(e.target.value)} />
           </TabsContent>
 
-          {/* AVATAR */}
-          <TabsContent value="avatar" className="space-y-4">
-            <label className="block font-semibold text-sm">Imagen del grupo</label>
-            <div className="flex items-center gap-3">
-              <Avatar className="h-16 w-16">
-                <AvatarImage src={avatarUrl} />
-                <AvatarFallback>GR</AvatarFallback>
-              </Avatar>
-              <Input
-                type="file"
-                accept="image/*"
-                onChange={handleAvatarChange}
-                className="w-auto"
-              />
-            </div>
-            <small className="text-xs text-gray-500">
+          {/* AVATAR (Imagen) */}
+          <TabsContent value="avatar" className="flex flex-col items-center gap-4 px-2 py-4">
+            <label className="block font-semibold text-sm w-full text-center">Imagen del grupo</label>
+            <Avatar className="h-16 w-16 mb-2">
+              <AvatarImage src={avatarUrl} />
+              <AvatarFallback className="bg-gray-200 text-gray-700 font-bold text-2xl">
+                {name?.slice(0, 2).toUpperCase() || "GR"}
+              </AvatarFallback>
+            </Avatar>
+            <Input
+              type="file"
+              accept="image/*"
+              onChange={handleAvatarChange}
+              className="block w-full max-w-xs mx-auto text-sm file:mr-4 file:py-2 file:px-4
+                file:rounded-full file:border-0 file:text-sm file:font-semibold
+                file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
+            />
+            <div className="text-xs text-gray-400 text-center mt-2">
               (Función demo: implementa subida a Supabase Storage si quieres guardar la imagen)
-            </small>
+            </div>
           </TabsContent>
 
           {/* MIEMBROS */}
-          <TabsContent value="members" className="space-y-4">
+          <TabsContent value="members" className="space-y-4 px-2">
             <div className="flex flex-col gap-2">
               <span className="font-semibold mb-2">Agregar miembro</span>
               <Button
