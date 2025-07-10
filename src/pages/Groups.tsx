@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { supabase } from "@/supabaseClient";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -53,12 +54,10 @@ export default function Groups() {
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
 
-  // Para el popover, usar userId + groupId para contexto único
+  // Popover y multa
   const [selectedPopover, setSelectedPopover] = useState<{ userId: string, groupId: string } | null>(null);
-
-  // Estado para el modal de multa
-  const [selectedUser, setSelectedUser] = useState<any>(null);
-  const [showSendFineModal, setShowSendFineModal] = useState(false);
+  const [isCreateFineModalOpen, setIsCreateFineModalOpen] = useState(false);
+  const [selectedContact, setSelectedContact] = useState<any>(null);
 
   // Modal handlers
   const handleCreateGroup = () => setIsCreateGroupModalOpen(true);
@@ -155,14 +154,61 @@ export default function Groups() {
     setSelectedGroupId(null);
   };
 
+  // Encuentra el contacto real (user_supabase_id debe coincidir con el id del miembro)
+  const getContactFromMember = (member: any) =>
+    contacts.find((c: any) => c.user_supabase_id === member.id);
+
   // Popover handlers usando userId+groupId
   const handleOpenSendFinePopover = (member: any, group: any) =>
     setSelectedPopover({ userId: member.id, groupId: group.id });
   const handleCloseSendFinePopover = () => setSelectedPopover(null);
 
+  // Abre el modal de multa
   const handleSendFine = (member: any, group: any) => {
-    setSelectedUser({ ...member, group });
-    setShowSendFineModal(true);
+    const contact = getContactFromMember(member);
+    if (!contact) {
+      toast({
+        title: "Error",
+        description: "No se encontró el contacto registrado para este miembro.",
+        variant: "destructive",
+      });
+      return;
+    }
+    setSelectedContact({ ...contact, group }); // Incluimos el grupo para el onSubmit
+    setIsCreateFineModalOpen(true);
+  };
+
+  // CREAR LA MULTA REALMENTE EN SUPABASE (asegúrate recipient_id es el user_supabase_id)
+  const handleCreateFine = async (fine: any) => {
+    if (!selectedContact?.group?.id) {
+      toast({ title: "Error", description: "Grupo no encontrado.", variant: "destructive" });
+      return;
+    }
+    // recipient_id debe ser siempre el user_supabase_id
+    const recipientUserId = selectedContact.user_supabase_id;
+    if (!recipientUserId) {
+      toast({ title: "Error", description: "No se pudo determinar el usuario a multar.", variant: "destructive" });
+      return;
+    }
+    // --- OJO: Aquí agregamos el número de teléfono del emisor
+    const senderPhone = user?.phone || "";
+    const { error } = await supabase.from("fines").insert([
+      {
+        ...fine,
+        group_id: selectedContact.group.id,
+        sender_id: user?.id,
+        sender_phone: senderPhone,   // <<--- ESTA LÍNEA AGREGA EL TELÉFONO DEL EMISOR
+        created_at: new Date(),
+        recipient_id: recipientUserId,
+      },
+    ]);
+    if (error) {
+      toast({ title: "Error", description: "No se pudo crear la multa: " + error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Multa creada", description: "¡Multa enviada correctamente!" });
+    }
+    setIsCreateFineModalOpen(false);
+    setSelectedContact(null);
   };
 
   return (
@@ -390,24 +436,23 @@ export default function Groups() {
       )}
 
       {/* Modal de enviar multa */}
-      {showSendFineModal && selectedUser && (
-        <CreateFineModal
-          isOpen={showSendFineModal}
-          onClose={() => setShowSendFineModal(false)}
-          preselectedContact={selectedUser}
-          contacts={selectedUser.group.members}
-          currentUser={{
-            id: user?.id ?? "",
-            name: user?.name,
-            email: user?.email,
-          }}
-          currentUserUsername={user?.name ?? ""}
-          onSubmit={(fine) => {
-            // aquí tu lógica para enviar multa
-            setShowSendFineModal(false);
-          }}
-        />
-      )}
+      <CreateFineModal
+        isOpen={isCreateFineModalOpen}
+        onClose={() => {
+          setIsCreateFineModalOpen(false);
+          setSelectedContact(null);
+        }}
+        preselectedContact={selectedContact}
+        contacts={contacts}
+        currentUser={{
+          id: user?.id ?? "",
+          name: user?.name,
+          email: user?.email,
+          phone: user?.phone,         // <<--- Importante para CreateFineModal (si lo necesita)
+        }}
+        currentUserUsername={user?.name ?? ""}
+        onSubmit={handleCreateFine}
+      />
     </div>
   );
 }

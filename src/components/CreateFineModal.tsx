@@ -31,6 +31,7 @@ interface CreateFineModalProps {
   id: string;
   name?: string;
   email?: string;
+  phone?: string;
 }
   currentUserUsername: string; // <- obligatorio
 }

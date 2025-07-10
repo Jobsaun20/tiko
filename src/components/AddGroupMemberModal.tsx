@@ -12,13 +12,12 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Users } from "lucide-react";
 
-// La interfaz ahora incluye el user_supabase_id (si es usuario registrado)
 interface Contact {
   id: string;
   name: string;
   email: string;
   avatar?: string;
-  user_supabase_id?: string | null; // Nuevo: solo estos pueden añadirse
+  user_supabase_id?: string | null; // Si quieres usarlo para registro real
 }
 
 interface AddGroupMemberModalProps {
@@ -37,25 +36,27 @@ export function AddGroupMemberModal({
   const [search, setSearch] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  // Solo contactos con user_supabase_id válido y búsqueda
+  // Buscar en todos los contactos
   const filtered =
     search.trim().length === 0
       ? []
       : contacts.filter(
           (c) =>
-            !!c.user_supabase_id && // Solo registrados
-            (
-              c.name.toLowerCase().includes(search.toLowerCase()) ||
-              c.email.toLowerCase().includes(search.toLowerCase())
-            )
+            (c.name?.toLowerCase().includes(search.toLowerCase()) ||
+              c.email?.toLowerCase().includes(search.toLowerCase()))
         );
 
   const handleConfirm = () => {
     if (selectedId) {
-      // Busca el contacto y usa su user_supabase_id
       const contact = contacts.find(c => c.id === selectedId);
-      if (contact && contact.user_supabase_id) {
-        onSubmit(contact.user_supabase_id); // Pasa el id de supabase real
+      if (contact) {
+        // Si quieres obligar a que solo se puedan añadir usuarios registrados, aquí validas user_supabase_id:
+        // if (!contact.user_supabase_id) {
+        //   alert("Este contacto no está registrado, no puede añadirse al grupo.");
+        //   return;
+        // }
+        // Puedes pasar el user_supabase_id o el id normal, según tu lógica
+        onSubmit(contact.user_supabase_id ?? contact.id); // Usa user_supabase_id si existe, si no el id
         setSearch("");
         setSelectedId(null);
       }
@@ -77,7 +78,7 @@ export function AddGroupMemberModal({
             Agregar miembro al grupo
           </DialogTitle>
           <DialogDescription>
-            Busca un contacto registrado y selecciónalo para añadirlo al grupo.
+            Busca un contacto y selecciónalo para añadirlo al grupo.
           </DialogDescription>
         </DialogHeader>
         <div className="my-3">
@@ -89,7 +90,7 @@ export function AddGroupMemberModal({
           />
         </div>
         {search.trim().length === 0 ? (
-          <div className="text-gray-400 text-sm text-center p-4">Empieza a escribir para buscar un contacto registrado.</div>
+          <div className="text-gray-400 text-sm text-center p-4">Empieza a escribir para buscar un contacto.</div>
         ) : filtered.length === 0 ? (
           <div className="text-gray-400 text-sm text-center p-4">No hay coincidencias.</div>
         ) : (
@@ -112,6 +113,10 @@ export function AddGroupMemberModal({
                 <div className="flex flex-col">
                   <span className="font-medium">{contact.name}</span>
                   <span className="text-xs text-gray-500">{contact.email}</span>
+                  {/* Si quieres, puedes mostrar aquí un tag si no está registrado */}
+                  {/* {!contact.user_supabase_id && (
+                    <span className="text-xs text-amber-600">No registrado</span>
+                  )} */}
                 </div>
               </button>
             ))}
