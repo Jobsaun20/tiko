@@ -33,6 +33,7 @@ export default function Datenschutz() {
           <p>
             <b>6. Änderungen</b><br />
             Änderungen dieser Datenschutzerklärung werden auf der Website veröffentlicht.
+            
           </p>
         </CardContent>
       </Card>

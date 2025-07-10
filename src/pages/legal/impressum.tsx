@@ -27,6 +27,7 @@ export default function Impressum() {
           <p>
             <b>Haftungsausschluss:</b><br />
             Trotz sorgfältiger Prüfung übernehmen wir keine Haftung für die Inhalte externer Links. Für den Inhalt der verlinkten Seiten sind ausschliesslich deren Betreiber verantwortlich.
+            
           </p>
         </CardContent>
       </Card>
