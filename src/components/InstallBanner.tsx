@@ -1,16 +1,16 @@
 import { usePWAInstall } from "@/contexts/PWAInstallContext";
-import { useLanguage } from "@/contexts/LanguageContext";  // <--- Importa el hook
+import { useLanguage } from "@/contexts/LanguageContext";
 import { useState } from "react";
 
 export function InstallBanner() {
   const { canInstall, promptInstall } = usePWAInstall();
-  const { t } = useLanguage(); // <--- Obtén las traducciones
+  const { t } = useLanguage();
   const [closed, setClosed] = useState(false);
 
   if (!canInstall || closed) return null;
 
   return (
-    <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-[#133bb3] text-white rounded-xl shadow-lg flex items-center px-4 py-3 z-50 gap-3">
+    <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-[#52AEB9] text-white rounded-xl shadow-lg flex items-center px-4 py-3 z-50 gap-3">
       <span className="text-lg">{t.banner.title}</span>
       <button
         onClick={promptInstall}

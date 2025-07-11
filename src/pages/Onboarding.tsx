@@ -31,7 +31,7 @@ export default function Onboarding() {
   const prev = () => setStep((s) => Math.max(0, s - 1));
 
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen bg-[#133bb3] relative">
+    <div className="flex flex-col justify-center items-center min-h-screen bg-[#52AEB9] relative">
       {/* Flecha arriba a la izquierda */}
       <button
         className="absolute top-5 left-5 z-50 p-2 rounded-full bg-white shadow hover:bg-gray-100 transition"
@@ -39,7 +39,7 @@ export default function Onboarding() {
         aria-label="Volver"
         type="button"
       >
-        <ArrowLeft className="w-6 h-6 text-[#133bb3]" />
+        <ArrowLeft className="w-6 h-6 text-[#52AEB9]" />
       </button>
       {/* Language Selector arriba a la derecha */}
       <div className="absolute top-5 right-5 z-50">
@@ -51,7 +51,7 @@ export default function Onboarding() {
           {slides.map((_, i) => (
             <span
               key={i}
-              className={`w-2 h-2 rounded-full ${i === step ? "bg-[#133bb3]" : "bg-yellow-300"} transition`}
+              className={`w-2 h-2 rounded-full ${i === step ? "bg-[#52AEB9]" : "bg-yellow-300"} transition`}
             />
           ))}
         </div>
@@ -65,13 +65,13 @@ export default function Onboarding() {
           />
         </div>
         {/* Texto */}
-        <h2 className="text-2xl font-bold text-[#133bb3] mb-2 text-center">{slides[step].title}</h2>
+        <h2 className="text-2xl font-bold text-[#52AEB9] mb-2 text-center">{slides[step].title}</h2>
         <p className="text-gray-700 mb-6 text-center">{slides[step].desc}</p>
         {/* Botones */}
         <div className="flex w-full gap-2 mt-2">
           {step > 0 && (
             <button
-              className="flex-1 py-2 rounded-xl bg-gray-100 text-[#133bb3] font-semibold shadow hover:bg-gray-200"
+              className="flex-1 py-2 rounded-xl bg-gray-100 text-[#52AEB9] font-semibold shadow hover:bg-gray-200"
               onClick={prev}
             >
               {t.onboard.back}
@@ -79,7 +79,7 @@ export default function Onboarding() {
           )}
           {step < slides.length - 1 ? (
             <button
-              className="flex-1 py-2 rounded-xl bg-[#133bb3] text-white font-semibold shadow hover:bg-[#2354d8]"
+              className="flex-1 py-2 rounded-xl bg-[#52AEB9] text-white font-semibold shadow hover:bg-[#418893]"
               onClick={next}
             >
               {t.onboard.next}
