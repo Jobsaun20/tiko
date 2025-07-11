@@ -255,7 +255,7 @@ const res = await fetch(endpoint, {
         </Card>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+       {/*  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <Card className="cursor-pointer hover:shadow-md transition-shadow"
             onClick={() => navigate("/history?filter=sent")}
           >
@@ -290,7 +290,7 @@ const res = await fetch(endpoint, {
               <p className="text-sm text-gray-600">Total Recibido</p>
             </CardContent>
           </Card>
-        </div>
+        </div> */}
 
         {/* Insignias */}
         <Card>
@@ -344,7 +344,7 @@ const res = await fetch(endpoint, {
         </Card>
 
         {/* Grupos */}
-        <Card>
+        {/* <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Users className="h-5 w-5" />
@@ -382,7 +382,7 @@ const res = await fetch(endpoint, {
               )}
             </div>
           </CardContent>
-        </Card>
+        </Card> */}
 
         {/* Código QR TWINT */}
         {/* <Card>

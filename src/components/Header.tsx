@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Bell, Settings, LogOut, User } from "lucide-react";
+import { Bell, LogOut, User } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,7 +16,7 @@ import { LanguageSelector } from "./LanguageSelector";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useUserProfile } from "@/hooks/useUserProfile";
-import { useNotifications } from "@/hooks/useNotifications"; // <- Asegúrate de usar el hook que retorna { unreadCount }
+import { useNotifications } from "@/hooks/useNotifications";
 
 export const Header = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -24,49 +24,56 @@ export const Header = () => {
   const navigate = useNavigate();
   const { logout } = useAuthContext();
   const { profile: user } = useUserProfile();
-  const { unreadCount } = useNotifications(); // <-- clave, badge de dot rojo
+  const { unreadCount } = useNotifications();
 
   const handleDeleteAccount = () => {
-    // Aquí puedes hacer llamada real a Supabase/borrar cuenta si lo necesitas
     navigate('/');
   };
 
   return (
     <header className="bg-white shadow-md border-b sticky top-0 z-50">
-      <div className="container mx-auto px-3 sm:px-4 py-2 sm:py-3">
+      <div className="max-w-full mx-auto px-2 sm:px-4 py-2 sm:py-3">
         <div className="flex items-center justify-between">
-          {/* Logo */}
+          {/* Logo + Nombre */}
           <div
-            className="flex items-center space-x-2 sm:space-x-3 cursor-pointer hover:opacity-80 transition-opacity"
-            onClick={() => navigate("/")}
-          >
-            <div className="h-8 w-8 sm:h-10 sm:w-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm sm:text-lg">O</span>
-            </div>
-            <div className="hidden xs:block">
-              <h1 className="text-base sm:text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                {t.app.name}
-              </h1>
-              <p className="text-xs text-muted-foreground hidden sm:block">{t.app.subtitle}</p>
-            </div>
-            <div className="xs:hidden">
-              <h1 className="text-lg font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                {t.app.name}
-              </h1>
-            </div>
-          </div>
+  className="flex items-center cursor-pointer hover:opacity-80 transition-opacity"
+  onClick={() => navigate("/")}
+>
+  <img
+    src="/img/logosvg.svg"
+    alt="Logo"
+    className="h-10 w-10 sm:h-14 sm:w-14 rounded-lg object-contain bg-white"
+    style={{ background: "transparent" }}
+  />
+  {/* Nombre para móvil */}
+  <h1
+    className="ml-2 text-lg font-bold block sm:hidden"
+    style={{ color: "#52AEB9" }}
+  >
+    {t.app.name}
+  </h1>
+  {/* Nombre y subtítulo solo en sm+ */}
+  <div className="hidden sm:flex flex-col ml-3">
+    <h1
+      className="text-xl sm:text-2xl font-bold"
+      style={{ color: "#52AEB9" }}
+    >
+      {t.app.name}
+    </h1>
+    <p className="text-xs text-muted-foreground hidden sm:block">{t.app.subtitle}</p>
+  </div>
+</div>
           {/* Actions */}
           <div className="flex items-center space-x-2 sm:space-x-3">
             <LanguageSelector />
             <Button
               variant="ghost"
               size="icon"
-              className="relative h-8 w-8 sm:h-10 sm:w-10"
+              className="relative h-10 w-10 sm:h-12 sm:w-12"
               onClick={() => navigate("/notifications")}
               aria-label="Notificaciones"
             >
-              <Bell className="h-4 w-4 sm:h-5 sm:w-5" />
-              {/* Punto rojo si hay notificaciones sin leer */}
+              <Bell className="h-5 w-5 sm:h-6 sm:w-6" />
               {unreadCount > 0 && (
                 <span
                   className="absolute top-1 right-1 block h-3 w-3 rounded-full bg-red-500 border-2 border-white"
@@ -77,8 +84,8 @@ export const Header = () => {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-8 w-8 sm:h-10 sm:w-10 rounded-full">
-                    <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
+                  <Button variant="ghost" className="relative h-10 w-10 sm:h-12 sm:w-12 rounded-full">
+                    <Avatar className="h-10 w-10 sm:h-12 sm:w-12">
                       <AvatarImage src={user.avatar_url} alt={user.username || user.email || "U"} />
                       <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs sm:text-sm">
                         {user.username?.charAt(0)?.toUpperCase() ||
@@ -104,7 +111,6 @@ export const Header = () => {
                     <User className="mr-2 h-4 w-4" />
                     <span>Perfil</span>
                   </DropdownMenuItem>
-                  {/* Opción "Mi Perfil" eliminada */}
                   <DropdownMenuItem onClick={() => navigate("/notifications")} className="text-sm">
                     <Bell className="mr-2 h-4 w-4" />
                     <span>{t.nav.notifications}</span>
