@@ -121,71 +121,79 @@ export default function Register() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-16 p-8 rounded-lg shadow bg-white">
-      <h2 className="text-2xl font-bold mb-6 text-center">Create account</h2>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <Input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={e => setUsername(e.target.value.replace(/\s/g, ""))}
-          required
-          autoComplete="username"
-          maxLength={32}
-        />
-        {username && (
-          <div className="text-xs pl-1 pb-1 h-4">
-            {usernameStatus === "checking" && (
-              <span className="text-gray-500">Checking availability…</span>
-            )}
-            {usernameStatus === "ok" && (
-              <span className="text-green-600">Username available!</span>
-            )}
-            {usernameStatus === "taken" && (
-              <span className="text-red-600">This username is already taken.</span>
-            )}
-          </div>
-        )}
-        <Input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          autoComplete="email"
-          required
-        />
-        <Input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          autoComplete="new-password"
-          required
-        />
-        <Button type="submit" disabled={loading || usernameStatus !== "ok"}>
-          {loading ? <Loader className="animate-spin w-4 h-4" /> : "Sign up"}
-        </Button>
-        {error && <div className="text-red-500 text-sm">{error}</div>}
-      </form>
-      {/* LEGAL NOTICE WHEN CREATING AN ACCOUNT */}
-      <div className="text-xs text-gray-600 mt-4 text-center px-2 leading-tight">
-        By creating an account, you automatically accept our{" "}
-        <Link to="/legal/agb" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">
-          Terms & Conditions
-        </Link>
-        ,{" "}
-        <Link to="/legal/datenschutz" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">
-          Privacy Policy
-        </Link>
-        {" "}and{" "}
-        <Link to="/legal/haftungsausschluss" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">
-          Disclaimer
-        </Link>
-        .
-      </div>
-      <div className="text-center text-sm mt-2">
-        Already have an account?{" "}
-        <Link to="/login" className="text-blue-600 underline">Log in</Link>
+    <div className="flex flex-col justify-center items-center min-h-screen bg-[#52AEB9]">
+      <div className="bg-white rounded-2xl shadow-xl px-8 py-10 max-w-md w-full flex flex-col gap-6 items-center">
+        <h2 className="text-2xl font-bold text-[#52AEB9] text-center mb-4">Create account</h2>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
+          <Input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={e => setUsername(e.target.value.replace(/\s/g, ""))}
+            required
+            autoComplete="username"
+            maxLength={32}
+          />
+          {username && (
+            <div className="text-xs pl-1 pb-1 h-4">
+              {usernameStatus === "checking" && (
+                <span className="text-gray-500">Checking availability…</span>
+              )}
+              {usernameStatus === "ok" && (
+                <span className="text-green-600">Username available!</span>
+              )}
+              {usernameStatus === "taken" && (
+                <span className="text-red-600">This username is already taken.</span>
+              )}
+            </div>
+          )}
+          <Input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            autoComplete="email"
+            required
+          />
+          <Input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            autoComplete="new-password"
+            required
+          />
+          <Button
+            type="submit"
+            disabled={loading || usernameStatus !== "ok"}
+            className="w-full bg-[#52AEB9] text-white font-bold rounded-xl shadow hover:bg-[#418893] transition"
+          >
+            {loading ? <Loader className="animate-spin w-4 h-4" /> : "Sign up"}
+          </Button>
+          {error && <div className="text-red-500 text-sm text-center">{error}</div>}
+        </form>
+        {/* LEGAL NOTICE WHEN CREATING AN ACCOUNT */}
+        <div className="text-xs text-gray-600 mt-4 text-center px-2 leading-tight">
+          By creating an account, you automatically accept our{" "}
+          <Link to="/legal/agb" className="text-yellow-500 hover:text-yellow-600 underline" target="_blank" rel="noopener noreferrer">
+            Terms & Conditions
+          </Link>
+          ,{" "}
+          <Link to="/legal/datenschutz" className="text-yellow-500 hover:text-yellow-600 underline" target="_blank" rel="noopener noreferrer">
+            Privacy Policy
+          </Link>
+          {" "}and{" "}
+          <Link to="/legal/haftungsausschluss" className="text-yellow-500 hover:text-yellow-600 underline" target="_blank" rel="noopener noreferrer">
+            Disclaimer
+          </Link>
+          .
+        </div>
+        <div className="text-center text-sm mt-2 text-black">
+          Already have an account?{" "}
+          <Link to="/login" className="text-yellow-500 font-semibold hover:text-yellow-600 underline">
+            Log in
+          </Link>
+        </div>
       </div>
     </div>
   );
