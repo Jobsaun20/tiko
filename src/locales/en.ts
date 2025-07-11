@@ -148,6 +148,10 @@ export const en = {
     create: "Create fine",
     created: "Fine created!",
     sentTo: "{amount} CHF fine sent to {recipient}",
+    seeAndManageContacts: "See and manage contacts",
+    seeHistoryComplete: "View complete history",
+    manageGroups: "Manage groups",
+    groups: "Groups",
     errors: {
       complete: "Please complete all required fields",
       selectRecipient: "Please select a recipient",

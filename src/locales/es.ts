@@ -147,6 +147,10 @@ export const es = {
     create: "Crear multa",
     created: "¡Multa creada!",
     sentTo: "Multa de {amount} CHF enviada a {recipient}",
+    seeAndManageContacts: "Ver y gestionar contactos",
+    seeHistoryComplete: "Ver historial completo",
+    manageGroups: "Gestionar grupos",
+    groups: "Grupos",
     errors: {
       complete: "Por favor, completa todos los campos obligatorios",
       selectRecipient: "Por favor, selecciona un destinatario",

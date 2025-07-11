@@ -148,6 +148,10 @@ export const fr = {
     create: "Créer l'amende",
     created: "Amende créée !",
     sentTo: "Amende de {amount} CHF envoyée à {recipient}",
+    seeAndManageContacts: "Voir et gérer les contacts",
+    seeHistoryComplete: "Voir l'historique complet",
+    manageGroups: "Gérer les groupes",
+    groups: "Groupes",
     errors: {
       complete: "Veuillez remplir tous les champs obligatoires",
       selectRecipient: "Veuillez sélectionner un destinataire",

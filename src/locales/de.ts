@@ -150,6 +150,10 @@ export const de = {
     create: "Strafe erstellen",
     created: "Strafe erstellt!",
     sentTo: "{amount} CHF Strafe an {recipient} gesendet",
+    seeAndManageContacts: "Kontakte anzeigen und verwalten",
+    seeHistoryComplete: "Kompletten Verlauf anzeigen",
+    manageGroups: "Gruppen verwalten",
+    groups: "Gruppen",
     errors: {
       complete: "Bitte alle erforderlichen Felder ausfüllen",
       selectRecipient: "Bitte wähle einen Empfänger aus",

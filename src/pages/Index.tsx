@@ -215,27 +215,27 @@ export default function Index() {
   const quickActions = [
     {
       title: t.quickActions.newFine,
-      description: "Crear una nueva multa social",
+      description: t.createFine.title,
       icon: Plus,
       color: "from-red-500 to-pink-500",
       onClick: () => navigate("/contacts") },
     {
       title: t.quickActions.contacts,
-      description: "Ver y gestionar contactos",
+      description: t.createFine.seeAndManageContacts,
       icon: Users,
       color: "from-blue-500 to-purple-500",
       onClick: () => navigate("/contacts")
     },
     {
       title: t.quickActions.history,
-      description: "Ver historial completo",
+      description: t.createFine.seeHistoryComplete,
       icon: History,
       color: "from-orange-500 to-yellow-500",
       onClick: () => navigate("/history")
     },
     {
-      title: "Grupos",
-      description: "Gestionar grupos",
+      title: t.createFine.groups,
+      description: t.createFine.manageGroups,
       icon: Users,
       color: "from-green-500 to-emerald-500",
       onClick: () => navigate("/groups")
@@ -243,7 +243,7 @@ export default function Index() {
   ];
 
   if (loading) {
-    return <div className="text-center py-16">Cargando...</div>;
+    return <div className="text-center py-16">{t.contacts.loading}</div>;
   }
 
   if (!user || !profile) {
@@ -447,7 +447,7 @@ export default function Index() {
               onClick={() => handleStatsCardClick("sent")}
             >
               <CardContent className="p-2 flex flex-col items-center justify-center">
-                <p className="text-xs font-semibold text-blue-600 mb-0.5">Enviadas</p>
+                <p className="text-xs font-semibold text-blue-600 mb-0.5">{t.pages.history.sent}</p>
                 <div className="flex items-baseline gap-1 mb-0.5">
                   <p className="text-xl font-bold text-blue-700">{sentFines.length}</p>
                 </div>
@@ -461,7 +461,7 @@ export default function Index() {
               onClick={() => handleStatsCardClick("received")}
             >
               <CardContent className="p-2 flex flex-col items-center justify-center">
-                <p className="text-xs font-semibold text-green-600 mb-0.5">Recibidas</p>
+                <p className="text-xs font-semibold text-green-600 mb-0.5">{t.pages.history.received}</p>
                 <div className="flex items-baseline gap-1 mb-0.5">
                   <p className="text-xl font-bold text-green-700">{receivedFines.length}</p>
                 </div>
@@ -519,7 +519,7 @@ export default function Index() {
                             {fine.sender_name?.charAt(0)?.toUpperCase() || "U"}
                           </div>
                           <div>
-                            <div className="font-semibold">De {fine.sender_name}</div>
+                            <div className="font-semibold">{t.index.de} {fine.sender_name}</div>
                             {fine.status === "pending" ? (
                               <span className="inline-block bg-orange-100 text-orange-700 text-xs px-2 py-0.5 rounded font-semibold">
                                 {t.index.pendent}

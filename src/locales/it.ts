@@ -148,6 +148,10 @@ export const it = {
     create: "Crea multa",
     created: "Multa creata!",
     sentTo: "Multa di {amount} CHF inviata a {recipient}",
+    seeAndManageContacts: "Visualizza e gestisci i contatti",
+    seeHistoryComplete: "Vedi la cronologia completa",
+    manageGroups: "Gestisci gruppi",
+    groups: "Gruppi",
     errors: {
       complete: "Per favore compila tutti i campi richiesti",
       selectRecipient: "Per favore seleziona un destinatario",
