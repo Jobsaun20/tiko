@@ -1,31 +1,42 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { LanguageSelector } from "@/components/LanguageSelector";
-import { ArrowLeft } from "lucide-react"; // <-- Importa la flecha
+import { ArrowLeft } from "lucide-react";
+import Lottie from "lottie-react";
 
 export default function Onboarding() {
   const { t } = useLanguage();
   const [step, setStep] = useState(0);
   const navigate = useNavigate();
+  const [animationData, setAnimationData] = useState<any>(null);
 
+  // URLs de animaciones
   const slides = [
     {
-      img: "/assets/pic-onboarding1.png",
+      lottie: "https://lottie.host/b7826704-df29-4a8b-a785-6f10c66c9468/YShWMObADu.json",
       title: t.onboard.whatIsPic,
       desc: t.onboard.whatIsPicDescription,
     },
     {
-      img: "/assets/pic-onboarding2.png",
+      lottie: "https://lottie.host/a9b25b68-7a1d-4f4f-be12-60dfc31814d8/b3dGcYKY5h.json",
       title: t.onboard.createGroups,
       desc: t.onboard.createGroupsDescription,
     },
     {
-      img: "/assets/pic-onboarding3.png",
+      lottie: "https://lottie.host/68a2a483-296d-499a-ba74-7e2e160b773a/zoQM2W5Vmj.json",
       title: t.onboard.payAndLevelUp,
       desc: t.onboard.payAndLevelUpDescription,
     },
   ];
+
+  // Cargar animación online cada vez que cambie el slide
+  useEffect(() => {
+    setAnimationData(null); // Limpia antes de cargar
+    fetch(slides[step].lottie)
+      .then((res) => res.json())
+      .then((data) => setAnimationData(data));
+  }, [step]);
 
   const next = () => setStep((s) => Math.min(slides.length - 1, s + 1));
   const prev = () => setStep((s) => Math.max(0, s - 1));
@@ -55,14 +66,18 @@ export default function Onboarding() {
             />
           ))}
         </div>
-        {/* Image */}
+        {/* Animación Lottie */}
         <div className="w-32 h-32 rounded-xl overflow-hidden mb-6 bg-[#f3f3f3] flex items-center justify-center shadow">
-          <img
-            src={slides[step].img}
-            alt="Pic onboarding"
-            className="w-full h-full object-contain"
-            draggable={false}
-          />
+          {animationData ? (
+            <Lottie
+              animationData={animationData}
+              loop
+              autoplay
+              style={{ width: "100%", height: "100%" }}
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">...</div>
+          )}
         </div>
         {/* Texto */}
         <h2 className="text-2xl font-bold text-[#52AEB9] mb-2 text-center">{slides[step].title}</h2>
