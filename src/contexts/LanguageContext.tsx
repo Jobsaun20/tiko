@@ -1,14 +1,14 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { es } from '@/locales/es';
-import { en } from '@/locales/en';
-import { de } from '@/locales/de';
-import { fr } from '@/locales/fr';
-import { it } from '@/locales/it';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { es } from "@/locales/es";
+import { en } from "@/locales/en";
+import { de } from "@/locales/de";
+import { fr } from "@/locales/fr";
+import { it } from "@/locales/it";
 
-// --- Define aquí todos los tipos, incluyendo achievements en los archivos de idioma ---
-export type Language = 'es' | 'en' | 'de' | 'fr' | 'it';
-
+export type Language = "es" | "en" | "de" | "fr" | "it";
 type Translations = typeof es;
+
+const AVAILABLE_LANGUAGES: Language[] = ["es", "en", "de", "fr", "it"];
 
 const translations: Record<Language, Translations> = {
   es,
@@ -29,7 +29,7 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 export const useLanguage = () => {
   const context = useContext(LanguageContext);
   if (!context) {
-    throw new Error('useLanguage must be used within a LanguageProvider');
+    throw new Error("useLanguage must be used within a LanguageProvider");
   }
   return context;
 };
@@ -38,32 +38,31 @@ interface LanguageProviderProps {
   children: React.ReactNode;
 }
 
-export const LanguageProvider = ({ children }: LanguageProviderProps) => {
+export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
   const [language, setLanguage] = useState<Language>(() => {
-    // Obtener idioma guardado
-    const saved = typeof window !== "undefined" ? localStorage.getItem('app-language') : null;
-    if (saved && ['es', 'en', 'de', 'fr', 'it'].includes(saved)) {
-      return saved as Language;
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("app-language");
+      if (saved && AVAILABLE_LANGUAGES.includes(saved as Language)) {
+        return saved as Language;
+      }
+      const browserLang = navigator.language.split("-")[0];
+      if (AVAILABLE_LANGUAGES.includes(browserLang as Language)) {
+        return browserLang as Language;
+      }
     }
-    // Detectar idioma del navegador
-    const browserLang = typeof navigator !== "undefined" ? navigator.language.split('-')[0] : '';
-    if (['es', 'en', 'de', 'fr', 'it'].includes(browserLang)) {
-      return browserLang as Language;
-    }
-    // Por defecto español
-    return 'es';
+    return "es";
   });
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      localStorage.setItem('app-language', language);
+      localStorage.setItem("app-language", language);
     }
   }, [language]);
 
-  const value = {
+  const value: LanguageContextType = {
     language,
     setLanguage,
-    t: translations[language]
+    t: translations[language],
   };
 
   return (

@@ -1,10 +1,38 @@
 export const es = {
   // Header
-  app: {
-    name: "Pic",
-    subtitle: "Entre amigos"
-  },
-  
+ app: {
+  name: "Pic",
+  subtitle: "Entre amigos",
+  installApp: "Instalar app",
+},
+
+banner: {
+  title: "¿Quieres instalar la app para acceso directo?",
+  install: "Instalar",
+  close: "Cerrar"
+},
+
+welcome: {
+  title: "Bienvenido a Pic",
+  subtitle1: "Multas entre amigos",
+  description: "Gestiona multas divertidas y reglas sociales con tus amigos y familiares. ¡Descubre una nueva forma de motivar y divertirte!",
+  login: "Iniciar sesión",
+  newUser: "Nuevo usuario",
+},
+
+onboard: {
+  whatIsPic: "¿Qué es Pic?",
+  whatIsPicDescription: "Pic es la forma más fácil de gestionar multas, reglas sociales y motivación en grupo con tus amigos. ¡Sin discusiones, solo diversión!",
+  createGroups: "Crea grupos y reglas",
+  createGroupsDescription: "Crea grupos privados, define reglas personalizadas y controla quién las rompe. Todas las reglas deben ser aceptadas por todos.",
+  payAndLevelUp: "Paga y sube de nivel",
+  payAndLevelUpDescription: "Cada multa es transparente. Paga al instante. Consigue medallas, sube de nivel y conviértete en el más responsable del grupo.",
+  back: "Atrás",
+  next: "Siguiente",
+  createAccount: "Crear cuenta",
+},
+
+
 // Index Page
   index: {
     hola: "¡Hola",

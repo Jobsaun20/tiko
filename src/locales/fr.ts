@@ -2,9 +2,37 @@
 export const fr = {
   // Header
   app: {
-    name: "Pic",
-    subtitle: "Entre amis"
-  },
+  name: "Pic",
+  subtitle: "Entre amis",
+  installApp: "Installer l’app",
+},
+
+banner: {
+  title: "Voulez-vous installer l’application pour un accès rapide ?",
+  install: "Installer",
+  close: "Fermer"
+},
+
+welcome: {
+  title: "Bienvenue sur Pic",
+  subtitle1: "Amendes entre amis",
+  description: "Gérez des amendes amusantes et des règles sociales avec vos amis et votre famille. Découvrez une nouvelle façon de vous motiver et de vous amuser !",
+  login: "Connexion",
+  newUser: "Nouveau compte",
+},
+
+onboard: {
+  whatIsPic: "Qu’est-ce que Pic ?",
+  whatIsPicDescription: "Pic est la manière la plus simple de gérer des amendes, des règles sociales et la motivation de groupe avec vos amis. Plus de disputes, que du fun !",
+  createGroups: "Créer des groupes & règles",
+  createGroupsDescription: "Créez des groupes privés, définissez des règles personnalisées et suivez qui les enfreint. Toutes les règles doivent être acceptées par tous.",
+  payAndLevelUp: "Payer & monter de niveau",
+  payAndLevelUpDescription: "Chaque amende est transparente. Payez instantanément. Collectionnez des badges, montez de niveau et devenez le plus responsable du groupe !",
+  back: "Retour",
+  next: "Suivant",
+  createAccount: "Créer un compte",
+},
+
 
   // Index Page
   index: {

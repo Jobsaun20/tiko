@@ -1,10 +1,37 @@
 
 export const en = {
   // Header
-  app: {
-    name: "Pic",
-    subtitle: "Among friends"
-  },
+ app: {
+  name: "Pic",
+  subtitle: "Among friends",
+  installApp: "Install app",
+},
+
+banner: {
+  title: "Want to install the app for quick access?",
+  install: "Install",
+  close: "Close"
+},
+
+welcome: {
+  title: "Welcome to Pic",
+  subtitle1: "Fines among friends",
+  description: "Manage fun fines and social rules with your friends and family. Discover a new way to motivate and have fun!",
+  login: "Login",
+  newUser: "New user",
+},
+
+onboard: {
+  whatIsPic: "What is Pic?",
+  whatIsPicDescription: "Pic is the easiest way to manage fines, social rules and group motivation with your friends. No more arguments—just fun!",
+  createGroups: "Create Groups & Rules",
+  createGroupsDescription: "Create private groups, set custom rules, and track who breaks them. All rules must be accepted by everyone.",
+  payAndLevelUp: "Pay & Level Up",
+  payAndLevelUpDescription: "Every fine is transparent. Pay instantly. Collect badges, level up, and become the most responsible in your group!",
+  back: "Back",
+  next: "Next",
+  createAccount: "Create Account",
+},
 
   // Index Page
   index: {

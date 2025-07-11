@@ -18,6 +18,9 @@ import { useAuthContext } from "@/contexts/AuthContext";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useNotifications } from "@/hooks/useNotifications";
 
+// 👇 Importa el hook de instalación PWA
+import { usePWAInstall } from "@/contexts/PWAInstallContext";
+
 export const Header = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { t } = useLanguage();
@@ -25,6 +28,9 @@ export const Header = () => {
   const { logout } = useAuthContext();
   const { profile: user } = useUserProfile();
   const { unreadCount } = useNotifications();
+
+  // Hook para la instalación de la PWA
+  const { canInstall, promptInstall } = usePWAInstall();
 
   const handleDeleteAccount = () => {
     navigate('/');
@@ -36,33 +42,33 @@ export const Header = () => {
         <div className="flex items-center justify-between">
           {/* Logo + Nombre */}
           <div
-  className="flex items-center cursor-pointer hover:opacity-80 transition-opacity"
-  onClick={() => navigate("/")}
->
-  <img
-    src="/img/logosvg.svg"
-    alt="Logo"
-    className="h-10 w-10 sm:h-14 sm:w-14 rounded-lg object-contain bg-white"
-    style={{ background: "transparent" }}
-  />
-  {/* Nombre para móvil */}
-  <h1
-    className="ml-2 text-lg font-bold block sm:hidden"
-    style={{ color: "#52AEB9" }}
-  >
-    {t.app.name}
-  </h1>
-  {/* Nombre y subtítulo solo en sm+ */}
-  <div className="hidden sm:flex flex-col ml-3">
-    <h1
-      className="text-xl sm:text-2xl font-bold"
-      style={{ color: "#52AEB9" }}
-    >
-      {t.app.name}
-    </h1>
-    <p className="text-xs text-muted-foreground hidden sm:block">{t.app.subtitle}</p>
-  </div>
-</div>
+            className="flex items-center cursor-pointer hover:opacity-80 transition-opacity"
+            onClick={() => navigate("/")}
+          >
+            <img
+              src="/img/logosvg.svg"
+              alt="Logo"
+              className="h-10 w-10 sm:h-14 sm:w-14 rounded-lg object-contain bg-white"
+              style={{ background: "transparent" }}
+            />
+            {/* Nombre para móvil */}
+            <h1
+              className="ml-2 text-lg font-bold block sm:hidden"
+              style={{ color: "#52AEB9" }}
+            >
+              {t.app.name}
+            </h1>
+            {/* Nombre y subtítulo solo en sm+ */}
+            <div className="hidden sm:flex flex-col ml-3">
+              <h1
+                className="text-xl sm:text-2xl font-bold"
+                style={{ color: "#52AEB9" }}
+              >
+                {t.app.name}
+              </h1>
+              <p className="text-xs text-muted-foreground hidden sm:block">{t.app.subtitle}</p>
+            </div>
+          </div>
           {/* Actions */}
           <div className="flex items-center space-x-2 sm:space-x-3">
             <LanguageSelector />
@@ -115,6 +121,16 @@ export const Header = () => {
                     <Bell className="mr-2 h-4 w-4" />
                     <span>{t.nav.notifications}</span>
                   </DropdownMenuItem>
+                  {/* --- Botón Instalar App SOLO si es instalable --- */}
+                  {canInstall && (
+                    <DropdownMenuItem
+                      onClick={promptInstall}
+                      className="text-sm font-semibold text-blue-700 hover:bg-blue-50 flex items-center gap-2"
+                    >
+                      <span role="img" aria-label="Instalar">📲</span>
+                      <span>{t.app.installApp}</span>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={logout} className="text-red-600 text-sm">
                     <LogOut className="mr-2 h-4 w-4" />

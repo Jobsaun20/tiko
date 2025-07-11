@@ -4,9 +4,37 @@ import { error } from "console";
 export const de = {
   // Header
   app: {
-    name: "Pic",
-    subtitle: "Unter Freunden"
-  },
+  name: "Pic",
+  subtitle: "Unter Freunden",
+  installApp: "App installieren",
+},
+
+banner: {
+  title: "Möchtest du die App für den Schnellzugriff installieren?",
+  install: "Installieren",
+  close: "Schließen"
+},
+
+welcome: {
+  title: "Willkommen bei Pic",
+  subtitle1: "Strafen unter Freunden",
+  description: "Verwalte lustige Strafen und soziale Regeln mit deinen Freunden und deiner Familie. Entdecke eine neue Art, dich zu motivieren und Spaß zu haben!",
+  login: "Anmelden",
+  newUser: "Neuer Nutzer",
+},
+
+onboard: {
+  whatIsPic: "Was ist Pic?",
+  whatIsPicDescription: "Pic ist der einfachste Weg, Strafen, soziale Regeln und Gruppenzusammenhalt mit deinen Freunden zu organisieren. Keine Streitereien mehr – nur Spaß!",
+  createGroups: "Gruppen & Regeln erstellen",
+  createGroupsDescription: "Erstelle private Gruppen, lege eigene Regeln fest und behalte im Blick, wer sie bricht. Alle Regeln müssen von allen akzeptiert werden.",
+  payAndLevelUp: "Zahlen & Level aufsteigen",
+  payAndLevelUpDescription: "Jede Strafe ist transparent. Zahle sofort. Sammle Badges, steige im Level auf und werde der Verantwortlichste der Gruppe!",
+  back: "Zurück",
+  next: "Weiter",
+  createAccount: "Konto erstellen",
+},
+
 
   // Index Page
   index: {

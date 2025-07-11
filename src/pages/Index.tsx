@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,9 +23,8 @@ import { useFines } from "@/hooks/useFines";
 import { useBadgeModal } from "@/contexts/BadgeModalContext";
 import { checkAndAwardBadge } from "@/utils/checkAndAwardBadge";
 
-// FOOTER SOLO visible al llegar abajo
-function Footer({ visible = false }: { visible?: boolean }) {
-  if (!visible) return null;
+// Footer siempre como un div al final, sin lógica de visibilidad
+function Footer() {
   return (
     <footer
       className="
@@ -39,12 +38,15 @@ function Footer({ visible = false }: { visible?: boolean }) {
         py-1.5 
         backdrop-blur
         shadow-sm
-        transition-opacity duration-300
         mx-auto
+        mt-8
       "
       style={{ fontSize: "12px", letterSpacing: "0.01em" }}
     >
-      © {new Date().getFullYear()} Pic · Plataforma de entretenimiento — <a href="/legal/agb" className="underline text-blue-500">AGB</a> · <a href="/legal/datenschutz" className="underline text-blue-500">Datenschutz</a> · <a href="/legal/haftungsausschluss" className="underline text-blue-500">Haftungsausschluss</a>
+      © {new Date().getFullYear()} Pic · Plataforma de entretenimiento —{" "}
+      <a href="/legal/agb" className="underline text-blue-500">AGB</a> ·{" "}
+      <a href="/legal/datenschutz" className="underline text-blue-500">Datenschutz</a> ·{" "}
+      <a href="/legal/haftungsausschluss" className="underline text-blue-500">Haftungsausschluss</a>
     </footer>
   );
 }
@@ -65,18 +67,6 @@ export default function Index() {
   const [selectedFine, setSelectedFine] = useState<any>(null);
   const [achievements, setAchievements] = useState<any[]>([]);
   const [showPhoneModal, setShowPhoneModal] = useState(false);
-  const [footerVisible, setFooterVisible] = useState(false);
-
-  // Detecta si el usuario ha hecho scroll hasta abajo
-  useEffect(() => {
-    const handleScroll = () => {
-      const atBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 1;
-      setFooterVisible(atBottom);
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll(); // Para que si la página ya está abajo al renderizar, funcione
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   // Si no hay perfil, inicializa datos vacíos para nuevo usuario
   const userData = profile || {
@@ -248,7 +238,7 @@ export default function Index() {
 
   if (!user || !profile) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 pb-8">
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 pb-8 flex flex-col">
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-2xl mx-auto text-center">
             <div className="mb-8">
@@ -286,7 +276,7 @@ export default function Index() {
           onClose={() => setIsAuthModalOpen(false)}
           onAuth={() => window.location.reload()}
         />
-        <Footer visible={footerVisible} />
+        <Footer />
       </div>
     );
   }
@@ -369,8 +359,7 @@ export default function Index() {
           {latestReceivedFine ? (
             <Card className="border-orange-200 bg-gradient-to-r from-orange-50 to-yellow-50">
               <CardHeader>
-                <CardTitle className="text-lg text-orange-800">{t.index.lastFineRecived}
-</CardTitle>
+                <CardTitle className="text-lg text-orange-800">{t.index.lastFineRecived}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex flex-row items-stretch gap-2">
@@ -624,7 +613,8 @@ export default function Index() {
         achievements={achievements}
         onComplete={() => setAchievements([])}
       />
-      <Footer visible={footerVisible} />
+      {/* Footer siempre al final */}
+      <Footer />
     </div>
   );
 }
