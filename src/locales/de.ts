@@ -328,6 +328,7 @@ export const de = {
       markAllRead: "Alle als gelesen markieren",
       noNotifications: "Du hast keine Benachrichtigungen",
       fine_received: "{{sender}} hat dir eine Strafe von {{amount}} CHF wegen \"{{reason}}\" geschickt",
+      fine_received_title: "Strafe erhalten",
       payment_received: "{{sender}} hat deine Strafe von {{amount}} CHF bezahlt",
       group_invite: "{{sender}} hat dich in die Gruppe \"{{group}}\" eingeladen",
       lessThanHour: "Vor weniger als 1 Stunde",

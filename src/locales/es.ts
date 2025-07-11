@@ -325,6 +325,7 @@ export const es = {
       markAllRead: "Marcar todas como leídas",
       noNotifications: "No tienes notificaciones",
       fine_received: "{{sender}} te ha enviado una multa de {{amount}} CHF por \"{{reason}}\"",
+      fine_received_title: "Multa recibida",
       payment_received: "{{sender}} ha pagado tu multa de {{amount}} CHF",
       group_invite: "{{sender}} te ha invitado al grupo \"{{group}}\"",
       lessThanHour: "Hace menos de 1 hora",

@@ -68,9 +68,7 @@ export function useGroupRules(groupId: string, members: GroupMember[]) {
     if (data && data.id && memberIds.length > 0) {
       const notifications = memberIds.map(memberId => ({
         user_id: memberId,
-        type: "group_rule_proposed",
-        title: "Nueva regla propuesta",
-        message: `Se ha propuesto una nueva regla en tu grupo: "${description}"`,
+        type: "group_rule_proposed",      
         link: `/groups/${groupId}#rules`,
         data: {
           group_id: groupId,

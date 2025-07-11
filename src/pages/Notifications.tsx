@@ -35,11 +35,11 @@ export default function Notifications() {
     const diffDays = Math.floor(diffHours / 24);
 
     if (diffHours < 1) {
-      return t?.pages?.notifications?.lessThanHour || "Hace menos de 1 hora";
+      return t?.pages?.notifications?.lessThanHour || "Less than 1 hour ago";
     } else if (diffHours < 24) {
-      return (t?.pages?.notifications?.hoursAgo || "Hace {hours} horas").replace("{hours}", diffHours.toString());
+      return (t?.pages?.notifications?.hoursAgo || "{hours} hours ago").replace("{hours}", diffHours.toString());
     } else {
-      return (t?.pages?.notifications?.daysAgo || "Hace {days} días").replace("{days}", diffDays.toString());
+      return (t?.pages?.notifications?.daysAgo || "{days} days ago").replace("{days}", diffDays.toString());
     }
   };
 
@@ -63,8 +63,8 @@ export default function Notifications() {
   const handleMarkAllAsRead = async () => {
     await markAllAsRead();
     toast({
-      title: t?.pages?.notifications?.marked || "Notificaciones marcadas",
-      description: t?.pages?.notifications?.allRead || "Todas las notificaciones han sido marcadas como leídas",
+      title: t?.pages?.notifications?.marked || "Notifications marked",
+      description: t?.pages?.notifications?.allRead || "All notifications have been marked as read",
     });
   };
 
@@ -91,7 +91,7 @@ export default function Notifications() {
             className="flex items-center gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
-            {t?.common?.back || "Atrás"}
+            {t?.common?.back || "Back"}
           </Button>
         </div>
 
@@ -101,7 +101,7 @@ export default function Notifications() {
             <div className="flex items-center gap-3">
               <Bell className="h-8 w-8" />
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 flex items-center gap-2">
-                {t?.pages?.notifications?.title || "Notificaciones"}
+                {t?.pages?.notifications?.title || "Notifications"}
                 {unreadCount > 0 && (
                   <Badge variant="destructive" className="ml-2">
                     {unreadCount}
@@ -116,12 +116,12 @@ export default function Notifications() {
                 className="flex items-center gap-2 w-full sm:w-auto mt-3 sm:mt-0"
               >
                 <Check className="h-4 w-4" />
-                {t?.pages?.notifications?.markAllRead || "Marcar todas como leídas"}
+                {t?.pages?.notifications?.markAllRead || "Mark all as read"}
               </Button>
             )}
           </div>
           <p className="text-gray-600 mt-2">
-            {t?.pages?.notifications?.description || "Tus notificaciones recientes"}
+            {t?.pages?.notifications?.description || "Your recent notifications"}
           </p>
         </div>
 
@@ -132,30 +132,33 @@ export default function Notifications() {
               <CardContent>
                 <Bell className="h-12 w-12 mx-auto text-gray-400 mb-4" />
                 <h3 className="text-lg font-medium text-gray-800 mb-2">
-                  {t?.common?.loading || "Cargando notificaciones..."}
+                  {t?.common?.loading || "Loading notifications..."}
                 </h3>
               </CardContent>
             </Card>
           ) : notifications.length > 0 ? (
             notifications.map((notification) => {
-              // Determina el mensaje según tipo
+              // Traducción dinámica del mensaje
               let template =
-                t?.pages?.notifications?.[notification.type] ||
-                notification.message ||
-                "";
+                t?.pages?.notifications?.[notification.type] || "";
 
-              if (notification.type === "group_rule_proposed" && !template) {
-  template = t.pages.notifications.newRuleProposed || "New group rule proposed: {{rule_description}}";
-}
-
+              // Fallbacks para tipos concretos
+              if (!template && notification.type === "group_rule_proposed") {
+                template = "{{rule_description}}";
+              }
+              if (!template && notification.type === "fine_received") {
+                template = "{{sender_name}} sent you a fine of {{amount}} CHF for \"{{reason}}\"";
+              }
 
               const message = renderNotificationText(template, notification.data);
 
-              // Para las reglas de grupo puedes personalizar el título si quieres
-              const notifTitle =
-                notification.title ||
-                t?.pages?.notifications?.[notification.type + "_title"] ||
-                (notification.type === "group_rule_proposed" ? "New group rule proposed" : "");
+              // Título traducible para tipos conocidos
+              let notifTitle = "";
+              if (notification.type === "group_rule_proposed") {
+                notifTitle = t?.pages?.notifications?.newRuleProposed || "";
+              } else if (notification.type === "fine_received") {
+                notifTitle = t?.pages?.notifications?.fine_received_title || "";
+              }
 
               return (
                 <Card
@@ -201,7 +204,7 @@ export default function Notifications() {
                 <Bell className="h-12 w-12 mx-auto text-gray-400 mb-4" />
                 <h3 className="text-lg font-medium text-gray-800 mb-2">
                   {t?.pages?.notifications?.noNotifications ||
-                    "You dont have notifications yet"}
+                    "You don't have notifications yet"}
                 </h3>
                 <p className="text-gray-600">
                   {t?.pages?.notifications?.emptyMessage ||
