@@ -5,7 +5,79 @@ export const en = {
     name: "Pic",
     subtitle: "Among friends"
   },
-  
+
+  // Index Page
+  index: {
+    hola: "Hello",
+    level: "Level",
+    noinsignias: "No badges",
+    lastFineRecived: "Last fine received",
+    pendent: "Pending",
+    pendents: "Pending",
+    de: "From",
+    payed: "Paid",
+    congrats: "Congratulations!",
+    noPendentFines: "You have no pending fines",
+    continueLikeThis: "Keep up this good behavior",
+    quickActions: "Quick Actions",
+    quickQuickActionsDescription: "Manage your fines efficiently",
+    recivedFines: "Received fines",
+    recentRecivedFines: "Recent received fines",
+    noRecivedFines: "You have not received any fines",
+    seeAllRecivedFines: "See all received fines",
+    recentInsignias: "Recent badges",
+    recentHitos: "Your most recent achievements",
+    seeAllInsignias: "See all badges",
+  },
+
+  // Contacts Page
+  contacts: {
+    error: "Error",
+    errorDescription: "The selected contact is not registered as a user. The fine cannot be sent.",
+    deletedContactConfirmed: "Contact successfully deleted.",
+    contactSearchPlaceholder: "Search contact by name or email",
+    loading: "Loading...",
+    addedContactConfirmed: "Contact added successfully",
+  },
+
+  // Groups Page
+  groups: {
+    notIdentifiedUser: "User not identified",
+    theGroup: "The group",
+    createdSuccessfully: "has been created successfully",
+    letTheGroup: "You have left the group",
+    groupDeleted: "The group has been deleted.",
+    updatedGroup: "Group updated successfully",
+    savedCorrectly: "Changes have been saved successfully",
+    deletedMember: "Member removed",
+    deletedMemberDescription: "The user has been removed from the group",
+    memberAdded: "Member added",
+    memberAddedDescription: "The new member has been added successfully",
+    contactNotFounError: "No registered contact found for this member.",
+    groupNotFound: "Group not found",
+    notDeterminedUser: "Could not determine the user to fine.",
+    createFineError: "Could not create the fine:",
+    fineCreated: "Fine created successfully",
+    fineSent: "Fine sent successfully",
+    rules: "Rules",
+    members: "Members",
+    sendFine: "Send fine",
+    createGroupToStart: "Create a group to start managing fines among friends",
+  },
+
+  // History Page
+  history: {
+    newFineReceived: "New fine received!",
+    newFineFrom: "You have received a new fine from",
+    fineForAmount: "Fine of",
+    correctlyPaid: "successfully paid",
+    experienceUpdateError: "Error updating user experience",
+    xpUpdated: "Experience updated successfully",
+    xpGained: "You have gained experience!",
+    xpGainedDescription1: "You gained",
+    xpGainedDescription2: "XP for your action.",
+  },
+
   // Navigation & Actions
   nav: {
     notifications: "Notifications",
@@ -13,23 +85,23 @@ export const en = {
     settings: "Settings",
     logout: "Logout",
     login: "Login",
-    register: "Sign Up",
+    register: "Sign up",
     invite: "Invite Friends"
   },
-  
+
   // Dashboard Stats
   stats: {
     pending: "Pending",
-    pendingFines: "Pending Fines",
+    pendingFines: "Pending fines",
     finesPending: "fines to pay",
     issued: "Issued",
-    issuedFines: "Issued Fines",
+    issuedFines: "Issued fines",
     totalSent: "Total sent",
     received: "Received",
-    receivedFines: "Received Fines",
+    receivedFines: "Received fines",
     totalReceived: "Total received"
   },
-  
+
   // Quick Actions
   quickActions: {
     title: "Quick Actions",
@@ -40,7 +112,7 @@ export const en = {
     history: "History",
     notifications: "Notifications"
   },
-  
+
   // Fines List
   fines: {
     title: "My Fines",
@@ -50,16 +122,16 @@ export const en = {
     paid: "Paid",
     pending: "Pending",
     pay: "Pay",
-    payFine: "Pay Fine",
+    payFine: "Pay fine",
     finePaid: "Fine paid!",
     noReceived: "You have no received fines",
     noSent: "You haven't sent any fines yet",
-    phone: "Teléfono"
+    phone: "Phone"
   },
-  
+
   // Create Fine Modal
   createFine: {
-    title: "Create New Fine",
+    title: "Create new fine",
     description: "Create a social fine to send to a friend or family member",
     reason: "Fine reason",
     reasonPlaceholder: "E.g.: Being late for dinner, forgetting to buy bread...",
@@ -73,7 +145,7 @@ export const en = {
     recipientEmail: "Recipient email",
     recipientEmailPlaceholder: "friend@example.com",
     cancel: "Cancel",
-    create: "Create Fine",
+    create: "Create fine",
     created: "Fine created!",
     sentTo: "{amount} CHF fine sent to {recipient}",
     errors: {
@@ -82,10 +154,10 @@ export const en = {
       validEmail: "Please enter a valid email"
     }
   },
-  
+
   // Payment Modal
   payment: {
-    title: "Pay Fine - {amount} CHF",
+    title: "Pay fine - {amount} CHF",
     description: "Pay your fine using TWINT by scanning the QR code or using the number",
     details: "Fine details",
     reason: "Reason:",
@@ -96,41 +168,57 @@ export const en = {
     useNumber: "Or use the TWINT number:",
     copied: "Copied",
     numberCopied: "TWINT number copied to clipboard",
-    markPaid: "Mark as Paid",
+    markPaid: "Mark as paid",
     processing: "Processing...",
     confirmed: "Payment confirmed!"
   },
-  
+
   // User Profile
   profile: {
     title: "My Profile",
-    description: "Update your personal information and configure your TWINT payment method",
+    description: "Update your personal information and set up your TWINT payment method",
     changePhoto: "Change photo",
-    personalInfo: "Personal Information",
+    personalInfo: "Personal information",
     fullName: "Full name",
     phone: "Phone",
     twintConfig: "TWINT Configuration",
     uploadQR: "Upload your TWINT QR code",
     uploadButton: "Upload QR",
     qrDescription: "This QR will be shown when someone needs to pay you a fine",
-    save: "Save Changes",
+    save: "Save changes",
     updated: "Profile updated",
     updateDescription: "Your data has been saved successfully",
     twintUpload: "TWINT QR",
-    twintUploadDescription: "QR upload feature coming soon"
+    twintUploadDescription: "QR upload feature coming soon",
+    updatedProfile: "Profile updated",
+    deleteAccountError: "Error deleting account",
+    deleteAccountDescription: "Could not delete the account. Contact support.",
+    accountDeleted: "Account deleted successfully",
+    accountDeletedDescription: "Your account and all your data have been deleted successfully.",
+    goBack: "Go back",
+    noName: "No name",
+    editProfile: "Edit profile",
+    accountManagement: "Account management",
+    endSession: "Log out",
+    deleteAccount: "Delete account",
+    insignias: "Badges",
+    confirmDeleteAccount: "Delete account?",
+    confirmDeleteAccountDescription: "This action cannot be undone. All your data, fines, and history will be permanently deleted from the app.",
+    Cancel: "Cancel",
+    deleteAccountButton: "Delete account",
   },
-  
+
   // Auth
   auth: {
     login: "Login",
-    register: "Create Account",
+    register: "Sign up",
     email: "Email",
-    password: "Password",  
+    password: "Password",
     confirmPassword: "Confirm password",
     fullName: "Full name",
     loginButton: "Login",
-    registerButton: "Create Account",
-    forgotPassword: "Forgot password?",
+    registerButton: "Sign up",
+    forgotPassword: "Forgot your password?",
     noAccount: "Don't have an account?",
     hasAccount: "Already have an account?",
     signUp: "Sign up here",
@@ -139,20 +227,20 @@ export const en = {
     registerSuccess: "Account created successfully!",
     errors: {
       emailRequired: "Email is required",
-      passwordRequired: "Password is required", 
-      passwordMatch: "Passwords don't match",
+      passwordRequired: "Password is required",
+      passwordMatch: "Passwords do not match",
       invalidEmail: "Invalid email",
       weakPassword: "Password must be at least 6 characters"
     }
   },
-  
+
   // Pages
   pages: {
     contacts: {
       title: "Contacts",
       description: "Manage your contact list",
-      addContact: "Add Contact",
-      addContactButton: "Add Contact",
+      addContact: "Add contact",
+      addContactButton: "Add contact",
       noContacts: "You have no contacts yet",
       name: "Name",
       email: "Email",
@@ -162,8 +250,8 @@ export const en = {
       fine: "Fine",
       save: "Save",
       cancel: "Cancel",
-      editContact: "Edit Contact",
-      deleteContact: "Delete Contact",
+      editContact: "Edit contact",
+      deleteContact: "Delete contact",
       deleteConfirmation: "Are you sure you want to delete this contact?",
       contactAdded: "Contact added",
       contactUpdated: "Contact updated",
@@ -172,8 +260,8 @@ export const en = {
     groups: {
       title: "Groups",
       description1: "Manage your groups",
-      createGroup: "Create Group",
-      joinGroup: "Join Group",
+      createGroup: "Create group",
+      joinGroup: "Join a group",
       noGroups: "You have no groups yet",
       groupName: "Group name",
       description: "Description",
@@ -185,12 +273,12 @@ export const en = {
       invite: "Invite",
       manage: "Manage",
       code: "Code",
-      enterCode: "Enter group code",
+      enterCode: "Enter the group code",
       join: "Join",
       create: "Create",
       groupCreated: "Group created",
-      joinedGroup: "Joined group",
-      leftGroup: "Left group",
+      joinedGroup: "You joined the group",
+      leftGroup: "You left the group",
       groupDeleted: "Group deleted"
     },
     settings: {
@@ -209,14 +297,14 @@ export const en = {
       settingsSaved: "Settings saved"
     },
     myQR: {
-      title: "My QR Code",
+      title: "My QR code",
       description: "Share your QR code to receive fines",
       downloadQR: "Download QR",
       shareQR: "Share QR"
     },
     history: {
       title: "History",
-      description: "Complete history of fines",
+      description: "Complete fine history",
       filter: "Filter",
       all: "All",
       sent: "Sent",
@@ -233,37 +321,38 @@ export const en = {
       description: "Your recent notifications",
       markAllRead: "Mark all as read",
       noNotifications: "You have no notifications",
-      fine_received: "{{sender}} hat dir eine Strafe von {{amount}} CHF wegen „{{reason}}“ geschickt",
-  payment_received: "{{sender}} hat deine Strafe von {{amount}} CHF bezahlt",
-  group_invite: "{{sender}} hat dich in die Gruppe „{{group}}“ eingeladen",
-    lessThanHour: "Hace menos de 1 hora",
-  hoursAgo: "Hace {hours} horas",
-  daysAgo: "Hace {days} días",
-  marked: "Notificaciones marcadas",
-  allRead: "Todas las notificaciones han sido marcadas como leídas",
-  emptyMessage: "Cuando tengas notificaciones, aparecerán aquí",
+      fine_received: "{{sender}} sent you a fine of {{amount}} CHF for \"{{reason}}\"",
+      payment_received: "{{sender}} has paid your fine of {{amount}} CHF",
+      group_invite: "{{sender}} has invited you to the group \"{{group}}\"",
+      lessThanHour: "Less than 1 hour ago",
+      hoursAgo: "{hours} hours ago",
+      daysAgo: "{days} days ago",
+      marked: "Notifications marked",
+      allRead: "All notifications have been marked as read",
+      emptyMessage: "When you have notifications, they'll appear here",
+      newRuleProposed: "New rule proposed",
     }
   },
-  
+
   // Invite
   invite: {
-    title: "Invite Friends",
+    title: "Invite friends",
     description: "Invite your friends to use Pic",
     shareText: "Join Pic and manage social fines among friends! 🎉",
     copyLink: "Copy link",
     linkCopied: "Link copied!",
     sendInvite: "Send invitation"
   },
-  
+
   // Achievements
   achievements: {
-    title: "Achievement Unlocked!",
+    title: "Achievement unlocked!",
     close: "Close",
     xpGained: "Experience points gained",
-    levelUp: "Level up!",
+    levelUp: "You leveled up!",
     newBadge: "New badge!"
   },
-  
+
   // Common
   common: {
     currency: "CHF",
@@ -285,6 +374,6 @@ export const en = {
     sort: "Sort",
     download: "Download",
     share: "Share",
-    total: "Total"
+    total: "Total",
   }
 };

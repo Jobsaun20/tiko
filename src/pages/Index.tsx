@@ -326,7 +326,7 @@ export default function Index() {
               className="text-2xl sm:text-3xl font-bold mb-2"
               style={{ color: "#52AEB9" }}
             >
-              ¡Hola, {userData.username || "usuario"}! 👋
+              {t.index.hola}, {userData.username || "usuario"}! 👋
             </h1>
             
             <div className="flex items-center justify-center gap-4 mb-4">
@@ -340,7 +340,7 @@ export default function Index() {
             <div className="w-full mb-4">
               <div className="flex justify-between text-sm text-gray-600 mb-1">
                 <span>{xpProgress.current} XP</span>
-                <span>Nivel {currentLevel + 1}</span>
+                <span>{t.index.level} {currentLevel + 1}</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div
@@ -354,7 +354,7 @@ export default function Index() {
             <div className="flex flex-wrap gap-2 justify-center mb-4">
               {userBadges.length === 0 ? (
                 <Badge variant="secondary" className="bg-gray-100 text-gray-700">
-                  Sin insignias
+                  {t.index.noinsignias} 
                 </Badge>
               ) : (
                 userBadges.slice(0, 3).map((badge) => (
@@ -369,7 +369,8 @@ export default function Index() {
           {latestReceivedFine ? (
             <Card className="border-orange-200 bg-gradient-to-r from-orange-50 to-yellow-50">
               <CardHeader>
-                <CardTitle className="text-lg text-orange-800">Última Multa Recibida</CardTitle>
+                <CardTitle className="text-lg text-orange-800">{t.index.lastFineRecived}
+</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex flex-row items-stretch gap-2">
@@ -380,14 +381,14 @@ export default function Index() {
                         {latestReceivedFine.sender_name?.charAt(0)?.toUpperCase() || "U"}
                       </div>
                       <div>
-                        <div className="font-semibold">De {latestReceivedFine.sender_name}</div>
+                        <div className="font-semibold">{t.index.de} {latestReceivedFine.sender_name}</div>
                         {latestReceivedFine.status === "pending" ? (
                           <span className="inline-block bg-orange-100 text-orange-700 text-xs px-2 py-0.5 rounded font-semibold">
-                            Pendiente
+                            {t.index.pendent}
                           </span>
                         ) : (
                           <span className="inline-block bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded font-semibold">
-                            Pagada
+                            {t.index.payed}
                           </span>
                         )}
                       </div>
@@ -403,7 +404,7 @@ export default function Index() {
                         className="bg-green-500 hover:bg-green-600 text-white font-bold px-5"
                         onClick={() => handlePayFine(latestReceivedFine)}
                       >
-                        Pagar
+                        {t.fines.pay}
                       </Button>
                     )}
                   </div>
@@ -415,11 +416,11 @@ export default function Index() {
               <CardContent className="px-3 py-4 sm:p-6 text-center flex flex-col items-center">
                 <CheckCircle className="h-10 w-10 sm:h-16 sm:w-16 mx-auto text-green-600 mb-2 sm:mb-4" />
                 <h3 className="text-lg sm:text-2xl font-bold text-green-800 mb-1 flex items-center justify-center gap-2">
-                  ¡Enhorabuena! <span className="text-base sm:text-2xl">🎉</span>
+                  {t.index.congrats} <span className="text-base sm:text-2xl">🎉</span>
                 </h3>
-                <p className="text-green-700 text-base sm:text-lg mb-0.5">No tienes multas pendientes</p>
+                <p className="text-green-700 text-base sm:text-lg mb-0.5">{t.index.noPendentFines}</p>
                 <p className="text-green-600 text-xs sm:text-base mt-1">
-                  Mantén este buen comportamiento
+                  {t.index.continueLikeThis} 
                 </p>
               </CardContent>
             </Card>
@@ -432,7 +433,7 @@ export default function Index() {
               onClick={() => handleStatsCardClick("pending")}
             >
               <CardContent className="p-2 flex flex-col items-center justify-center">
-                <p className="text-xs font-semibold text-red-600 mb-0.5">Pendientes</p>
+                <p className="text-xs font-semibold text-red-600 mb-0.5">{t.index.pendents}</p>
                 <div className="flex items-baseline gap-1 mb-0.5">
                   <p className="text-xl font-bold text-red-700">{pendingFines.length}</p>
                 </div>
@@ -474,8 +475,8 @@ export default function Index() {
           {/* Acciones rápidas */}
           <Card>
             <CardHeader>
-              <CardTitle>Acciones rápidas</CardTitle>
-              <CardDescription>Gestiona tus multas de forma eficiente</CardDescription>
+              <CardTitle>{t.index.quickActions}</CardTitle>
+              <CardDescription>{t.index.quickQuickActionsDescription}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
@@ -501,8 +502,8 @@ export default function Index() {
             {/* Recibidas */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Multas Recibidas Recientes</CardTitle>
-                <CardDescription>Multas que has recibido recientemente</CardDescription>
+                <CardTitle className="text-lg">{t.index.recivedFines}</CardTitle>
+                <CardDescription>{t.index.recentRecivedFines}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {receivedFines.length > 0 ? (
@@ -521,11 +522,11 @@ export default function Index() {
                             <div className="font-semibold">De {fine.sender_name}</div>
                             {fine.status === "pending" ? (
                               <span className="inline-block bg-orange-100 text-orange-700 text-xs px-2 py-0.5 rounded font-semibold">
-                                Pendiente
+                                {t.index.pendent}
                               </span>
                             ) : (
                               <span className="inline-block bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded font-semibold">
-                                Pagada
+                                {t.index.payed}
                               </span>
                             )}
                           </div>
@@ -542,14 +543,14 @@ export default function Index() {
                             onClick={() => handlePayFine(fine)}
                             size="sm"
                           >
-                            Pagar
+                            {t.fines.pay}
                           </Button>
                         )}
                       </div>
                     </div>
                   ))
                 ) : (
-                  <p className="text-center text-gray-500 py-8">No has recibido multas</p>
+                  <p className="text-center text-gray-500 py-8">{t.index.noRecivedFines}</p>
                 )}
                 {receivedFines.length > 3 && (
                   <Button
@@ -557,7 +558,7 @@ export default function Index() {
                     className="w-full"
                     onClick={() => handleStatsCardClick("received")}
                   >
-                    Ver todas las recibidas
+                    {t.index.seeAllRecivedFines}
                   </Button>
                 )}
               </CardContent>
@@ -568,9 +569,9 @@ export default function Index() {
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Award className="h-5 w-5" />
-                  Insignias Recientes
+                  {t.index.recentInsignias}
                 </CardTitle>
-                <CardDescription>Tus logros más recientes</CardDescription>
+                <CardDescription>{t.index.recentHitos}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex flex-wrap gap-2">
@@ -586,7 +587,7 @@ export default function Index() {
                   onClick={() => navigate("/profile")}
                   className="w-full"
                 >
-                  Ver todas las insignias
+                  {t.index.seeAllInsignias}
                 </Button>
               </CardContent>
             </Card>

@@ -81,7 +81,7 @@ export default function Profile() {
       avatar_url: updatedUser.avatar_url,
       // puedes añadir aquí phone, etc si tu modal lo permite
     });
-    toast({ title: "Perfil actualizado" });
+    toast({ title: t.profile.updatedProfile});
     setIsEditProfileOpen(false);
   };
 
@@ -121,8 +121,8 @@ const res = await fetch(endpoint, {
     if (!res.ok) {
       const result = await res.json().catch(() => null);
       toast({
-        title: "Error al eliminar la cuenta",
-        description: result?.error || "No se pudo eliminar la cuenta. Contacta con soporte.",
+        title: t.profile.deleteAccountError,
+        description: result?.error || t.profile.deleteAccountDescription,
         variant: "destructive",
       });
       return;
@@ -131,8 +131,8 @@ const res = await fetch(endpoint, {
     // Logout y feedback
     await logout();
     toast({
-      title: "Cuenta eliminada",
-      description: "Tu cuenta y todos tus datos han sido eliminados correctamente.",
+      title: t.profile.accountDeleted,
+      description: t.profile.accountDeletedDescription,
     });
     navigate('/login');
   };
@@ -143,7 +143,7 @@ const res = await fetch(endpoint, {
     }
   }, [error, toast]);
 
-  if (loading) return <div className="text-center py-16">Cargando...</div>;
+  if (loading) return <div className="text-center py-16">{t.contacts.loading}</div>;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
@@ -159,7 +159,7 @@ const res = await fetch(endpoint, {
             className="flex items-center gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
-            Volver
+            {t.profile.goBack}
           </Button>
         </div>
 
@@ -181,10 +181,10 @@ const res = await fetch(endpoint, {
                   {user.username
                     ? user.username
                     : <span>
-                        Sin nombre{" "}
+                        {t.profile.noName}{" "}
                         <span className="text-xs text-blue-600 cursor-pointer underline ml-1"
                               onClick={() => setIsEditProfileOpen(true)}>
-                          (Editar perfil)
+                          ({t.profile.editProfile})
                         </span>
                       </span>
                   }
@@ -192,7 +192,7 @@ const res = await fetch(endpoint, {
                 <p className="text-gray-600 mb-2">{user.email}</p>
                 <div className="flex items-center justify-center sm:justify-start gap-2 mb-4">
                   <Badge variant="secondary" className="bg-purple-100 text-purple-800">
-                    Nivel {currentLevel}
+                    {t.index.level} {currentLevel}
                   </Badge>
                   <Badge variant="secondary" className="bg-blue-100 text-blue-800">
                     {user.xp} XP
@@ -211,7 +211,7 @@ const res = await fetch(endpoint, {
                 <div className="flex-1 min-w-48 mb-4">
                   <div className="flex justify-between text-sm text-gray-600 mb-1">
                     <span>{progressToNextLevel.current} XP</span>
-                    <span>Nivel {currentLevel + 1}</span>
+                    <span>{t.index.level} {currentLevel + 1}</span>
                   </div>
                   <Progress value={progressToNextLevel.percentage} className="h-2" />
                 </div>
@@ -222,7 +222,7 @@ const res = await fetch(endpoint, {
                   className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white"
                 >
                   <Edit className="h-4 w-4 mr-2" />
-                  Editar Perfil
+                  {t.profile.editProfile}
                 </Button>
               </div>
             </div>
@@ -232,7 +232,7 @@ const res = await fetch(endpoint, {
         {/* Acciones de cuenta */}
         <Card>
           <CardHeader>
-            <CardTitle>Gestión de Cuenta</CardTitle>
+            <CardTitle>{t.profile.accountManagement}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <Button
@@ -241,7 +241,7 @@ const res = await fetch(endpoint, {
               onClick={handleLogout}
             >
               <LogOut className="h-4 w-4 mr-2" />
-              Cerrar Sesión
+              {t.profile.endSession}
             </Button>
             <Button
               variant="destructive"
@@ -249,7 +249,7 @@ const res = await fetch(endpoint, {
               onClick={() => setShowDeleteConfirm(true)}
             >
               <Trash2 className="h-4 w-4 mr-2" />
-              Eliminar Cuenta
+              {t.profile.deleteAccount}
             </Button>
           </CardContent>
         </Card>
@@ -297,7 +297,7 @@ const res = await fetch(endpoint, {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Award className="h-5 w-5" />
-              Insignias Obtenidas
+              {t.profile.insignias}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -321,7 +321,7 @@ const res = await fetch(endpoint, {
         </Card>
 
         {/* Recompensas */}
-        <Card>
+       {/*  <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Trophy className="h-5 w-5" />
@@ -341,7 +341,7 @@ const res = await fetch(endpoint, {
               ))}
             </div>
           </CardContent>
-        </Card>
+        </Card> */}
 
         {/* Grupos */}
         {/* <Card>
@@ -422,19 +422,18 @@ const res = await fetch(endpoint, {
         <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>¿Eliminar cuenta?</AlertDialogTitle>
+              <AlertDialogTitle>{t.profile.confirmDeleteAccount}</AlertDialogTitle>
               <AlertDialogDescription>
-                Esta acción no se puede deshacer. Se eliminarán permanentemente todos tus datos, 
-                multas e historial de la aplicación.
+                {t.profile.confirmDeleteAccountDescription}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogCancel>{t.profile.Cancel}</AlertDialogCancel>
               <AlertDialogAction
                 onClick={handleDeleteAccount}
                 className="bg-red-600 hover:bg-red-700"
               >
-                Eliminar Cuenta
+                {t.profile.deleteAccountButton}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

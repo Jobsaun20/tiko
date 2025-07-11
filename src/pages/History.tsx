@@ -36,8 +36,8 @@ export default function History() {
     if (prevReceivedRef.current && received.length > prevReceivedRef.current) {
       const lastFine = received[0];
       toast({
-        title: "¡Nueva multa recibida!",
-        description: `Has recibido una nueva multa de ${lastFine.sender_name}`,
+        title: t.history.newFineReceived,
+        description: `${t.history.newFineFrom} ${lastFine.sender_name}`,
         variant: "default",
       });
     }
@@ -51,7 +51,7 @@ export default function History() {
         await payFine(selectedFine.id);
         toast({
           title: t.fines.finePaid,
-          description: `Multa de ${selectedFine.amount} CHF pagada correctamente`,
+          description: `${t.history.fineForAmount} ${selectedFine.amount} CHF ${t.history.correctlyPaid}`,
         });
 
         // --- SIEMPRE SUMA AL MENOS 2 XP POR PAGO ---
@@ -80,20 +80,20 @@ export default function History() {
           const result = await updateProfile({ xp: nuevoXP });
 
           if (result.error) {
-            console.error("Error al actualizar XP en Supabase:", result.error);
+            console.error(t.history.experienceUpdateError, result.error);
             toast({
               title: "Error XP",
-              description: "No se pudo actualizar la experiencia: " + result.error,
+              description: t.history.experienceUpdateError + result.error,
               variant: "destructive",
             });
-            alert("No se pudo actualizar la experiencia: " + result.error);
+            alert(t.history.experienceUpdateError + result.error);
           } else {
-            console.log("XP actualizado correctamente. Nuevo XP:", nuevoXP);
+            console.log(t.history.xpUpdated + "Nuevo XP:", nuevoXP);
             toast({
-              title: t.achievements.title || "¡Has ganado experiencia!",
+              title: t.achievements.title || t.history.xpGained,
               description: t.achievements.xpGained
                 ? t.achievements.xpGained.replace("{xp}", String(gainedXp))
-                : `Has ganado ${gainedXp} XP por tu acción.`,
+                : `${t.history.xpGainedDescription1} ${gainedXp} ${t.history.xpGainedDescription2}`,
               variant: "default",
             });
             fetchProfile(); // Refresca el perfil para mostrar el nuevo XP actualizado
@@ -103,7 +103,7 @@ export default function History() {
       } catch (err: any) {
         toast({
           title: "Error",
-          description: err?.message || "Error desconocido",
+          description: err?.message || "Unknown Error",
           variant: "destructive",
         });
         console.error("[XP][handlePayment] Error:", err);
@@ -235,7 +235,7 @@ export default function History() {
         </div>
         <div className="space-y-4">
           {loading ? (
-            <div className="text-center text-gray-400 py-8">Cargando...</div>
+            <div className="text-center text-gray-400 py-8">{t.contacts.loading}</div>
           ) : filteredFines.length > 0 ? (
             filteredFines.map((fine: any) => (
               <div
@@ -275,7 +275,7 @@ export default function History() {
                       onClick={() => handlePayFine(fine)}
                       size="sm"
                     >
-                      Pagar
+                      {t.fines.pay}
                     </Button>
                   )}
                 </div>

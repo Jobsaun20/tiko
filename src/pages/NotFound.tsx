@@ -22,7 +22,7 @@ export default function NotFound() {
                 404 - {t.common.error}
               </h1>
               <p className="text-gray-600 mb-8">
-                La página que buscas no existe.
+                Page not found.
               </p>
               <Button
                 onClick={() => navigate("/")}

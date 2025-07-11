@@ -15,14 +15,14 @@ export default function Register() {
   const [usernameStatus, setUsernameStatus] = useState<"checking" | "ok" | "taken" | "">("");
   const [error, setError] = useState<string | null>(null);
 
-  // 🔵 Redirigir si el usuario ya está logueado
+  // 🔵 Redirect if user is already logged in
   useEffect(() => {
     if (user) {
       navigate("/");
     }
   }, [user, navigate]);
 
-  // Validar nombre de usuario único en tiempo real
+  // Check if username is unique in real time
   useEffect(() => {
     let active = true;
     if (!username) {
@@ -51,26 +51,26 @@ export default function Register() {
     setError(null);
 
     if (!username.trim()) {
-      setError("Debes elegir un nombre de usuario.");
+      setError("You must choose a username.");
       return;
     }
     if (usernameStatus === "taken") {
-      setError("El nombre de usuario ya está en uso.");
+      setError("This username is already taken.");
       return;
     }
     if (usernameStatus !== "ok") {
-      setError("Por favor espera a que se valide tu nombre de usuario.");
+      setError("Please wait for your username to be validated.");
       return;
     }
 
-    // 1. Registrar usuario en Auth
+    // 1. Register user in Auth
     const { error: regError } = await register(email, password);
     if (regError) {
       setError(regError.message);
       return;
     }
 
-    // 2. Esperar que esté disponible el usuario (hasta 10 intentos/2 segundos)
+    // 2. Wait for the user to be available (up to 10 attempts/2 seconds)
     let tries = 0;
     let currentUser = user;
     while (!currentUser && tries < 10) {
@@ -81,11 +81,11 @@ export default function Register() {
     }
 
     if (!currentUser) {
-      setError("No se pudo crear el perfil del usuario.");
+      setError("User profile could not be created.");
       return;
     }
 
-    // 3. Crear perfil vacío en tabla users solo si NO existe
+    // 3. Create empty profile in users table if it does NOT exist
     const { data: existingProfile } = await supabase
       .from("users")
       .select("id")
@@ -104,29 +104,29 @@ export default function Register() {
         badges: [],
         groups: [],
         achievements: [],
-        // cualquier otro campo inicial
+        // any other initial fields
       }]);
       if (insertError) {
         if (insertError.code === "23505") {
-          setError("El nombre de usuario ya está en uso. Elige otro.");
+          setError("This username is already taken. Please choose another one.");
         } else {
-          setError("Error al crear el perfil: " + insertError.message);
+          setError("Error creating profile: " + insertError.message);
         }
         return;
       }
     }
 
-    // 4. Redirige al Home (opcional, porque useEffect lo hará)
+    // 4. Redirect to Home (optional, because useEffect will handle it)
     // navigate("/");
   };
 
   return (
     <div className="max-w-md mx-auto mt-16 p-8 rounded-lg shadow bg-white">
-      <h2 className="text-2xl font-bold mb-6 text-center">Crear cuenta</h2>
+      <h2 className="text-2xl font-bold mb-6 text-center">Create account</h2>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <Input
           type="text"
-          placeholder="Nombre de usuario"
+          placeholder="Username"
           value={username}
           onChange={e => setUsername(e.target.value.replace(/\s/g, ""))}
           required
@@ -136,19 +136,19 @@ export default function Register() {
         {username && (
           <div className="text-xs pl-1 pb-1 h-4">
             {usernameStatus === "checking" && (
-              <span className="text-gray-500">Comprobando disponibilidad…</span>
+              <span className="text-gray-500">Checking availability…</span>
             )}
             {usernameStatus === "ok" && (
-              <span className="text-green-600">¡Nombre de usuario disponible!</span>
+              <span className="text-green-600">Username available!</span>
             )}
             {usernameStatus === "taken" && (
-              <span className="text-red-600">Este nombre ya está en uso.</span>
+              <span className="text-red-600">This username is already taken.</span>
             )}
           </div>
         )}
         <Input
           type="email"
-          placeholder="Correo electrónico"
+          placeholder="Email"
           value={email}
           onChange={e => setEmail(e.target.value)}
           autoComplete="email"
@@ -156,36 +156,36 @@ export default function Register() {
         />
         <Input
           type="password"
-          placeholder="Contraseña"
+          placeholder="Password"
           value={password}
           onChange={e => setPassword(e.target.value)}
           autoComplete="new-password"
           required
         />
         <Button type="submit" disabled={loading || usernameStatus !== "ok"}>
-          {loading ? <Loader className="animate-spin w-4 h-4" /> : "Registrarse"}
+          {loading ? <Loader className="animate-spin w-4 h-4" /> : "Sign up"}
         </Button>
         {error && <div className="text-red-500 text-sm">{error}</div>}
       </form>
-      {/* AVISO LEGAL AL CREAR LA CUENTA */}
+      {/* LEGAL NOTICE WHEN CREATING AN ACCOUNT */}
       <div className="text-xs text-gray-600 mt-4 text-center px-2 leading-tight">
-        Al crear una cuenta, aceptas automáticamente nuestros{" "}
+        By creating an account, you automatically accept our{" "}
         <Link to="/legal/agb" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">
-          AGB
+          Terms & Conditions
         </Link>
         ,{" "}
         <Link to="/legal/datenschutz" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">
-          Datenschutz
+          Privacy Policy
         </Link>
-        {" "}y{" "}
+        {" "}and{" "}
         <Link to="/legal/haftungsausschluss" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">
-          Haftungsausschluss
+          Disclaimer
         </Link>
         .
       </div>
       <div className="text-center text-sm mt-2">
-        ¿Ya tienes cuenta?{" "}
-        <Link to="/login" className="text-blue-600 underline">Inicia sesión</Link>
+        Already have an account?{" "}
+        <Link to="/login" className="text-blue-600 underline">Log in</Link>
       </div>
     </div>
   );

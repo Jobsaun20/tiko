@@ -67,8 +67,8 @@ export default function Contacts() {
       const recipientId = await getUserIdByEmail(recipient.email);
       if (!recipientId) {
         toast({
-          title: "Error",
-          description: "El contacto seleccionado no está registrado como usuario. No se puede enviar la multa.",
+           title: t.contacts.error,
+          description: t.contacts.errorDescription,
           variant: "destructive",
         });
         return;
@@ -107,7 +107,7 @@ export default function Contacts() {
       await deleteContact(contactId);
       toast({
         title: t.pages.contacts.contactDeleted,
-        description: "El contacto ha sido eliminado correctamente.",
+        description: t.contacts.deletedContactConfirmed,
       });
     } catch (err: any) {
       toast({ title: "Error", description: err.message, variant: "destructive" });
@@ -156,7 +156,7 @@ export default function Contacts() {
             <input
               type="text"
               className="border rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
-              placeholder="Buscar contacto por nombre o email"
+              placeholder= {t.contacts.contactSearchPlaceholder}
               value={search}
               onChange={e => setSearch(e.target.value)}
             />
@@ -176,7 +176,7 @@ export default function Contacts() {
         {/* Lista de contactos filtrada */}
         <div className="space-y-4">
           {loading ? (
-            <div className="text-center text-gray-400 py-8">Cargando...</div>
+            <div className="text-center text-gray-400 py-8">{t.contacts.loading}</div>
           ) : filteredContacts.length > 0 ? (
             filteredContacts.map((contact) => (
               <Card key={contact.id} className="hover:shadow-md transition-shadow">
@@ -273,7 +273,7 @@ export default function Contacts() {
             await addContact({ ...contactData, status: "active", avatar: "/placeholder.svg" });
             toast({
               title: t.pages.contacts.contactAdded,
-              description: "El contacto ha sido agregado correctamente.",
+              description: t.contacts.addedContactConfirmed,
             });
           } catch (err: any) {
             toast({ title: "Error", description: err.message, variant: "destructive" });

@@ -144,10 +144,10 @@ export default function Notifications() {
                 notification.message ||
                 "";
 
-              // Por defecto para las reglas de grupo si no tienes traducción aún:
               if (notification.type === "group_rule_proposed" && !template) {
-                template = "Nueva regla propuesta: {{rule_description}}";
-              }
+  template = t.pages.notifications.newRuleProposed || "New group rule proposed: {{rule_description}}";
+}
+
 
               const message = renderNotificationText(template, notification.data);
 
@@ -155,7 +155,7 @@ export default function Notifications() {
               const notifTitle =
                 notification.title ||
                 t?.pages?.notifications?.[notification.type + "_title"] ||
-                (notification.type === "group_rule_proposed" ? "Nueva regla propuesta" : "");
+                (notification.type === "group_rule_proposed" ? "New group rule proposed" : "");
 
               return (
                 <Card
@@ -201,11 +201,11 @@ export default function Notifications() {
                 <Bell className="h-12 w-12 mx-auto text-gray-400 mb-4" />
                 <h3 className="text-lg font-medium text-gray-800 mb-2">
                   {t?.pages?.notifications?.noNotifications ||
-                    "No tienes notificaciones"}
+                    "You dont have notifications yet"}
                 </h3>
                 <p className="text-gray-600">
                   {t?.pages?.notifications?.emptyMessage ||
-                    "Cuando tengas notificaciones, aparecerán aquí"}
+                    "When you have notifications, they will appear here."}
                 </p>
               </CardContent>
             </Card>

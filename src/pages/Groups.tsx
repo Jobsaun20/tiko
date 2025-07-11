@@ -67,7 +67,7 @@ export default function Groups() {
 
   const handleSubmitGroup = async (groupData: any) => {
     if (!user) {
-      toast({ title: "Error", description: "Usuario no identificado.", variant: "destructive" });
+      toast({ title: "Error", description: t.groups.notIdentifiedUser, variant: "destructive" });
       return;
     }
     try {
@@ -78,7 +78,7 @@ export default function Groups() {
       setIsCreateGroupModalOpen(false);
       toast({
         title: t.pages.groups.groupCreated,
-        description: `El grupo "${groupData.name}" ha sido creado exitosamente`,
+        description: `${t.groups.theGroup} "${groupData.name}" ${t.groups.createdSuccessfully}`,
       });
     } catch (err: any) {
       toast({ title: "Error", description: err.message, variant: "destructive" });
@@ -90,7 +90,7 @@ export default function Groups() {
       await leaveGroup(groupId);
       toast({
         title: t.pages.groups.leftGroup,
-        description: "Has abandonado el grupo correctamente.",
+        description: t.groups.letTheGroup,
       });
     } catch (err: any) {
       toast({ title: "Error", description: err.message, variant: "destructive" });
@@ -102,7 +102,7 @@ export default function Groups() {
       await deleteGroup(groupId);
       toast({
         title: t.pages.groups.groupDeleted,
-        description: "El grupo ha sido eliminado correctamente.",
+        description: t.groups.groupDeleted,
       });
     } catch (err: any) {
       toast({ title: "Error", description: err.message, variant: "destructive" });
@@ -116,8 +116,8 @@ export default function Groups() {
     try {
       await editGroup(editGroupData.id, changes);
       toast({
-        title: "Grupo actualizado",
-        description: "Los cambios se han guardado correctamente.",
+        title: t.groups.updatedGroup,
+        description: t.groups.savedCorrectly,
       });
       setEditGroupData(null);
     } catch (err: any) {
@@ -129,8 +129,8 @@ export default function Groups() {
     try {
       await removeMemberFromGroup(groupId, userId);
       toast({
-        title: "Miembro eliminado",
-        description: "El usuario ha sido eliminado del grupo.",
+        title: t.groups.deletedMember,
+        description: t.groups.deletedMemberDescription,
       });
     } catch (err: any) {
       toast({ title: "Error", description: err.message, variant: "destructive" });
@@ -147,8 +147,8 @@ export default function Groups() {
     try {
       await addMemberToGroup(selectedGroupId, selectedUserId, "member");
       toast({
-        title: "Integrante agregado",
-        description: "El nuevo miembro ha sido añadido correctamente.",
+        title: t.groups.memberAdded,
+        description: t.groups.memberAddedDescription,
       });
     } catch (err: any) {
       toast({ title: "Error", description: err.message, variant: "destructive" });
@@ -172,7 +172,7 @@ export default function Groups() {
     if (!contact) {
       toast({
         title: "Error",
-        description: "No se encontró el contacto registrado para este miembro.",
+        description: t.groups.contactNotFounError,
         variant: "destructive",
       });
       return;
@@ -184,13 +184,13 @@ export default function Groups() {
   // CREAR LA MULTA REALMENTE EN SUPABASE (asegúrate recipient_id es el user_supabase_id)
   const handleCreateFine = async (fine: any) => {
     if (!selectedContact?.group?.id) {
-      toast({ title: "Error", description: "Grupo no encontrado.", variant: "destructive" });
+      toast({ title: "Error", description: t.groups.groupNotFound, variant: "destructive" });
       return;
     }
     // recipient_id debe ser siempre el user_supabase_id
     const recipientUserId = selectedContact.user_supabase_id;
     if (!recipientUserId) {
-      toast({ title: "Error", description: "No se pudo determinar el usuario a multar.", variant: "destructive" });
+      toast({ title: "Error", description: t.groups.notDeterminedUser, variant: "destructive" });
       return;
     }
     // --- OJO: Aquí agregamos el número de teléfono del emisor
@@ -206,9 +206,9 @@ export default function Groups() {
       },
     ]);
     if (error) {
-      toast({ title: "Error", description: "No se pudo crear la multa: " + error.message, variant: "destructive" });
+      toast({ title: "Error", description: t.groups.createFineError + error.message, variant: "destructive" });
     } else {
-      toast({ title: "Multa creada", description: "¡Multa enviada correctamente!" });
+      toast({ title: t.groups.fineCreated, description: t.groups.fineSent });
     }
     setIsCreateFineModalOpen(false);
     setSelectedContact(null);
@@ -273,7 +273,7 @@ export default function Groups() {
         {/* Groups List */}
         <div className="flex flex-col gap-6 w-full">
           {loading ? (
-            <div className="text-center text-gray-400 py-8">Cargando...</div>
+            <div className="text-center text-gray-400 py-8">{t.contacts.loading}</div>
           ) : groups.length > 0 ? (
             groups.map((group) => (
               <Card key={group.id} className="hover:shadow-md transition-shadow w-full max-w-full">
@@ -324,7 +324,7 @@ export default function Groups() {
                           onClick={() => setOpenRulesGroupId(group.id)}
                         >
                           <Hourglass className="h-4 w-4" />
-                          Reglas
+                          {t.groups.rules}
                         </Button>
                         {group.role !== "admin" && (
                           <Button
@@ -342,7 +342,7 @@ export default function Groups() {
                 <CardContent>
                   <div>
                     <h4 className="font-semibold mb-3 text-sm sm:text-base">
-                      Miembros ({group.members.length}):
+                      {t.groups.members} ({group.members.length}):
                     </h4>
                     <div className="flex flex-wrap gap-2 mb-3">
                       {group.members.map((member: any) => (
@@ -386,7 +386,7 @@ export default function Groups() {
                                 handleCloseSendFinePopover();
                               }}
                             >
-                              Enviar multa
+                              {t.groups.sendFine}
                             </Button>
                           </PopoverContent>
                         </Popover>
@@ -404,7 +404,7 @@ export default function Groups() {
                   {t.pages.groups.noGroups}
                 </h3>
                 <p className="text-gray-600 mb-4">
-                  Crea un grupo para empezar
+                  {t.groups.createGroupToStart}
                 </p>
                 <div className="flex justify-center gap-4">
                   <Button
