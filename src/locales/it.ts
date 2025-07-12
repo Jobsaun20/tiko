@@ -10,7 +10,9 @@ export const it = {
 banner: {
   title: "Vuoi installare l’app per un accesso rapido?",
   install: "Installa",
-  close: "Chiudi"
+  close: "Chiudi",
+    showInstallBanner: "Per installare l’app: 🔽 tocca Condividi e seleziona “Aggiungi alla schermata Home”",
+
 },
 
 welcome: {

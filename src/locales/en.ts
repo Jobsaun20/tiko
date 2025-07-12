@@ -10,7 +10,9 @@ export const en = {
 banner: {
   title: "Want to install the app for quick access?",
   install: "Install",
-  close: "Close"
+  close: "Close",
+    showInstallBanner: "To install the app: 🔽 tap Share and select “Add to Home Screen”",
+
 },
 
 welcome: {

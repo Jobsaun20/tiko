@@ -10,7 +10,9 @@ export const fr = {
 banner: {
   title: "Voulez-vous installer l’application pour un accès rapide ?",
   install: "Installer",
-  close: "Fermer"
+  close: "Fermer",
+    showInstallBanner: "Pour installer l’application : 🔽 appuyez sur Partager et sélectionnez « Ajouter à l’écran d’accueil »",
+
 },
 
 welcome: {

@@ -5,7 +5,6 @@ interface PWAInstallContextProps {
   promptInstall: () => void;
 }
 
-// ¡ESTO ES LO QUE TE FALTABA!
 const PWAInstallContext = createContext<PWAInstallContextProps>({
   canInstall: false,
   promptInstall: () => {},

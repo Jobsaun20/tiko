@@ -12,20 +12,22 @@ export const de = {
 banner: {
   title: "Möchtest du die App für den Schnellzugriff installieren?",
   install: "Installieren",
-  close: "Schließen"
+  close: "Schliessen",
+    showInstallBanner: "Um die App zu installieren: 🔽 tippe auf Teilen und wähle „Zum Home-Bildschirm hinzufügen“",
+
 },
 
 welcome: {
   title: "Willkommen bei Pic",
   subtitle1: "Strafen unter Freunden",
-  description: "Verwalte lustige Strafen und soziale Regeln mit deinen Freunden und deiner Familie. Entdecke eine neue Art, dich zu motivieren und Spaß zu haben!",
+  description: "Verwalte lustige Strafen und soziale Regeln mit deinen Freunden und deiner Familie. Entdecke eine neue Art, dich zu motivieren und Spass zu haben!",
   login: "Anmelden",
   newUser: "Neuer Nutzer",
 },
 
 onboard: {
   whatIsPic: "Was ist Pic?",
-  whatIsPicDescription: "Pic ist der einfachste Weg, Strafen, soziale Regeln und Gruppenzusammenhalt mit deinen Freunden zu organisieren. Keine Streitereien mehr – nur Spaß!",
+  whatIsPicDescription: "Pic ist der einfachste Weg, Strafen, soziale Regeln und Gruppenzusammenhalt mit deinen Freunden zu organisieren. Keine Streitereien mehr – nur Spass!",
   createGroups: "Gruppen & Regeln erstellen",
   createGroupsDescription: "Erstelle private Gruppen, lege eigene Regeln fest und behalte im Blick, wer sie bricht. Alle Regeln müssen von allen akzeptiert werden.",
   payAndLevelUp: "Zahlen & Level aufsteigen",
