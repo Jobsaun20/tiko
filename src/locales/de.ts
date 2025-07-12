@@ -14,6 +14,8 @@ banner: {
   install: "Installieren",
   close: "Schliessen",
     showInstallBanner: "Um die App zu installieren: 🔽 tippe auf Teilen und wähle „Zum Home-Bildschirm hinzufügen“",
+    phoneWarning: "Du musst deine Telefonnummer hinzufügen, um Zahlungen mit Pic zu erhalten.",
+    phoneWarningButton: "Nummer hinzufügen",
 
 },
 
@@ -412,5 +414,44 @@ onboard: {
     download: "Herunterladen",
     share: "Teilen",
     total: "Gesamt",
-  }
+  },
+
+  // Alemán
+modal: {
+  close: "Schliessen",
+  confirm: "Bestätigen",
+  cancel: "Abbrechen",
+  delete: "Löschen",
+  save: "Speichern",
+  edit: "Bearbeiten",
+  create: "Erstellen",
+  update: "Aktualisieren",
+  add: "Hinzufügen",
+  addMember: "Mitglied zur Gruppe hinzufügen",
+  searchContactToAdd: "Suche nach einem Kontakt zum Hinzufügen",
+  noContactsFound: "Keine Kontakte gefunden",
+  startWriteToFind: "Beginne zu tippen, um nach Kontakten zu suchen",
+    searchNameOrEmail: "Nach Name oder E-Mail suchen",
+  searching: "Suche…",
+  errorSelectUser: "Du musst einen bestehenden Benutzer auswählen.",
+  editGroup: "Gruppe bearbeiten",
+  editGroupDescription: "Verwalte die Informationen und Mitglieder deiner Gruppe.",
+  generalTab: "Allgemein",
+  avatarTab: "Bild",
+  membersTab: "Mitglieder",
+  groupName: "Gruppenname",
+  description: "Beschreibung",
+  avatarLabel: "Gruppenbild",
+  changeAvatarTitle: "Zum Ändern des Bildes klicken",
+  changeAvatar: "Bild ändern",
+  uploading: "Hochladen...",
+  avatarHelpAdmin: "(Nur der Administrator kann das Bild ändern. Klicken Sie oder verwenden Sie den Button, um ein neues Foto hochzuladen.)",
+  avatarHelpUser: "Nur der Administrator kann das Gruppenbild ändern.",
+  uploadSuccess: "Bild erfolgreich hochgeladen. Vergiss nicht zu speichern!",
+  currentMembers: "Aktuelle Mitglieder:",
+  adminLabel: "Admin",
+  removeMemberTitle: "Aus Gruppe entfernen",
+  saveChanges: "Änderungen speichern",
+}
+
 };

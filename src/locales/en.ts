@@ -12,6 +12,8 @@ banner: {
   install: "Install",
   close: "Close",
     showInstallBanner: "To install the app: 🔽 tap Share and select “Add to Home Screen”",
+    phoneWarning: "You must add your phone number to receive payments with Pic.",
+    phoneWarningButton: "Add number",
 
 },
 
@@ -409,5 +411,44 @@ onboard: {
     download: "Download",
     share: "Share",
     total: "Total",
-  }
+  },
+
+  // Inglés
+modal: {
+  close: "Close",
+  confirm: "Confirm",
+  cancel: "Cancel",
+  delete: "Delete",
+  save: "Save",
+  edit: "Edit",
+  create: "Create",
+  update: "Update",
+  add: "Add",
+  addMember: "Add group member",
+  searchContactToAdd: "Search for a contact to add",
+  noContactsFound: "No contacts found",
+  startWriteToFind: "Start typing to search for contacts",
+   searchNameOrEmail: "Search by name or email",
+  searching: "Searching…",
+  errorSelectUser: "You must select an existing user.",
+  editGroup: "Edit group",
+  editGroupDescription: "Manage your group's information and members.",
+  generalTab: "General",
+  avatarTab: "Image",
+  membersTab: "Members",
+  groupName: "Group name",
+  description: "Description",
+  avatarLabel: "Group image",
+  changeAvatarTitle: "Click to change image",
+  changeAvatar: "Change image",
+  uploading: "Uploading...",
+  avatarHelpAdmin: "(Only the admin can change the image. Click or use the button to upload a new photo.)",
+  avatarHelpUser: "Only the admin can change the group's image.",
+  uploadSuccess: "Image uploaded successfully. Don’t forget to save!",
+  currentMembers: "Current members:",
+  adminLabel: "Admin",
+  removeMemberTitle: "Remove from group",
+  saveChanges: "Save changes",
+}
+
 };

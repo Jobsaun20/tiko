@@ -1,4 +1,5 @@
-import { useState } from "react";
+// src/components/AddGroupMemberModal.tsx
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -11,13 +12,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Users } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Contact {
   id: string;
   name: string;
   email: string;
   avatar?: string;
-  user_supabase_id?: string | null; // Si quieres usarlo para registro real
+  user_supabase_id?: string | null;
 }
 
 interface AddGroupMemberModalProps {
@@ -31,32 +33,26 @@ export function AddGroupMemberModal({
   isOpen,
   onClose,
   onSubmit,
-  contacts
+  contacts,
 }: AddGroupMemberModalProps) {
+  const { t } = useLanguage();
   const [search, setSearch] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  // Buscar en todos los contactos
   const filtered =
     search.trim().length === 0
       ? []
       : contacts.filter(
           (c) =>
-            (c.name?.toLowerCase().includes(search.toLowerCase()) ||
-              c.email?.toLowerCase().includes(search.toLowerCase()))
+            c.name?.toLowerCase().includes(search.toLowerCase()) ||
+            c.email?.toLowerCase().includes(search.toLowerCase())
         );
 
   const handleConfirm = () => {
     if (selectedId) {
-      const contact = contacts.find(c => c.id === selectedId);
+      const contact = contacts.find((c) => c.id === selectedId);
       if (contact) {
-        // Si quieres obligar a que solo se puedan añadir usuarios registrados, aquí validas user_supabase_id:
-        // if (!contact.user_supabase_id) {
-        //   alert("Este contacto no está registrado, no puede añadirse al grupo.");
-        //   return;
-        // }
-        // Puedes pasar el user_supabase_id o el id normal, según tu lógica
-        onSubmit(contact.user_supabase_id ?? contact.id); // Usa user_supabase_id si existe, si no el id
+        onSubmit(contact.user_supabase_id ?? contact.id);
         setSearch("");
         setSelectedId(null);
       }
@@ -75,24 +71,30 @@ export function AddGroupMemberModal({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Users className="h-5 w-5" />
-            Agregar miembro al grupo
+            {t.modal.addMember}
           </DialogTitle>
           <DialogDescription>
-            Busca un contacto y selecciónalo para añadirlo al grupo.
+            {t.modal.searchContactToAdd}
           </DialogDescription>
         </DialogHeader>
+
         <div className="my-3">
           <Input
-            placeholder="Buscar contacto"
+            placeholder={t.modal.searchContactToAdd}
             value={search}
-            onChange={e => setSearch(e.target.value)}
+            onChange={(e) => setSearch(e.target.value)}
             autoFocus
           />
         </div>
+
         {search.trim().length === 0 ? (
-          <div className="text-gray-400 text-sm text-center p-4">Empieza a escribir para buscar un contacto.</div>
+          <div className="text-gray-400 text-sm text-center p-4">
+            {t.modal.startWriteToFind}
+          </div>
         ) : filtered.length === 0 ? (
-          <div className="text-gray-400 text-sm text-center p-4">No hay coincidencias.</div>
+          <div className="text-gray-400 text-sm text-center p-4">
+            {t.modal.noContactsFound}
+          </div>
         ) : (
           <div className="max-h-60 overflow-y-auto divide-y">
             {filtered.map((contact) => (
@@ -113,18 +115,15 @@ export function AddGroupMemberModal({
                 <div className="flex flex-col">
                   <span className="font-medium">{contact.name}</span>
                   <span className="text-xs text-gray-500">{contact.email}</span>
-                  {/* Si quieres, puedes mostrar aquí un tag si no está registrado */}
-                  {/* {!contact.user_supabase_id && (
-                    <span className="text-xs text-amber-600">No registrado</span>
-                  )} */}
                 </div>
               </button>
             ))}
           </div>
         )}
+
         <DialogFooter className="mt-2 gap-2">
           <Button variant="outline" type="button" onClick={handleClose}>
-            Cancelar
+            {t.modal.cancel}
           </Button>
           <Button
             type="button"
@@ -132,7 +131,7 @@ export function AddGroupMemberModal({
             className="bg-gradient-to-r from-blue-500 to-purple-500 text-white"
             onClick={handleConfirm}
           >
-            Añadir
+            {t.modal.add}
           </Button>
         </DialogFooter>
       </DialogContent>

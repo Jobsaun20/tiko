@@ -12,6 +12,8 @@ banner: {
   install: "Installa",
   close: "Chiudi",
     showInstallBanner: "Per installare l’app: 🔽 tocca Condividi e seleziona “Aggiungi alla schermata Home”",
+    phoneWarning: "Devi aggiungere il tuo numero di telefono per ricevere pagamenti con Pic.",
+    phoneWarningButton: "Aggiungi numero",
 
 },
 
@@ -410,5 +412,44 @@ onboard: {
     download: "Scarica",
     share: "Condividi",
     total: "Totale",
-  }
+  },
+
+  // Italiano
+modal: {
+  close: "Chiudi",
+  confirm: "Conferma",
+  cancel: "Annulla",
+  delete: "Elimina",
+  save: "Salva",
+  edit: "Modifica",
+  create: "Crea",
+  update: "Aggiorna",
+  add: "Aggiungi",
+  addMember: "Aggiungi un membro al gruppo",
+  searchContactToAdd: "Cerca un contatto da aggiungere",
+  noContactsFound: "Nessun contatto trovato",
+  startWriteToFind: "Inizia a digitare per cercare contatti",
+   searchNameOrEmail: "Cerca per nome o email",
+  searching: "Ricerca in corso…",
+  errorSelectUser: "Devi selezionare un utente esistente.",
+   editGroup: "Modifica gruppo",
+  editGroupDescription: "Gestisci le informazioni e i membri del tuo gruppo.",
+  generalTab: "Generale",
+  avatarTab: "Immagine",
+  membersTab: "Membri",
+  groupName: "Nome del gruppo",
+  description: "Descrizione",
+  avatarLabel: "Immagine del gruppo",
+  changeAvatarTitle: "Clicca per cambiare l’immagine",
+  changeAvatar: "Cambia immagine",
+  uploading: "Caricamento...",
+  avatarHelpAdmin: "(Solo l’amministratore può cambiare l’immagine. Clicca o usa il pulsante per caricare una nuova foto.)",
+  avatarHelpUser: "Solo l’amministratore può modificare l’immagine del gruppo.",
+  uploadSuccess: "Immagine caricata con successo. Non dimenticare di salvare!",
+  currentMembers: "Membri attuali:",
+  adminLabel: "Admin",
+  removeMemberTitle: "Rimuovi dal gruppo",
+  saveChanges: "Salva modifiche",
+}
+
 };

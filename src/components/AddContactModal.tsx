@@ -1,7 +1,5 @@
-import { useState, useEffect } from "react";
-import { supabase } from "@/supabaseClient";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+// src/components/AddContactModal.tsx
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,11 +8,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useToast } from "@/hooks/use-toast";
-
-
-
+import { supabase } from "@/supabaseClient";
 
 // Sugerencias de usuario para autocompletar
 interface UserSuggestion {
@@ -30,16 +33,14 @@ interface AddContactModalProps {
   editingContact?: any; // Opcional, para edición
 }
 
-export const AddContactModal = ({
+export const AddContactModal: React.FC<AddContactModalProps> = ({
   isOpen,
   onClose,
   onSubmit,
   editingContact = null,
-}: AddContactModalProps) => {
+}) => {
   const { t } = useLanguage();
   const { toast } = useToast();
-
-    
 
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState<UserSuggestion[]>([]);
@@ -64,7 +65,7 @@ export const AddContactModal = ({
   // Busca usuarios en Supabase por username o email
   const searchUsers = async (q: string) => {
     setLoading(true);
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("users")
       .select("id,username,email")
       .or(`username.ilike.%${q}%,email.ilike.%${q}%`)
@@ -92,7 +93,7 @@ export const AddContactModal = ({
     if (!selectedUser) {
       toast({
         title: t.common.error,
-        description: "Debes seleccionar un usuario existente.",
+        description: t.modal.errorSelectUser || "Debes seleccionar un usuario existente.",
         variant: "destructive",
       });
       return;
@@ -111,22 +112,31 @@ export const AddContactModal = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{editingContact ? t.pages.contacts.editContact : t.pages.contacts.addContact}</DialogTitle>
+          <DialogTitle>
+            {editingContact
+              ? t.pages.contacts.editContact
+              : t.pages.contacts.addContact}
+          </DialogTitle>
           <DialogDescription>
-            Busca por nombre de usuario o email y selecciona un usuario real
+            {t.modal.searchContactToAdd}
           </DialogDescription>
         </DialogHeader>
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2 relative">
             <Input
               id="search"
               value={query}
               onChange={handleInputChange}
-              placeholder="Nombre de usuario o email"
+              placeholder={t.modal.searchNameOrEmail}
               autoComplete="off"
               disabled={!!editingContact}
             />
-            {loading && <div className="text-xs text-gray-400 pl-1">Buscando...</div>}
+            {loading && (
+              <div className="text-xs text-gray-400 pl-1">
+                {t.modal.searching}
+              </div>
+            )}
             {!selectedUser && suggestions.length > 0 && (
               <div className="bg-white border rounded-md shadow p-1 max-h-48 overflow-y-auto z-50 absolute w-full">
                 {suggestions.map((user) => (
@@ -142,8 +152,9 @@ export const AddContactModal = ({
               </div>
             )}
           </div>
+
           <DialogFooter className="gap-2">
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button variant="outline" type="button" onClick={onClose}>
               {t.common.cancel}
             </Button>
             <Button type="submit" disabled={!selectedUser && !editingContact}>
@@ -154,4 +165,4 @@ export const AddContactModal = ({
       </DialogContent>
     </Dialog>
   );
-};
+}

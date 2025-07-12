@@ -1,3 +1,5 @@
+import { add } from "date-fns";
+
 export const es = {
   // Header
  app: {
@@ -11,6 +13,8 @@ banner: {
   install: "Instalar",
   close: "Cerrar",
   showInstallBanner: "Para instalar la app: 🔽 pulsa Compartir y selecciona “Añadir a pantalla de inicio",
+  phoneWarning: "Debes añadir tu número de teléfono para recibir pagos con Pic.",
+  phoneWarningButton: "Añadir número",
 },
 
 welcome: {
@@ -408,5 +412,46 @@ onboard: {
     download: "Descargar",
     share: "Compartir",
     total: "Total",
+  },
+
+  // Common
+  modal: {
+    close: "Cerrar",
+    confirm: "Confirmar",
+    cancel: "Cancelar",
+    delete: "Eliminar",
+    save: "Guardar",
+    edit: "Editar",
+    create: "Crear",
+    update: "Actualizar",
+    add: "Añadir",
+    addMember: "Agregar miembro al grupo",
+    searchContactToAdd: "Busca un contacto para añadir",
+    noContactsFound: "No se encontraron contactos",
+    startWriteToFind: "Empieza a escribir para buscar contactos",
+    searchNameOrEmail: "Buscar por nombre o email",
+    searching: "Buscando...",
+    errorSelectUser: "Debes seleccionar un usuario existente.",
+     editGroup: "Editar grupo",
+   
+  editGroupDescription: "Gestiona la información y miembros de tu grupo.",
+  generalTab: "General",
+  avatarTab: "Imagen",
+  membersTab: "Miembros",
+  groupName: "Nombre del grupo",
+  description: "Descripción",
+  avatarLabel: "Imagen del grupo",
+  changeAvatarTitle: "Haz clic para cambiar la imagen",
+  changeAvatar: "Cambiar imagen",
+  uploading: "Subiendo...",
+  avatarHelpAdmin: "(Solo el admin puede cambiar la imagen. Haz clic o usa el botón para subir una nueva foto.)",
+  avatarHelpUser: "Solo el admin puede cambiar la imagen del grupo.",
+  uploadSuccess: "Imagen subida correctamente. ¡No olvides guardar!",
+  currentMembers: "Miembros actuales:",
+  adminLabel: "Admin",
+  removeMemberTitle: "Eliminar del grupo",
+  
+  saveChanges: "Guardar cambios",
+ 
   }
 };

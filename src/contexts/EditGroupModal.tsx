@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from "react";
+// src/components/EditGroupModal.tsx
+import React, { useState, useEffect, useRef } from "react";
 import {
   Dialog,
   DialogContent,
@@ -14,6 +15,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { UserPlus, Trash2, Upload } from "lucide-react";
 import { supabase } from "@/supabaseClient";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export interface EditGroupModalProps {
   isOpen: boolean;
@@ -36,6 +38,7 @@ export function EditGroupModal({
   isAdmin = false,
   currentUserId,
 }: EditGroupModalProps) {
+  const { t } = useLanguage();
   const [name, setName] = useState(group?.name || "");
   const [description, setDescription] = useState(group?.description || "");
   const [avatarUrl, setAvatarUrl] = useState(group?.avatar_url || group?.avatar || "");
@@ -51,37 +54,37 @@ export function EditGroupModal({
     setAvatarUrl(group?.avatar_url || group?.avatar || "");
   }, [group]);
 
-  // Subida de imagen solo si eres admin
   const handleAvatarUpload = () => {
     if (isAdmin && fileInputRef.current) fileInputRef.current.click();
   };
 
-  // Subida de imagen a Supabase
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !group?.id) return;
     setUploading(true);
 
-    const fileExt = file.name.split('.').pop();
+    const fileExt = file.name.split(".").pop();
     const filePath = `groups/${group.id}/avatar_${Date.now()}.${fileExt}`;
 
-    // Subir al bucket avatars
     const { error: uploadError } = await supabase.storage
       .from("avatars")
       .upload(filePath, file, { upsert: true });
 
     if (uploadError) {
-      toast({ title: "Error subiendo imagen", description: uploadError.message, variant: "destructive" });
+      toast({
+        title: t.common.error,
+        description: uploadError.message,
+        variant: "destructive",
+      });
       setUploading(false);
       return;
     }
 
-    // Obtener la URL pública
     const { data } = supabase.storage.from("avatars").getPublicUrl(filePath);
     setAvatarUrl(data.publicUrl);
 
     setUploading(false);
-    toast({ title: "Imagen subida correctamente. ¡No olvides guardar!" });
+    toast({ title: t.modal.uploadSuccess || "Imagen subida correctamente. ¡No olvides guardar!" });
   };
 
   const handleSave = async () => {
@@ -90,7 +93,7 @@ export function EditGroupModal({
       ...group,
       name,
       description,
-      avatar: avatarUrl,  // Usa avatar_url como estándar en tu base de datos
+      avatar: avatarUrl,
     });
     setSaving(false);
   };
@@ -99,36 +102,45 @@ export function EditGroupModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-md w-[95vw]">
         <DialogHeader>
-          <DialogTitle>Editar grupo</DialogTitle>
+          <DialogTitle>{t.modal.editGroup}</DialogTitle>
           <DialogDescription>
-            Gestiona la información y miembros de tu grupo.
+            {t.modal.editGroupDescription}
           </DialogDescription>
         </DialogHeader>
 
         <Tabs value={tab} onValueChange={setTab} className="w-full">
           <TabsList className="grid grid-cols-3 mb-4">
-            <TabsTrigger value="general">General</TabsTrigger>
-            <TabsTrigger value="avatar">Imagen</TabsTrigger>
+            <TabsTrigger value="general">{t.modal.generalTab}</TabsTrigger>
+            <TabsTrigger value="avatar">{t.modal.avatarTab}</TabsTrigger>
             <TabsTrigger value="members" disabled={!isAdmin}>
-              Miembros
+              {t.modal.membersTab}
             </TabsTrigger>
           </TabsList>
 
-          {/* GENERAL */}
           <TabsContent value="general" className="space-y-4 px-2">
-            <label className="block font-semibold text-sm">Nombre del grupo</label>
+            <label className="block font-semibold text-sm">
+              {t.modal.groupName}
+            </label>
             <Input value={name} onChange={e => setName(e.target.value)} />
-            <label className="block font-semibold text-sm">Descripción</label>
+            <label className="block font-semibold text-sm">
+              {t.modal.description}
+            </label>
             <Input value={description} onChange={e => setDescription(e.target.value)} />
           </TabsContent>
 
-          {/* AVATAR (Imagen) */}
-          <TabsContent value="avatar" className="flex flex-col items-center gap-4 px-2 py-4">
-            <label className="block font-semibold text-sm w-full text-center">Imagen del grupo</label>
+          <TabsContent
+            value="avatar"
+            className="flex flex-col items-center gap-4 px-2 py-4"
+          >
+            <label className="block font-semibold text-sm w-full text-center">
+              {t.modal.avatarLabel}
+            </label>
             <Avatar
-              className={`h-16 w-16 mb-2 ${isAdmin ? "cursor-pointer hover:ring-2 ring-blue-400 transition-all" : ""}`}
+              className={`h-16 w-16 mb-2 ${
+                isAdmin ? "cursor-pointer hover:ring-2 ring-blue-400 transition-all" : ""
+              }`}
               onClick={handleAvatarUpload}
-              title={isAdmin ? "Haz clic para cambiar la imagen" : ""}
+              title={isAdmin ? t.modal.changeAvatarTitle : ""}
             >
               <AvatarImage src={avatarUrl} />
               <AvatarFallback className="bg-gray-200 text-gray-700 font-bold text-2xl">
@@ -140,7 +152,6 @@ export function EditGroupModal({
                 </div>
               )}
             </Avatar>
-            {/* Input oculto solo para admin */}
             {isAdmin && (
               <>
                 <Button
@@ -150,7 +161,7 @@ export function EditGroupModal({
                   disabled={uploading}
                 >
                   <Upload className="h-4 w-4 mr-2" />
-                  {uploading ? "Subiendo..." : "Cambiar imagen"}
+                  {uploading ? t.modal.uploading : t.modal.changeAvatar}
                 </Button>
                 <input
                   type="file"
@@ -164,43 +175,50 @@ export function EditGroupModal({
             )}
             <div className="text-xs text-gray-400 text-center mt-2">
               {isAdmin
-                ? "(Solo el admin puede cambiar la imagen. Haz clic o usa el botón para subir una nueva foto.)"
-                : "Solo el admin puede cambiar la imagen del grupo."}
+                ? t.modal.avatarHelpAdmin
+                : t.modal.avatarHelpUser}
             </div>
           </TabsContent>
 
-          {/* MIEMBROS */}
           <TabsContent value="members" className="space-y-4 px-2">
             <div className="flex flex-col gap-2">
-              <span className="font-semibold mb-2">Agregar miembro</span>
+              <span className="font-semibold mb-2">
+                {t.modal.addMember}
+              </span>
               <Button
                 variant="outline"
                 className="flex items-center gap-2"
                 onClick={() => onAddMember(group.id)}
               >
                 <UserPlus className="h-4 w-4" />
-                Agregar miembro
+                {t.modal.addMember}
               </Button>
             </div>
             <div className="mt-4">
-              <span className="font-semibold">Miembros actuales:</span>
+              <span className="font-semibold">
+                {t.modal.currentMembers}
+              </span>
               <ul className="mt-2 space-y-1">
                 {group?.members?.map((m: any) => (
                   <li key={m.id} className="flex items-center gap-2 text-sm">
                     <Avatar className="h-5 w-5">
                       <AvatarImage src={m.avatar} />
-                      <AvatarFallback>{m.name?.charAt(0)?.toUpperCase()}</AvatarFallback>
+                      <AvatarFallback>
+                        {m.name?.charAt(0)?.toUpperCase()}
+                      </AvatarFallback>
                     </Avatar>
                     <span>{m.name}</span>
                     {m.role === "admin" && (
-                      <span className="ml-2 text-amber-600 font-bold text-xs">Admin</span>
+                      <span className="ml-2 text-amber-600 font-bold text-xs">
+                        {t.modal.adminLabel}
+                      </span>
                     )}
                     {isAdmin && m.id !== currentUserId && (
                       <Button
                         size="icon"
                         variant="ghost"
                         className="ml-2 text-red-500"
-                        title="Eliminar del grupo"
+                        title={t.modal.removeMemberTitle}
                         onClick={() => onRemoveMember(group.id, m.id)}
                       >
                         <Trash2 className="h-4 w-4" />
@@ -214,12 +232,14 @@ export function EditGroupModal({
         </Tabs>
 
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>Cancelar</Button>
+          <Button variant="outline" onClick={onClose}>
+            {t.modal.cancel}
+          </Button>
           <Button
             onClick={handleSave}
             disabled={saving || (!name.trim())}
           >
-            Guardar cambios
+            {t.modal.saveChanges}
           </Button>
         </DialogFooter>
       </DialogContent>

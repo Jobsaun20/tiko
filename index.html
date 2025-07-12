@@ -1,8 +1,11 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
     <title>Pic</title>
     <meta name="description" content="Fines among friends" />
     <meta name="author" content="Pic" />
@@ -18,142 +21,65 @@
     <meta name="twitter:site" content="@Pic_dev" />
     <meta name="twitter:image" content="https://Pic.dev/opengraph-image-p98pqg.png" />
 
-    <!-- ICONOS PARA PWA Y FAVICON -->
-    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png" />
-    <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512x512.png" />
-    <link rel="icon" type="image/png" href="/img/logopng.png" sizes="any" />
-    <link rel="icon" type="image/svg+xml" href="/img/logosvg.svg" sizes="any" />
+    <!-- Favicons / PWA icons -->
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="48x48"
+      href="/icons/icon-48x48.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="96x96"
+      href="/icons/icon-96x96.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="192x192"
+      href="/icons/icon-192x192.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="512x512"
+      href="/icons/icon-512x512.png"
+    />
+
+    <!-- iOS: apple-touch-icon -->
+    <link
+      rel="apple-touch-icon"
+      sizes="120x120"
+      href="/icons/apple-touch-icon-120x120.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="152x152"
+      href="/icons/apple-touch-icon-152x152.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="167x167"
+      href="/icons/apple-touch-icon-167x167.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/icons/apple-touch-icon-180x180.png"
+    />
+
+    <!-- Safari PWA -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
     <!-- Manifest para PWA -->
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#133bb3" />
-
-    <!-- ESTILOS DEL BANNER -->
-    <style>
-      #install-banner {
-        position: fixed;
-        bottom: 1rem;
-        left: 50%;
-        transform: translateX(-50%);
-        background: #0dacda;
-        color: white;
-        padding: 0.75rem 1rem;
-        border-radius: 0.5rem;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        font-family: sans-serif;
-        max-width: calc(100% - 2rem);
-        z-index: 1000;
-      }
-      #install-banner.hidden {
-        display: none;
-      }
-      #install-text {
-        flex: 1;
-        font-size: 0.95rem;
-      }
-      #install-btn {
-        background: #ffc000;
-        color: #333;
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 0.25rem;
-        font-size: 0.95rem;
-        cursor: pointer;
-      }
-      #dismiss-btn {
-        background: transparent;
-        border: none;
-        color: white;
-        font-size: 1.2rem;
-        line-height: 1;
-        cursor: pointer;
-      }
-    </style>
   </head>
 
   <body>
-    <!-- 0️⃣ Diccionario de traducciones inline -->
-    <script>
-      window.t = {
-        banner: {
-          title: "¿Quieres instalar la app para acceso directo?",
-          install: "Instalar",
-          close: "✕",
-          showInstallBanner:
-            "Para instalar la app: 🔽 pulsa Compartir y selecciona “Añadir a pantalla de inicio”"
-        }
-      };
-    </script>
-
-    <!-- BANNER DE INSTALACIÓN -->
-    <div id="install-banner" class="hidden">
-      <span id="install-text"></span>
-      <button id="install-btn"></button>
-      <button id="dismiss-btn"></button>
-    </div>
-
     <div id="root"></div>
-
-    <!-- 1️⃣ Control del banner -->
-    <script>
-      const { banner } = window.t;
-      const installBannerEl = document.getElementById("install-banner");
-      const installTextEl   = document.getElementById("install-text");
-      const installBtn      = document.getElementById("install-btn");
-      const dismissBtn      = document.getElementById("dismiss-btn");
-
-      // Rellenamos los textos
-      installBtn.textContent      = banner.install;
-      dismissBtn.textContent      = banner.close;
-
-      // 2️⃣ Registramos el Service Worker
-      if ("serviceWorker" in navigator) {
-        navigator.serviceWorker
-          .register("/service-worker.js")
-          .catch(console.error);
-      }
-
-      let deferredPrompt = null;
-
-      // 3️⃣ Chrome/Edge/Firefox: interceptamos beforeinstallprompt
-      window.addEventListener("beforeinstallprompt", (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        showInstallBanner(banner.title, true);
-      });
-
-      // 4️⃣ Safari iOS: detectamos modo standalone
-      const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
-      const isInStandalone = window.navigator.standalone === true;
-      if (isIos && !isInStandalone) {
-        showInstallBanner(banner.showInstallBanner, false);
-      }
-
-      // 5️⃣ Funciones helper
-      function showInstallBanner(text, canPrompt) {
-        installTextEl.textContent = text;
-        installBtn.style.display  = canPrompt ? "inline-block" : "none";
-        installBannerEl.classList.remove("hidden");
-      }
-      function hideInstallBanner() {
-        installBannerEl.classList.add("hidden");
-      }
-
-      // 6️⃣ Handlers de botones
-      installBtn.addEventListener("click", async () => {
-        if (!deferredPrompt) return;
-        deferredPrompt.prompt();
-        await deferredPrompt.userChoice;
-        deferredPrompt = null;
-        hideInstallBanner();
-      });
-      dismissBtn.addEventListener("click", hideInstallBanner);
-    </script>
-
-    <!-- 2️⃣ Tu bundle principal -->
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
