@@ -1,4 +1,5 @@
-import { useState } from "react";
+// src/pages/index.tsx
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,19 +24,20 @@ import { useFines } from "@/hooks/useFines";
 import { useBadgeModal } from "@/contexts/BadgeModalContext";
 import { checkAndAwardBadge } from "@/utils/checkAndAwardBadge";
 
+
 // Footer siempre como un div al final, sin lógica de visibilidad
 function Footer() {
   return (
     <footer
       className="
-        w-full 
-        bg-white/70 
-        border-t 
-        border-gray-200 
-        text-xs 
-        text-gray-500 
-        text-center 
-        py-1.5 
+        w-full
+        bg-white/70
+        border-t
+        border-gray-200
+        text-xs
+        text-gray-500
+        text-center
+        py-1.5
         backdrop-blur
         shadow-sm
         mx-auto
@@ -50,6 +52,7 @@ function Footer() {
     </footer>
   );
 }
+const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY;
 
 export default function Index() {
   const { t } = useLanguage();
@@ -67,6 +70,49 @@ export default function Index() {
   const [selectedFine, setSelectedFine] = useState<any>(null);
   const [achievements, setAchievements] = useState<any[]>([]);
   const [showPhoneModal, setShowPhoneModal] = useState(false);
+
+// Registrar service worker y pedir permiso de notificaciones
+useEffect(() => {
+  if ('serviceWorker' in navigator && 'PushManager' in window) {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(reg => console.log('Service Worker registrado con scope:', reg.scope))
+      .catch(err => console.error('Error registrando SW:', err));
+
+    Notification.requestPermission()
+      .then(permission => {
+        if (permission === 'granted') {
+          console.log('Permiso de notificaciones concedido');
+
+          (async () => {
+            const reg = await navigator.serviceWorker.ready;
+            let sub = await reg.pushManager.getSubscription();
+            if (!sub) {
+              sub = await reg.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: VAPID_PUBLIC_KEY, // define esta constante arriba
+              });
+            }
+            // 1. Obtener usuario autenticado de Supabase
+            const { data: { user } } = await supabase.auth.getUser();
+            console.log("Usuario:", user);
+
+            if (!user) {
+              alert("Debes iniciar sesión para activar las notificaciones push.");
+              return;
+            }
+            // 2. Guarda la suscripción en Supabase
+            await supabase
+              .from("push_subscriptions")
+              .upsert({ user_id: user.id, subscription: sub.toJSON() });
+          })();
+
+        } else {
+          console.warn('Permiso de notificaciones denegado');
+        }
+      });
+  }
+}, []);
+
 
   // Si no hay perfil, inicializa datos vacíos para nuevo usuario
   const userData = profile || {
@@ -208,28 +254,29 @@ export default function Index() {
       description: t.createFine.title,
       icon: Plus,
       color: "from-red-500 to-pink-500",
-      onClick: () => navigate("/contacts") },
+      onClick: () => navigate("/contacts"),
+    },
     {
       title: t.quickActions.contacts,
       description: t.createFine.seeAndManageContacts,
       icon: Users,
       color: "from-blue-500 to-purple-500",
-      onClick: () => navigate("/contacts")
+      onClick: () => navigate("/contacts"),
     },
     {
       title: t.quickActions.history,
       description: t.createFine.seeHistoryComplete,
       icon: History,
       color: "from-orange-500 to-yellow-500",
-      onClick: () => navigate("/history")
+      onClick: () => navigate("/history"),
     },
     {
       title: t.createFine.groups,
       description: t.createFine.manageGroups,
       icon: Users,
       color: "from-green-500 to-emerald-500",
-      onClick: () => navigate("/groups")
-    }
+      onClick: () => navigate("/groups"),
+    },
   ];
 
   if (loading) {
@@ -318,7 +365,7 @@ export default function Index() {
             >
               {t.index.hola}, {userData.username || "usuario"}! 👋
             </h1>
-            
+
             <div className="flex items-center justify-center gap-4 mb-4">
               <Badge variant="secondary" className="bg-purple-100 text-purple-800">
                 Nivel {currentLevel}
@@ -344,7 +391,7 @@ export default function Index() {
             <div className="flex flex-wrap gap-2 justify-center mb-4">
               {userBadges.length === 0 ? (
                 <Badge variant="secondary" className="bg-gray-100 text-gray-700">
-                  {t.index.noinsignias} 
+                  {t.index.noinsignias}
                 </Badge>
               ) : (
                 userBadges.slice(0, 3).map((badge) => (
@@ -355,6 +402,7 @@ export default function Index() {
               )}
             </div>
           </div>
+
           {/* Última multa recibida o mensaje */}
           {latestReceivedFine ? (
             <Card className="border-orange-200 bg-gradient-to-r from-orange-50 to-yellow-50">
@@ -383,7 +431,9 @@ export default function Index() {
                       </div>
                     </div>
                     <div className="text-gray-600 text-sm mb-1">{latestReceivedFine.reason}</div>
-                    <div className="text-gray-400 text-xs mb-2">{latestReceivedFine.date ? new Date(latestReceivedFine.date).toLocaleDateString() : ""}</div>
+                    <div className="text-gray-400 text-xs mb-2">
+                      {latestReceivedFine.date ? new Date(latestReceivedFine.date).toLocaleDateString() : ""}
+                    </div>
                   </div>
                   {/* Precio y botón alineados a la derecha */}
                   <div className="flex flex-col items-end justify-between">
@@ -409,7 +459,7 @@ export default function Index() {
                 </h3>
                 <p className="text-green-700 text-base sm:text-lg mb-0.5">{t.index.noPendentFines}</p>
                 <p className="text-green-600 text-xs sm:text-base mt-1">
-                  {t.index.continueLikeThis} 
+                  {t.index.continueLikeThis}
                 </p>
               </CardContent>
             </Card>
@@ -495,62 +545,71 @@ export default function Index() {
                 <CardDescription>{t.index.recentRecivedFines}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                {receivedFines.length > 0 ? (
-                  receivedFines.slice(0, 3).map((fine) => (
-                    <div
-                      key={fine.id}
-                      className="flex flex-row items-stretch gap-2 rounded-lg bg-white/80 shadow-sm px-4 py-3 border"
-                    >
-                      {/* Info multa */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-3 mb-2">
-                          <div className="rounded-full bg-gradient-to-br from-purple-400 to-pink-500 h-9 w-9 flex items-center justify-center text-white font-bold text-lg">
-                            {fine.sender_name?.charAt(0)?.toUpperCase() || "U"}
-                          </div>
-                          <div>
-                            <div className="font-semibold">{t.index.de} {fine.sender_name}</div>
-                            {fine.status === "pending" ? (
-                              <span className="inline-block bg-orange-100 text-orange-700 text-xs px-2 py-0.5 rounded font-semibold">
-                                {t.index.pendent}
-                              </span>
-                            ) : (
-                              <span className="inline-block bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded font-semibold">
-                                {t.index.payed}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                        <div className="text-gray-600 text-sm mb-1">{fine.reason}</div>
-                        <div className="text-gray-400 text-xs mb-2">{fine.date ? new Date(fine.date).toLocaleDateString() : ""}</div>
-                      </div>
-                      {/* Precio y botón alineados a la derecha */}
-                      <div className="flex flex-col items-end justify-between">
-                        <div className="text-xl sm:text-2xl font-bold text-purple-700 mb-2">{fine.amount} CHF</div>
-                        {fine.status === "pending" && (
-                          <Button
-                            className="bg-green-500 hover:bg-green-600 text-white font-bold px-4"
-                            onClick={() => handlePayFine(fine)}
-                            size="sm"
-                          >
-                            {t.fines.pay}
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-center text-gray-500 py-8">{t.index.noRecivedFines}</p>
-                )}
-                {receivedFines.length > 3 && (
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                    onClick={() => handleStatsCardClick("received")}
-                  >
-                    {t.index.seeAllRecivedFines}
-                  </Button>
-                )}
-              </CardContent>
+  {receivedFines.length > 0 ? (
+    receivedFines.slice(0, 3).map((fine) => (
+      <div
+        key={fine.id}
+        className="flex flex-row items-stretch gap-2 rounded-lg bg-white/80 shadow-sm px-4 py-3 border"
+      >
+        {/* Info multa */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="rounded-full bg-gradient-to-br from-purple-400 to-pink-500 h-9 w-9 flex items-center justify-center text-white font-bold text-lg">
+              {fine.sender_name?.charAt(0)?.toUpperCase() || "U"}
+            </div>
+            <div>
+              <div className="font-semibold">
+                {t.index.de} {fine.sender_name}
+              </div>
+              {fine.status === "pending" ? (
+                <span className="inline-block bg-orange-100 text-orange-700 text-xs px-2 py-0.5 rounded font-semibold">
+                  {t.index.pendent}
+                </span>
+              ) : (
+                <span className="inline-block bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded font-semibold">
+                  {t.index.payed}
+                </span>
+              )}
+            </div>
+          </div>
+          <div className="text-gray-600 text-sm mb-1">{fine.reason}</div>
+          <div className="text-gray-400 text-xs mb-2">
+            {fine.date ? new Date(fine.date).toLocaleDateString() : ""}
+          </div>
+        </div>
+        {/* Precio y botón alineados a la derecha */}
+        <div className="flex flex-col items-end justify-between">
+          <div className="text-xl sm:text-2xl font-bold text-purple-700 mb-2">
+            {fine.amount} CHF
+          </div>
+          {fine.status === "pending" && (
+            <Button
+              className="bg-green-500 hover:bg-green-600 text-white font-bold px-4"
+              onClick={() => handlePayFine(fine)}
+              size="sm"
+            >
+              {t.fines.pay}
+            </Button>
+          )}
+        </div>
+      </div>
+    ))
+  ) : (
+    <p className="text-center text-gray-500 py-8">
+      {t.index.noRecivedFines}
+    </p>
+  )}
+
+  {receivedFines.length > 3 && (
+    <Button
+      variant="outline"
+      className="w-full"
+      onClick={() => handleStatsCardClick("received")}
+    >
+      {t.index.seeAllRecivedFines}
+    </Button>
+  )}
+</CardContent>
             </Card>
 
             {/* Insignias recientes */}
@@ -565,7 +624,11 @@ export default function Index() {
               <CardContent className="space-y-4">
                 <div className="flex flex-wrap gap-2">
                   {userBadges.slice(0, 3).map((badge) => (
-                    <Badge key={badge.id} variant="secondary" className="bg-yellow-100 text-yellow-800">
+                    <Badge
+                      key={badge.id}
+                      variant="secondary"
+                      className="bg-yellow-100 text-yellow-800"
+                    >
                       {badge.icon} {badge.name.es || badge.name.en || badge.name.de}
                     </Badge>
                   ))}
@@ -609,10 +672,11 @@ export default function Index() {
           onPayment={handlePayment}
         />
       )}
-      <AchievementModal 
+      <AchievementModal
         achievements={achievements}
         onComplete={() => setAchievements([])}
       />
+
       {/* Footer siempre al final */}
       <Footer />
     </div>

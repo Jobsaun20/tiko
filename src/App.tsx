@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { Toaster } from '@/components/ui/toaster';
@@ -34,6 +35,54 @@ import ImpressumPage from "./pages/legal/impressum";
 // Tutorial/Onboarding y Bienvenida
 import Welcome from '@/pages/Welcome';
 import Onboarding from '@/pages/Onboarding';
+
+// Importa tu cliente de Supabase
+import { supabase } from "@/supabaseClient"; // ajusta la ruta si es distinta
+
+// FUNCION AUXILIAR PARA DECODIFICAR LA CLAVE VAPID
+function urlBase64ToUint8Array(base64String) {
+  const padding = "=".repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
+  const rawData = window.atob(base64);
+  return Uint8Array.from([...rawData].map((c) => c.charCodeAt(0)));
+}
+
+// HOOK para registrar push notifications y guardar la suscripción en Supabase
+function usePushNotifications(user) {
+  useEffect(() => {
+    if (!user) return; // Espera a que haya usuario logueado
+
+    const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+
+    if ("serviceWorker" in navigator && "PushManager" in window) {
+      navigator.serviceWorker
+        .register("/service-worker.js")
+        .then((reg) => console.log("Service Worker registrado:", reg.scope))
+        .catch((err) => console.error("Error registrando SW:", err));
+
+      Notification.requestPermission().then((permission) => {
+        if (permission === "granted") {
+          (async () => {
+            const reg = await navigator.serviceWorker.ready;
+            let sub = await reg.pushManager.getSubscription();
+            if (!sub) {
+              sub = await reg.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+              });
+            }
+            // Guarda la suscripción en Supabase
+            await supabase
+              .from("push_subscriptions")
+              .upsert({ user_id: user.id, subscription: sub.toJSON() });
+          })();
+        } else {
+          console.warn("Permiso de notificaciones denegado");
+        }
+      });
+    }
+  }, [user]);
+}
 
 function AppRoutes() {
   const { user, loading } = useAuthContext();
@@ -119,6 +168,9 @@ function AppRoutes() {
 }
 
 function App() {
+  const { user } = useAuthContext();
+  usePushNotifications(user); // <-- Activa el hook aquí
+
   return (
     <LanguageProvider>
       <PWAInstallProvider>

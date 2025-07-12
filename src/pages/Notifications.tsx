@@ -1,3 +1,5 @@
+import { useEffect } from "react"; // AÑADE ESTO
+
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -25,6 +27,13 @@ export default function Notifications() {
     markAllAsRead,
     markAsRead,
   } = useNotifications();
+
+  // Limpia el badge (puntito rojo) al abrir la página
+  useEffect(() => {
+    if ("clearAppBadge" in navigator) {
+      navigator.clearAppBadge();
+    }
+  }, []);
 
   // Formatear fecha relativa
   const formatTime = (timestamp: string) => {
@@ -66,6 +75,10 @@ export default function Notifications() {
       title: t?.pages?.notifications?.marked || "Notifications marked",
       description: t?.pages?.notifications?.allRead || "All notifications have been marked as read",
     });
+    // Limpia el badge también aquí por si el usuario está en otra página
+    if ("clearAppBadge" in navigator) {
+      navigator.clearAppBadge();
+    }
   };
 
   // Marcar una notificación como leída y navegar si tiene link
@@ -75,6 +88,10 @@ export default function Notifications() {
     }
     if (notification.link) {
       navigate(notification.link);
+    }
+    // Limpia el badge al abrir cualquier notificación
+    if ("clearAppBadge" in navigator) {
+      navigator.clearAppBadge();
     }
   };
 
