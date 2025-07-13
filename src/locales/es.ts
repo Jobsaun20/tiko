@@ -8,6 +8,15 @@ export const es = {
   installApp: "Instalar app",
 },
 
+share: {
+   title: "Comparte Pic",
+    description: "Comparte esta web con tus amigos o familiares:",
+    copy: "Copiar enlace",
+    copied: "¡Copiado!",
+    close: "Cerrar",
+    button: "Compartir app",
+    buttonDesc: "Comparte Pic con tus amigos"
+},
 
 
 banner: {

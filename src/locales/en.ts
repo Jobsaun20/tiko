@@ -7,6 +7,16 @@ export const en = {
   installApp: "Install app",
 },
 
+share: {
+   title: "Comparte Pic",
+    description: "Comparte esta web con tus amigos o familiares:",
+    copy: "Copiar enlace",
+    copied: "¡Copiado!",
+    close: "Cerrar",
+    button: "Compartir app",
+    buttonDesc: "Comparte Pic con tus amigos"
+},
+
 banner: {
   title: "Want to install the app for quick access?",
   install: "Install",

@@ -1,10 +1,10 @@
 // src/pages/index.tsx
-import { useState, useEffect } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Users, History, Award, CheckCircle } from "lucide-react";
+import { Plus, Users, History, Award, CheckCircle, Share2, Copy } from "lucide-react";
 import { Header } from "@/components/Header";
 import { CreateFineModal } from "@/components/CreateFineModal";
 import { AuthModal } from "@/components/AuthModal";
@@ -23,9 +23,16 @@ import { isValidSwissPhone, normalizeSwissPhone } from "@/utils/validateSwissPho
 import { useFines } from "@/hooks/useFines";
 import { useBadgeModal } from "@/contexts/BadgeModalContext";
 import { checkAndAwardBadge } from "@/utils/checkAndAwardBadge";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 
-
-// Footer siempre como un div al final, sin lógica de visibilidad
+// Footer
 function Footer() {
   return (
     <footer
@@ -52,7 +59,60 @@ function Footer() {
     </footer>
   );
 }
-const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+
+// --------- MODAL PARA COMPARTIR LA APP ---------
+function ShareAppModal({ isOpen, onClose, appUrl }: { isOpen: boolean; onClose: () => void; appUrl: string; }) {
+  const { t } = useLanguage();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(appUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1200);
+    inputRef.current?.select();
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-xs sm:max-w-sm p-5">
+        <DialogHeader>
+          <DialogTitle className="text-center mb-2">{t.share.title}</DialogTitle>
+        </DialogHeader>
+        <div className="text-center mb-3 text-gray-600 text-sm">
+          {t.share.description || "Comparte esta web con tus amigos o familiares:"}
+        </div>
+        <div className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg border">
+          <Input
+            ref={inputRef}
+            value={appUrl}
+            readOnly
+            className="border-0 bg-transparent text-center font-mono px-0 py-1 focus:outline-none focus:ring-0"
+            style={{ background: "transparent" }}
+            onClick={() => inputRef.current?.select()}
+          />
+          <Button
+            type="button"
+            size="icon"
+            variant="ghost"
+            onClick={handleCopy}
+            title={t.share.copy || "Copiar enlace"}
+          >
+            <Copy className="w-5 h-5" />
+          </Button>
+        </div>
+        <div className="text-center mt-2 text-green-600 text-xs h-4">
+          {copied ? t.share.copied || "¡Copiado!" : ""}
+        </div>
+        <DialogFooter className="pt-4 flex justify-center">
+          <Button onClick={onClose} variant="outline" className="w-full">
+            {t.share.close || "Cerrar"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 export default function Index() {
   const { t } = useLanguage();
@@ -70,49 +130,7 @@ export default function Index() {
   const [selectedFine, setSelectedFine] = useState<any>(null);
   const [achievements, setAchievements] = useState<any[]>([]);
   const [showPhoneModal, setShowPhoneModal] = useState(false);
-
-/* // Registrar service worker y pedir permiso de notificaciones
-useEffect(() => {
-  if ('serviceWorker' in navigator && 'PushManager' in window) {
-    navigator.serviceWorker.register('/service-worker.js')
-      .then(reg => console.log('Service Worker registrado con scope:', reg.scope))
-      .catch(err => console.error('Error registrando SW:', err));
-
-    Notification.requestPermission()
-      .then(permission => {
-        if (permission === 'granted') {
-          console.log('Permiso de notificaciones concedido');
-
-          (async () => {
-            const reg = await navigator.serviceWorker.ready;
-            let sub = await reg.pushManager.getSubscription();
-            if (!sub) {
-              sub = await reg.pushManager.subscribe({
-                userVisibleOnly: true,
-                applicationServerKey: VAPID_PUBLIC_KEY, // define esta constante arriba
-              });
-            }
-            // 1. Obtener usuario autenticado de Supabase
-            const { data: { user } } = await supabase.auth.getUser();
-            console.log("Usuario:", user);
-
-            if (!user) {
-              alert("Debes iniciar sesión para activar las notificaciones push.");
-              return;
-            }
-            // 2. Guarda la suscripción en Supabase
-            await supabase
-              .from("push_subscriptions")
-              .upsert({ user_id: user.id, subscription: sub.toJSON() });
-          })();
-
-        } else {
-          console.warn('Permiso de notificaciones denegado');
-        }
-      });
-  }
-}, []); */
-
+  const [showShareModal, setShowShareModal] = useState(false);
 
   // Si no hay perfil, inicializa datos vacíos para nuevo usuario
   const userData = profile || {
@@ -276,6 +294,13 @@ useEffect(() => {
       icon: Users,
       color: "from-green-500 to-emerald-500",
       onClick: () => navigate("/groups"),
+    },
+    {
+      title: t.share.title || "Compartir app",
+      description: t.share.description || "Comparte Pic con tus amigos",
+      icon: Share2,
+      color: "from-blue-500 to-green-500",
+      onClick: () => setShowShareModal(true),
     },
   ];
 
@@ -545,71 +570,71 @@ useEffect(() => {
                 <CardDescription>{t.index.recentRecivedFines}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-  {receivedFines.length > 0 ? (
-    receivedFines.slice(0, 3).map((fine) => (
-      <div
-        key={fine.id}
-        className="flex flex-row items-stretch gap-2 rounded-lg bg-white/80 shadow-sm px-4 py-3 border"
-      >
-        {/* Info multa */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="rounded-full bg-gradient-to-br from-purple-400 to-pink-500 h-9 w-9 flex items-center justify-center text-white font-bold text-lg">
-              {fine.sender_name?.charAt(0)?.toUpperCase() || "U"}
-            </div>
-            <div>
-              <div className="font-semibold">
-                {t.index.de} {fine.sender_name}
-              </div>
-              {fine.status === "pending" ? (
-                <span className="inline-block bg-orange-100 text-orange-700 text-xs px-2 py-0.5 rounded font-semibold">
-                  {t.index.pendent}
-                </span>
-              ) : (
-                <span className="inline-block bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded font-semibold">
-                  {t.index.payed}
-                </span>
-              )}
-            </div>
-          </div>
-          <div className="text-gray-600 text-sm mb-1">{fine.reason}</div>
-          <div className="text-gray-400 text-xs mb-2">
-            {fine.date ? new Date(fine.date).toLocaleDateString() : ""}
-          </div>
-        </div>
-        {/* Precio y botón alineados a la derecha */}
-        <div className="flex flex-col items-end justify-between">
-          <div className="text-xl sm:text-2xl font-bold text-purple-700 mb-2">
-            {fine.amount} CHF
-          </div>
-          {fine.status === "pending" && (
-            <Button
-              className="bg-green-500 hover:bg-green-600 text-white font-bold px-4"
-              onClick={() => handlePayFine(fine)}
-              size="sm"
-            >
-              {t.fines.pay}
-            </Button>
-          )}
-        </div>
-      </div>
-    ))
-  ) : (
-    <p className="text-center text-gray-500 py-8">
-      {t.index.noRecivedFines}
-    </p>
-  )}
+                {receivedFines.length > 0 ? (
+                  receivedFines.slice(0, 3).map((fine) => (
+                    <div
+                      key={fine.id}
+                      className="flex flex-row items-stretch gap-2 rounded-lg bg-white/80 shadow-sm px-4 py-3 border"
+                    >
+                      {/* Info multa */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-3 mb-2">
+                          <div className="rounded-full bg-gradient-to-br from-purple-400 to-pink-500 h-9 w-9 flex items-center justify-center text-white font-bold text-lg">
+                            {fine.sender_name?.charAt(0)?.toUpperCase() || "U"}
+                          </div>
+                          <div>
+                            <div className="font-semibold">
+                              {t.index.de} {fine.sender_name}
+                            </div>
+                            {fine.status === "pending" ? (
+                              <span className="inline-block bg-orange-100 text-orange-700 text-xs px-2 py-0.5 rounded font-semibold">
+                                {t.index.pendent}
+                              </span>
+                            ) : (
+                              <span className="inline-block bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded font-semibold">
+                                {t.index.payed}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="text-gray-600 text-sm mb-1">{fine.reason}</div>
+                        <div className="text-gray-400 text-xs mb-2">
+                          {fine.date ? new Date(fine.date).toLocaleDateString() : ""}
+                        </div>
+                      </div>
+                      {/* Precio y botón alineados a la derecha */}
+                      <div className="flex flex-col items-end justify-between">
+                        <div className="text-xl sm:text-2xl font-bold text-purple-700 mb-2">
+                          {fine.amount} CHF
+                        </div>
+                        {fine.status === "pending" && (
+                          <Button
+                            className="bg-green-500 hover:bg-green-600 text-white font-bold px-4"
+                            onClick={() => handlePayFine(fine)}
+                            size="sm"
+                          >
+                            {t.fines.pay}
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-center text-gray-500 py-8">
+                    {t.index.noRecivedFines}
+                  </p>
+                )}
 
-  {receivedFines.length > 3 && (
-    <Button
-      variant="outline"
-      className="w-full"
-      onClick={() => handleStatsCardClick("received")}
-    >
-      {t.index.seeAllRecivedFines}
-    </Button>
-  )}
-</CardContent>
+                {receivedFines.length > 3 && (
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => handleStatsCardClick("received")}
+                  >
+                    {t.index.seeAllRecivedFines}
+                  </Button>
+                )}
+              </CardContent>
             </Card>
 
             {/* Insignias recientes */}
@@ -675,6 +700,12 @@ useEffect(() => {
       <AchievementModal
         achievements={achievements}
         onComplete={() => setAchievements([])}
+      />
+
+      <ShareAppModal
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        appUrl="https://picpic-ruby.vercel.app/welcome"
       />
 
       {/* Footer siempre al final */}
