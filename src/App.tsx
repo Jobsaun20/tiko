@@ -5,13 +5,9 @@ import { Toaster } from '@/components/ui/toaster';
 import ProtectedRoute from '@/components/routes/ProtectedRoute';
 import { useAuthContext } from '@/contexts/AuthContext';
 
-// CONTEXTO GLOBAL DE LOGROS (MODAL BADGES)
+// Contextos globales
 import { BadgeModalProvider } from '@/contexts/BadgeModalContext';
-
-// CONTEXTO GLOBAL PARA INSTALAR PWA
 import { PWAInstallProvider } from '@/contexts/PWAInstallContext';
-
-// Banner para instalar la app (PWA)
 import { InstallBanner } from '@/components/InstallBanner';
 
 // Páginas principales
@@ -26,20 +22,20 @@ import Notifications from '@/pages/Notifications';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 
-// Páginas legales públicas
+// Páginas legales
 import AGBPage from '@/pages/legal/agb';
 import DatenschutzPage from './pages/legal/datenschutz';
 import HaftungsausschlussPage from '@/pages/legal/haftungsausschluss';
 import ImpressumPage from "./pages/legal/impressum";
 
-// Tutorial/Onboarding y Bienvenida
+// Tutorial/Onboarding y bienvenida
 import Welcome from '@/pages/Welcome';
 import Onboarding from '@/pages/Onboarding';
 
-// Importa tu cliente de Supabase
-import { supabase } from "@/supabaseClient"; // ajusta la ruta si es distinta
+// Supabase client
+import { supabase } from "@/supabaseClient";
 
-// FUNCION AUXILIAR PARA DECODIFICAR LA CLAVE VAPID
+// FUNCION: Decodifica clave VAPID (para PushManager)
 function urlBase64ToUint8Array(base64String) {
   const padding = "=".repeat((4 - base64String.length % 4) % 4);
   const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
@@ -47,19 +43,16 @@ function urlBase64ToUint8Array(base64String) {
   return Uint8Array.from([...rawData].map((c) => c.charCodeAt(0)));
 }
 
-// HOOK para registrar push notifications y guardar la suscripción en Supabase
+// HOOK: Registra push notifications y guarda la suscripción en Supabase
 function usePushNotifications(user) {
   useEffect(() => {
-    if (!user) return; // Espera a que haya usuario logueado
-
+    if (!user) return;
     const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY;
-
     if ("serviceWorker" in navigator && "PushManager" in window) {
       navigator.serviceWorker
         .register("/service-worker.js")
         .then((reg) => console.log("Service Worker registrado:", reg.scope))
         .catch((err) => console.error("Error registrando SW:", err));
-
       Notification.requestPermission().then((permission) => {
         if (permission === "granted") {
           (async () => {
@@ -84,6 +77,7 @@ function usePushNotifications(user) {
   }, [user]);
 }
 
+// AppRoutes con todas tus rutas y protección
 function AppRoutes() {
   const { user, loading } = useAuthContext();
 
@@ -91,85 +85,43 @@ function AppRoutes() {
 
   return (
     <Routes>
-      {/* Tutorial y Bienvenida: solo si NO está logueado */}
+      {/* Onboarding/Bienvenida solo sin login */}
       <Route path="/welcome" element={!user ? <Welcome /> : <Navigate to="/" replace />} />
       <Route path="/onboarding" element={!user ? <Onboarding /> : <Navigate to="/register" replace />} />
 
-      {/* Páginas públicas de login y registro */}
+      {/* Rutas públicas */}
       <Route path="/login" element={!user ? <Login /> : <Navigate to="/" replace />} />
       <Route path="/register" element={!user ? <Register /> : <Navigate to="/" replace />} />
 
-      {/* Páginas legales públicas */}
+      {/* Legales */}
       <Route path="/legal/agb" element={<AGBPage />} />
       <Route path="/legal/datenschutz" element={<DatenschutzPage />} />
       <Route path="/legal/haftungsausschluss" element={<HaftungsausschlussPage />} />
       <Route path="/legal/impressum" element={<ImpressumPage />} />
 
-      {/* Páginas protegidas */}
-      <Route
-        path="/"
-        element={
-          user
-            ? (
-                <ProtectedRoute>
-                  <Index />
-                </ProtectedRoute>
-              )
-            : <Navigate to="/welcome" replace />
-        }
-      />
-      <Route path="/history" element={
+      {/* Protegidas */}
+      <Route path="/" element={user ? (
         <ProtectedRoute>
-          <History />
+          <Index />
         </ProtectedRoute>
-      } />
-      <Route path="/profile" element={
-        <ProtectedRoute>
-          <Profile />
-        </ProtectedRoute>
-      } />
-      <Route path="/contacts" element={
-        <ProtectedRoute>
-          <Contacts />
-        </ProtectedRoute>
-      } />
-      <Route path="/groups" element={
-        <ProtectedRoute>
-          <Groups />
-        </ProtectedRoute>
-      } />
-      <Route path="/settings" element={
-        <ProtectedRoute>
-          <Settings />
-        </ProtectedRoute>
-      } />
-      <Route path="/my-qr" element={
-        <ProtectedRoute>
-          <MyQR />
-        </ProtectedRoute>
-      } />
-      <Route path="/notifications" element={
-        <ProtectedRoute>
-          <Notifications />
-        </ProtectedRoute>
-      } />
+      ) : <Navigate to="/welcome" replace />} />
+      <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
+      <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+      <Route path="/contacts" element={<ProtectedRoute><Contacts /></ProtectedRoute>} />
+      <Route path="/groups" element={<ProtectedRoute><Groups /></ProtectedRoute>} />
+      <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+      <Route path="/my-qr" element={<ProtectedRoute><MyQR /></ProtectedRoute>} />
+      <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
 
-      {/* Redirección catch-all: igual que raíz */}
-      <Route
-        path="*"
-        element={
-          user
-            ? <Navigate to="/" replace />
-            : <Navigate to="/welcome" replace />
-        }
-      />
+      {/* Catch-all */}
+      <Route path="*" element={user ? <Navigate to="/" replace /> : <Navigate to="/welcome" replace />} />
     </Routes>
   );
 }
 
 function App() {
   const { user } = useAuthContext();
-  usePushNotifications(user); // <-- Activa el hook aquí
+  usePushNotifications(user);
 
   return (
     <LanguageProvider>
@@ -178,7 +130,7 @@ function App() {
           <BadgeModalProvider>
             <div className="App">
               <AppRoutes />
-              <InstallBanner /> {/* Banner para instalar PWA */}
+              <InstallBanner />
               <Toaster />
             </div>
           </BadgeModalProvider>

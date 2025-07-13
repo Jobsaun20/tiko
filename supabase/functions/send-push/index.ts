@@ -8,7 +8,7 @@
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 
 // 2) Importa web-push desde esm.sh
-import webpush from "https://esm.sh/web-push@3.5.0";
+import webpush from "https://esm.sh/web-push@3.3.5";
 
 // 3) Importa el cliente de Supabase
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";

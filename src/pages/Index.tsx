@@ -71,7 +71,7 @@ export default function Index() {
   const [achievements, setAchievements] = useState<any[]>([]);
   const [showPhoneModal, setShowPhoneModal] = useState(false);
 
-// Registrar service worker y pedir permiso de notificaciones
+/* // Registrar service worker y pedir permiso de notificaciones
 useEffect(() => {
   if ('serviceWorker' in navigator && 'PushManager' in window) {
     navigator.serviceWorker.register('/service-worker.js')
@@ -111,7 +111,7 @@ useEffect(() => {
         }
       });
   }
-}, []);
+}, []); */
 
 
   // Si no hay perfil, inicializa datos vacíos para nuevo usuario

@@ -110,6 +110,7 @@ export function useFines() {
       type: newFine.type || "sent"
     };
 
+    // 1. Inserta la multa en la tabla "fines"
     const { data, error } = await supabase
       .from("fines")
       .insert([fineToInsert])
@@ -118,7 +119,58 @@ export function useFines() {
 
     if (error) throw new Error(error.message);
 
-    // Recargar listado tras crear multa
+    // 2. Crea una notificación para el destinatario
+    let notificationId: string | undefined;
+    const notifInsert = await supabase
+      .from("notifications")
+      .insert([{
+        user_id: newFine.recipient_id,
+        type: "fine_received",
+        title: "Nueva multa recibida",
+        message: `Has recibido una multa de ${fineToInsert.sender_name} por ${fineToInsert.amount} CHF.`,
+        link: "/", // o el link donde se ve la multa
+        read: false,
+        created_at: new Date().toISOString()
+      }])
+      .select()
+      .maybeSingle();
+
+    if (notifInsert.data && notifInsert.data.id) {
+      notificationId = notifInsert.data.id;
+    }
+
+    // 3. Si se ha insertado la notificación, envía la push (CORREGIDO)
+    if (notificationId) {
+      try {
+        // 1. Obtén todas las suscripciones push del destinatario
+        const { data: pushSubs } = await supabase
+          .from("push_subscriptions")
+          .select("subscription")
+          .eq("user_id", newFine.recipient_id);
+
+        const subs = (pushSubs || []).map(s => s.subscription);
+
+        // 2. Prepara el objeto notif con los mismos datos de la notificación
+        const notif = {
+          title: "Nueva multa recibida",
+          body: `Has recibido una multa de ${fineToInsert.sender_name} por ${fineToInsert.amount} CHF.`,
+          url: "/" // O el link a la multa
+        };
+
+        // 3. Llama al endpoint correctamente
+        await fetch("https://pic-push-server.vercel.app/api/send-push", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ subs, notif })
+        });
+
+      } catch (err) {
+        // Opcional: manejar el error
+        console.error("Error enviando push notification:", err);
+      }
+    }
+
+    // 4. Recarga listado tras crear multa
     await refetchFines();
 
     return data;

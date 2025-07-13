@@ -46,7 +46,7 @@ export function useGroupRules(groupId: string, members: GroupMember[]) {
     // eslint-disable-next-line
   }, [groupId]);
 
-  // Proponer nueva regla y crear notificaciones persistentes
+  // Proponer nueva regla y crear notificaciones persistentes + push
   async function proposeRule(description: string) {
     if (!user) throw new Error("No autenticado");
 
@@ -65,10 +65,13 @@ export function useGroupRules(groupId: string, members: GroupMember[]) {
 
     // 2. Notificar a todos los miembros excepto quien la propone
     const memberIds = members.map(m => m.id).filter(id => id !== user.id);
+    let notificationIds: string[] = [];
     if (data && data.id && memberIds.length > 0) {
       const notifications = memberIds.map(memberId => ({
         user_id: memberId,
-        type: "group_rule_proposed",      
+        type: "group_rule_proposed",
+        title: "Nueva regla propuesta",
+        message: `${user.user_metadata?.username || "Un miembro"} ha propuesto una nueva regla: "${description}"`,
         link: `/groups/${groupId}#rules`,
         data: {
           group_id: groupId,
@@ -77,16 +80,39 @@ export function useGroupRules(groupId: string, members: GroupMember[]) {
           created_by: user.id,
         },
         read: false,
+        created_at: new Date().toISOString(),
       }));
 
-      const { error: notifError } = await supabase.from("notifications").insert(notifications);
+      const { data: notifData, error: notifError } = await supabase.from("notifications").insert(notifications).select();
       if (notifError) {
         // Info de debugging
         console.error("Error creando notificaciones:", notifError, notifications);
+      } else if (notifData && notifData.length > 0) {
+        // Guarda los IDs de las notificaciones recién creadas
+        notificationIds = notifData.map((n: any) => n.id);
       }
     }
 
+    // 3. (NUEVO) Envía la push a cada notificación creada
+    if (notificationIds.length > 0) {
+      await Promise.all(
+        notificationIds.map(async (notificationId) => {
+          try {
+            await fetch("https://pic-push-server.vercel.app/api/send-push", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ notification_id: notificationId })
+            });
+          } catch (err) {
+            console.error("Error enviando push notification:", err);
+          }
+        })
+      );
+    }
+
     await fetchRules();
+    // Retorna el primer notificationId solo si lo necesitas para el modal (opcional)
+    return notificationIds[0];
   }
 
   // Aceptar regla
