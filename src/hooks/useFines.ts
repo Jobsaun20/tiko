@@ -152,9 +152,9 @@ export function useFines() {
 
         // 2. Prepara el objeto notif con los mismos datos de la notificación
         const notif = {
-          title: "Nueva multa recibida",
-          body: `Has recibido una multa de ${fineToInsert.sender_name} por ${fineToInsert.amount} CHF.`,
-          url: "/" // O el link a la multa
+          title: "New fine received",
+          body: `You have received a fine from ${fineToInsert.sender_name} for ${fineToInsert.amount} CHF.`,
+          url: "/history" // O el link a la multa
         };
 
         // 3. Llama al endpoint correctamente

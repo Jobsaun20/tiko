@@ -70,8 +70,8 @@ export function useGroupRules(groupId: string, members: GroupMember[]) {
       const notifications = memberIds.map(memberId => ({
         user_id: memberId,
         type: "group_rule_proposed",
-        title: "Nueva regla propuesta",
-        message: `${user.user_metadata?.username || "Un miembro"} ha propuesto una nueva regla: "${description}"`,
+        title: "New rule proposed",
+        message: `${user.user_metadata?.username || "A member"} proposed a new rule: "${description}"`,
         link: `/groups/${groupId}#rules`,
         data: {
           group_id: groupId,
