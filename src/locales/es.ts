@@ -8,6 +8,8 @@ export const es = {
   installApp: "Instalar app",
 },
 
+
+
 banner: {
   title: "¿Quieres instalar la app para acceso directo?",
   install: "Instalar",

@@ -65,7 +65,7 @@ export function useGroupRules(groupId: string, members: GroupMember[]) {
 
     // 2. Notificar a todos los miembros excepto quien la propone
     const memberIds = members.map(m => m.id).filter(id => id !== user.id);
-    let notificationIds: string[] = [];
+    let notifObjects: any[] = [];
     if (data && data.id && memberIds.length > 0) {
       const notifications = memberIds.map(memberId => ({
         user_id: memberId,
@@ -83,26 +83,43 @@ export function useGroupRules(groupId: string, members: GroupMember[]) {
         created_at: new Date().toISOString(),
       }));
 
+      // Inserta notificaciones y recoge los objetos creados
       const { data: notifData, error: notifError } = await supabase.from("notifications").insert(notifications).select();
       if (notifError) {
-        // Info de debugging
         console.error("Error creando notificaciones:", notifError, notifications);
       } else if (notifData && notifData.length > 0) {
-        // Guarda los IDs de las notificaciones recién creadas
-        notificationIds = notifData.map((n: any) => n.id);
+        notifObjects = notifData;
       }
     }
 
-    // 3. (NUEVO) Envía la push a cada notificación creada
-    if (notificationIds.length > 0) {
+    // 3. Envía la push a cada notificación creada (solo a miembros que tengan subs)
+    if (notifObjects.length > 0) {
       await Promise.all(
-        notificationIds.map(async (notificationId) => {
+        notifObjects.map(async (notif) => {
           try {
-            await fetch("https://pic-push-server.vercel.app/api/send-push", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ notification_id: notificationId })
-            });
+            // Busca las subscripciones de este usuario
+            const { data: subsData } = await supabase
+              .from("push_subscriptions")
+              .select("subscription")
+              .eq("user_id", notif.user_id);
+
+            const subs = (subsData || []).map((s: any) => s.subscription);
+
+            // Si tiene subs, manda la push
+            if (subs.length > 0) {
+              await fetch("https://pic-push-server.vercel.app/api/send-push", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  subs,
+                  notif: {
+                    title: notif.title,
+                    body: notif.message,
+                    url: notif.link
+                  }
+                })
+              });
+            }
           } catch (err) {
             console.error("Error enviando push notification:", err);
           }
@@ -111,8 +128,8 @@ export function useGroupRules(groupId: string, members: GroupMember[]) {
     }
 
     await fetchRules();
-    // Retorna el primer notificationId solo si lo necesitas para el modal (opcional)
-    return notificationIds[0];
+    // Retorna el primer objeto notif solo si lo necesitas (opcional)
+    return notifObjects[0]?.id;
   }
 
   // Aceptar regla
@@ -148,7 +165,6 @@ export function useGroupRules(groupId: string, members: GroupMember[]) {
   // Eliminar una regla (por admin o autor) solo si está rechazada
   async function deleteRule(ruleId: string) {
     if (!user) throw new Error("No autenticado");
-    // Primero, comprobar si la regla está rechazada (opcional)
     const { data: ruleData, error: fetchError } = await supabase
       .from("group_rules")
       .select("*")
@@ -168,7 +184,6 @@ export function useGroupRules(groupId: string, members: GroupMember[]) {
 
   // Chequear validación o rechazo global
   async function checkAndValidateOrRejectRule(ruleId: string) {
-    // 1. Traer todas las aceptaciones/rechazos de los miembros del grupo
     const { data, error } = await supabase
       .from("group_rule_acceptances")
       .select("user_id, accepted")
@@ -179,7 +194,6 @@ export function useGroupRules(groupId: string, members: GroupMember[]) {
     const memberIds = members.map(m => m.id);
     const acceptances = data?.filter((a: any) => memberIds.includes(a.user_id)) || [];
 
-    // Si alguno ha rechazado:
     if (acceptances.some((a: any) => a.accepted === false)) {
       await supabase
         .from("group_rules")
@@ -187,7 +201,6 @@ export function useGroupRules(groupId: string, members: GroupMember[]) {
         .eq("id", ruleId);
       return;
     }
-    // Si todos han aceptado y ninguno ha rechazado:
     if (
       acceptances.length === memberIds.length &&
       acceptances.every((a: any) => a.accepted)
@@ -198,20 +211,17 @@ export function useGroupRules(groupId: string, members: GroupMember[]) {
         .eq("id", ruleId);
       return;
     }
-    // Si ni aceptada ni rechazada:
     await supabase
       .from("group_rules")
       .update({ validated: false, rejected: false })
       .eq("id", ruleId);
   }
 
-  // Saber si el usuario ha aceptado la regla
   function hasUserAccepted(rule: GroupRule): boolean {
     if (!user) return false;
     return rule.acceptances.some(a => a.user_id === user.id && a.accepted === true);
   }
 
-  // Saber si el usuario ha rechazado la regla
   function hasUserRejected(rule: GroupRule): boolean {
     if (!user) return false;
     return rule.acceptances.some(a => a.user_id === user.id && a.accepted === false);
@@ -224,7 +234,7 @@ export function useGroupRules(groupId: string, members: GroupMember[]) {
     proposeRule,
     acceptRule,
     rejectRule,
-    deleteRule, // <- Para usar en tu modal si quieres botón de borrar
+    deleteRule,
     hasUserAccepted,
     hasUserRejected,
     fetchRules,
