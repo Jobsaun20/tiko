@@ -3,19 +3,19 @@ import { add } from "date-fns";
 export const es = {
   // Header
  app: {
-  name: "Pic",
+  name: "DESWG",
   subtitle: "Entre amigos",
   installApp: "Instalar app",
 },
 
 share: {
-   title: "Comparte Pic",
+   title: "Comparte DESWG",
     description: "Comparte esta web con tus amigos o familiares:",
     copy: "Copiar enlace",
     copied: "¡Copiado!",
     close: "Cerrar",
     button: "Compartir app",
-    buttonDesc: "Comparte Pic con tus amigos"
+    buttonDesc: "Comparte DESWG con tus amigos"
 },
 
 
@@ -24,12 +24,12 @@ banner: {
   install: "Instalar",
   close: "Cerrar",
   showInstallBanner: "Para instalar la app: 🔽 pulsa Compartir y selecciona “Añadir a pantalla de inicio",
-  phoneWarning: "Debes añadir tu número de teléfono para recibir pagos con Pic.",
+  phoneWarning: "Debes añadir tu número de teléfono para recibir pagos con DESWG.",
   phoneWarningButton: "Añadir número",
 },
 
 welcome: {
-  title: "Bienvenido a Pic",
+  title: "Bienvenido a DESWG",
   subtitle1: "Multas entre amigos",
   description: "Gestiona multas divertidas y reglas sociales con tus amigos y familiares. ¡Descubre una nueva forma de motivar y divertirte!",
   login: "Iniciar sesión",
@@ -37,8 +37,8 @@ welcome: {
 },
 
 onboard: {
-  whatIsPic: "¿Qué es Pic?",
-  whatIsPicDescription: "Pic es la forma más fácil de gestionar multas, reglas sociales y motivación en grupo con tus amigos. ¡Sin discusiones, solo diversión!",
+  whatIsDESWG: "¿Qué es DESWG?",
+  whatIsDESWGDescription: "DESWG es la forma más fácil de gestionar multas, reglas sociales y motivación en grupo con tus amigos. ¡Sin discusiones, solo diversión!",
   createGroups: "Crea grupos y reglas",
   createGroupsDescription: "Crea grupos privados, define reglas personalizadas y controla quién las rompe. Todas las reglas deben ser aceptadas por todos.",
   payAndLevelUp: "Paga y sube de nivel",
@@ -385,8 +385,8 @@ onboard: {
   // Invite
   invite: {
     title: "Invitar amigos",
-    description: "Invita a tus amigos a usar Pic",
-    shareText: "¡Únete a Pic y gestiona multas sociales entre amigos! 🎉",
+    description: "Invita a tus amigos a usar DESWG",
+    shareText: "¡Únete a DESWG y gestiona multas sociales entre amigos! 🎉",
     copyLink: "Copiar enlace",
     linkCopied: "¡Enlace copiado!",
     sendInvite: "Enviar invitación"

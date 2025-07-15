@@ -12,17 +12,17 @@ export default function Impressum() {
         <CardContent className="space-y-4 text-sm text-gray-700">
           <p>
             <b>Betreiber dieser Plattform:</b><br />
-            Pic – Eine Plattform für soziale Unterhaltung<br />
-            [info@pic-app.com]<br />
+            DESWG – Eine Plattform für soziale Unterhaltung<br />
+            [info@DESWG-app.com]<br />
             Luzern, Schweiz
           </p>
           <p>
             <b>Kontakt:</b><br />
-            E-Mail: info@pic-app.com
+            E-Mail: info@DESWG-app.com
           </p>
           <p>
             <b>Verantwortlich für den Inhalt:</b><br />
-            [Pic]
+            [DESWG Team]<br />
           </p>
           <p>
             <b>Haftungsausschluss:</b><br />

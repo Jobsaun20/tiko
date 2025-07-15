@@ -52,7 +52,7 @@ function Footer() {
       "
       style={{ fontSize: "12px", letterSpacing: "0.01em" }}
     >
-      © {new Date().getFullYear()} Pic · Plataforma de entretenimiento —{" "}
+      © {new Date().getFullYear()} DESWG · Plataforma de entretenimiento —{" "}
       <a href="/legal/agb" className="underline text-blue-500">AGB</a> ·{" "}
       <a href="/legal/datenschutz" className="underline text-blue-500">Datenschutz</a> ·{" "}
       <a href="/legal/haftungsausschluss" className="underline text-blue-500">Haftungsausschluss</a>
@@ -297,7 +297,7 @@ export default function Index() {
     },
     {
       title: t.share.title || "Compartir app",
-      description: t.share.description || "Comparte Pic con tus amigos",
+      description: t.share.description || "Comparte DESWG con tus amigos",
       icon: Share2,
       color: "from-blue-500 to-green-500",
       onClick: () => setShowShareModal(true),

@@ -44,7 +44,7 @@ export default function MyQR() {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'Mi código QR de Pic',
+          title: 'Mi código QR de DESWG',
           text: 'Escanea este código para enviarme multas sociales',
           url: qrData
         });
@@ -70,7 +70,7 @@ export default function MyQR() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
-      <Header user={user} />
+      <Header  />
       
       <div className="container mx-auto max-w-2xl px-4 py-6">
         {/* Back Button for mobile */}

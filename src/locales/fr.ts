@@ -2,19 +2,19 @@
 export const fr = {
   // Header
   app: {
-  name: "Pic",
+  name: "DESWG",
   subtitle: "Entre amis",
   installApp: "Installer l’app",
 },
 
 share: {
-   title: "Comparte Pic",
+   title: "Comparte DESWG",
     description: "Comparte esta web con tus amigos o familiares:",
     copy: "Copiar enlace",
     copied: "¡Copiado!",
     close: "Cerrar",
     button: "Compartir app",
-    buttonDesc: "Comparte Pic con tus amigos"
+    buttonDesc: "Comparte DESWG con tus amigos"
 },
 
 banner: {
@@ -22,13 +22,13 @@ banner: {
   install: "Installer",
   close: "Fermer",
     showInstallBanner: "Pour installer l’application : 🔽 appuyez sur Partager et sélectionnez « Ajouter à l’écran d’accueil »",
-    phoneWarning: "Vous devez ajouter votre numéro de téléphone pour recevoir des paiements avec Pic.",
+    phoneWarning: "Vous devez ajouter votre numéro de téléphone pour recevoir des paiements avec DESWG.",
     phoneWarningButton: "Ajouter un numéro",
 
 },
 
 welcome: {
-  title: "Bienvenue sur Pic",
+  title: "Bienvenue sur DESWG",
   subtitle1: "Amendes entre amis",
   description: "Gérez des amendes amusantes et des règles sociales avec vos amis et votre famille. Découvrez une nouvelle façon de vous motiver et de vous amuser !",
   login: "Connexion",
@@ -36,8 +36,8 @@ welcome: {
 },
 
 onboard: {
-  whatIsPic: "Qu’est-ce que Pic ?",
-  whatIsPicDescription: "Pic est la manière la plus simple de gérer des amendes, des règles sociales et la motivation de groupe avec vos amis. Plus de disputes, que du fun !",
+  whatIsDESWG: "Qu’est-ce que DESWG ?",
+  whatIsDESWGDescription: "DESWG est la manière la plus simple de gérer des amendes, des règles sociales et la motivation de groupe avec vos amis. Plus de disputes, que du fun !",
   createGroups: "Créer des groupes & règles",
   createGroupsDescription: "Créez des groupes privés, définissez des règles personnalisées et suivez qui les enfreint. Toutes les règles doivent être acceptées par tous.",
   payAndLevelUp: "Payer & monter de niveau",
@@ -384,8 +384,8 @@ onboard: {
   // Invite
   invite: {
     title: "Inviter des amis",
-    description: "Invitez vos amis à utiliser Pic",
-    shareText: "Rejoignez Pic et gérez les amendes sociales entre amis ! 🎉",
+    description: "Invitez vos amis à utiliser DESWG",
+    shareText: "Rejoignez DESWG et gérez les amendes sociales entre amis ! 🎉",
     copyLink: "Copier le lien",
     linkCopied: "Lien copié !",
     sendInvite: "Envoyer l'invitation"

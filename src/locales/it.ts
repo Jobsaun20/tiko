@@ -2,19 +2,19 @@
 export const it = {
   // Header
   app: {
-  name: "Pic",
+  name: "DESWG",
   subtitle: "Tra amici",
   installApp: "Installa app",
 },
 
 share: {
-   title: "Comparte Pic",
+   title: "Comparte DESWG",
     description: "Comparte esta web con tus amigos o familiares:",
     copy: "Copiar enlace",
     copied: "¡Copiado!",
     close: "Cerrar",
     button: "Compartir app",
-    buttonDesc: "Comparte Pic con tus amigos"
+    buttonDesc: "Comparte DESWG con tus amigos"
 },
 
 banner: {
@@ -22,13 +22,13 @@ banner: {
   install: "Installa",
   close: "Chiudi",
     showInstallBanner: "Per installare l’app: 🔽 tocca Condividi e seleziona “Aggiungi alla schermata Home”",
-    phoneWarning: "Devi aggiungere il tuo numero di telefono per ricevere pagamenti con Pic.",
+    phoneWarning: "Devi aggiungere il tuo numero di telefono per ricevere pagamenti con DESWG.",
     phoneWarningButton: "Aggiungi numero",
 
 },
 
 welcome: {
-  title: "Benvenuto su Pic",
+  title: "Benvenuto su DESWG",
   subtitle1: "Multe tra amici",
   description: "Gestisci multe divertenti e regole sociali con amici e familiari. Scopri un nuovo modo per motivarti e divertirti!",
   login: "Accedi",
@@ -36,8 +36,8 @@ welcome: {
 },
 
 onboard: {
-  whatIsPic: "Cos’è Pic?",
-  whatIsPicDescription: "Pic è il modo più semplice per gestire multe, regole sociali e motivazione di gruppo con i tuoi amici. Basta discussioni, solo divertimento!",
+  whatIsDESWG: "Cos’è DESWG?",
+  whatIsDESWGDescription: "DESWG è il modo più semplice per gestire multe, regole sociali e motivazione di gruppo con i tuoi amici. Basta discussioni, solo divertimento!",
   createGroups: "Crea gruppi e regole",
   createGroupsDescription: "Crea gruppi privati, imposta regole personalizzate e controlla chi le infrange. Tutte le regole devono essere accettate da tutti.",
   payAndLevelUp: "Paga e sali di livello",
@@ -384,8 +384,8 @@ onboard: {
   // Invite
   invite: {
     title: "Invita amici",
-    description: "Invita i tuoi amici a usare Pic",
-    shareText: "Unisciti a Pic e gestisci le multe sociali tra amici! 🎉",
+    description: "Invita i tuoi amici a usare DESWG",
+    shareText: "Unisciti a DESWG e gestisci le multe sociali tra amici! 🎉",
     copyLink: "Copia link",
     linkCopied: "Link copiato!",
     sendInvite: "Invia invito"

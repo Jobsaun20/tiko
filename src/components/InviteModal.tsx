@@ -40,7 +40,7 @@ export const InviteModal = ({ isOpen, onClose }: InviteModalProps) => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'Únete a Pic',
+          title: 'Únete a DESWG',
           text: shareText,
           url: inviteLink
         });

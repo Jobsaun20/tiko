@@ -2,19 +2,19 @@
 export const en = {
   // Header
  app: {
-  name: "Pic",
+  name: "DESWG",
   subtitle: "Among friends",
   installApp: "Install app",
 },
 
 share: {
-   title: "Comparte Pic",
+   title: "Comparte DESWG",
     description: "Comparte esta web con tus amigos o familiares:",
     copy: "Copiar enlace",
     copied: "¡Copiado!",
     close: "Cerrar",
     button: "Compartir app",
-    buttonDesc: "Comparte Pic con tus amigos"
+    buttonDesc: "Comparte DESWG con tus amigos"
 },
 
 banner: {
@@ -22,13 +22,13 @@ banner: {
   install: "Install",
   close: "Close",
     showInstallBanner: "To install the app: 🔽 tap Share and select “Add to Home Screen”",
-    phoneWarning: "You must add your phone number to receive payments with Pic.",
+    phoneWarning: "You must add your phone number to receive payments with DESWG.",
     phoneWarningButton: "Add number",
 
 },
 
 welcome: {
-  title: "Welcome to Pic",
+  title: "Welcome to DESWG",
   subtitle1: "Fines among friends",
   description: "Manage fun fines and social rules with your friends and family. Discover a new way to motivate and have fun!",
   login: "Login",
@@ -36,8 +36,8 @@ welcome: {
 },
 
 onboard: {
-  whatIsPic: "What is Pic?",
-  whatIsPicDescription: "Pic is the easiest way to manage fines, social rules and group motivation with your friends. No more arguments—just fun!",
+  whatIsDESWG: "What is DESWG?",
+  whatIsDESWGDescription: "DESWG is the easiest way to manage fines, social rules and group motivation with your friends. No more arguments—just fun!",
   createGroups: "Create Groups & Rules",
   createGroupsDescription: "Create private groups, set custom rules, and track who breaks them. All rules must be accepted by everyone.",
   payAndLevelUp: "Pay & Level Up",
@@ -383,8 +383,8 @@ onboard: {
   // Invite
   invite: {
     title: "Invite friends",
-    description: "Invite your friends to use Pic",
-    shareText: "Join Pic and manage social fines among friends! 🎉",
+    description: "Invite your friends to use DESWG",
+    shareText: "Join DESWG and manage social fines among friends! 🎉",
     copyLink: "Copy link",
     linkCopied: "Link copied!",
     sendInvite: "Send invitation"
