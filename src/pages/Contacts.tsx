@@ -173,7 +173,7 @@ export default function Contacts() {
           </div>
         </div>
 
-        {/* Lista de contactos filtrada */}
+        {/* Lista de contactos filtrada s*/}
         <div className="space-y-4">
           {loading ? (
             <div className="text-center text-gray-400 py-8">{t.contacts.loading}</div>
