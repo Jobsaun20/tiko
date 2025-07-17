@@ -149,7 +149,12 @@ onboard: {
     logout: "Cerrar sesión",
     login: "Iniciar sesión",
     register: "Crear cuenta",
-    invite: "Invitar amigos"
+    invite: "Invitar amigos",
+    home: "Inicio",
+    groups: "Grupos",
+    contacts: "Contactos",
+    fines: "Multas",
+    history: "Historial",
   },
   
   // Dashboard Stats

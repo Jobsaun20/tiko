@@ -143,7 +143,12 @@ showInstallBanner: "Per installare su iOS: Tocca “Condividi” 📤 e selezion
     logout: "Disconnetti",
     login: "Accedi",
     register: "Crea account",
-    invite: "Invita amici"
+    invite: "Invita amici",
+     home: "Home",
+  groups: "Gruppi",
+  contacts: "Contatti",
+  fines: "Multe",
+  history: "Storico",
   },
 
   // Dashboard Stats

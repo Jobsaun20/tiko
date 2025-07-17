@@ -143,7 +143,12 @@ showInstallBanner: "Pour installer sur iOS : Appuie sur « Partager » 📤 puis
     logout: "Déconnexion",
     login: "Connexion",
     register: "Créer un compte",
-    invite: "Inviter des amis"
+    invite: "Inviter des amis",
+    home: "Accueil",
+  groups: "Groupes",
+  contacts: "Contacts",
+  fines: "Amendes",
+  history: "Historique",
   },
 
   // Dashboard Stats

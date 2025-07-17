@@ -143,7 +143,12 @@ showInstallBanner: "To install on iOS: Tap “Share” 📤 and select “Add to
     logout: "Log out",
     login: "Log in",
     register: "Create account",
-    invite: "Invite friends"
+    invite: "Invite friends",
+      home: "Home",
+  groups: "Groups",
+  contacts: "Contacts",
+  fines: "Fines",
+  history: "History",
   },
   
   // Dashboard Stats

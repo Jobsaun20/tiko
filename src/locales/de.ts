@@ -143,7 +143,12 @@ showInstallBanner: "Für die Installation auf iOS: Tippe auf „Teilen“ 📤 u
     logout: "Abmelden",
     login: "Anmelden",
     register: "Registrieren",
-    invite: "Freunde einladen"
+    invite: "Freunde einladen",
+    home: "Startseite",
+  groups: "Gruppen",
+  contacts: "Kontakte",
+  fines: "Strafen",
+  history: "Verlauf",
   },
 
   // Dashboard Stats

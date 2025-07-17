@@ -1,9 +1,11 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { Home, Users, Plus, BookUser, ScrollText } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext"; // Añade esto
 
 export function BottomNavBar() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useLanguage(); // Obten las traducciones
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t flex justify-between items-center px-1 py-1 shadow-lg">
@@ -11,14 +13,14 @@ export function BottomNavBar() {
       <NavButton
         to="/"
         icon={<Home className="w-6 h-6" />}
-        label="Home"
+        label={t.nav?.home || "Home"}
         active={location.pathname === "/"}
       />
       {/* Grupos */}
       <NavButton
         to="/groups"
         icon={<Users className="w-6 h-6" />}
-        label="Grupos"
+        label={t.nav?.groups || "Groups"}
         active={location.pathname === "/groups"}
       />
       {/* Botón +, azul, grande, central */}
@@ -39,14 +41,14 @@ export function BottomNavBar() {
       <NavButton
         to="/contacts"
         icon={<BookUser className="w-6 h-6" />}
-        label="Contactos"
+        label={t.nav?.contacts || "Contacts"}
         active={location.pathname === "/contacts"}
       />
       {/* Multas/Historial */}
       <NavButton
         to="/history"
         icon={<ScrollText className="w-6 h-6" />}
-        label="Multas"
+        label={t.nav?.fines || "Fines"}
         active={location.pathname === "/history"}
       />
     </nav>
