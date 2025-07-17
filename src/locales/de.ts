@@ -272,6 +272,8 @@ showInstallBanner: "Für die Installation auf iOS: Tippe auf „Teilen“ 📤 u
     confirmDeleteAccountDescription: "Diese Aktion kann nicht rückgängig gemacht werden. Alle deine Daten, Strafen und der Verlauf werden dauerhaft gelöscht.",
     Cancel: "Abbrechen",
     deleteAccountButton: "Konto löschen",
+    loadingBadges: "Lade Abzeichen...",
+    noBadges: "Du hast noch keine Abzeichen",
   },
 
   // Auth

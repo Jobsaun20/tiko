@@ -11,7 +11,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useToast } from "@/hooks/use-toast";
 import { Award, Users, QrCode, TrendingUp, Trophy, Edit, ArrowLeft, LogOut, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { calculateLevel, getXPProgress, BADGES } from "@/utils/gamification";
+import { calculateLevel, getXPProgress } from "@/utils/gamification";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,7 +34,7 @@ const rewards = [
 ];
 
 export default function Profile() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage(); // language añadido aquí
   const { toast } = useToast();
   const navigate = useNavigate();
   const { logout } = useAuthContext();
@@ -42,6 +42,10 @@ export default function Profile() {
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
+
+  // ---- NUEVO: Estados para insignias reales ----
+  const [earnedBadges, setEarnedBadges] = useState([]);
+  const [badgesLoading, setBadgesLoading] = useState(true);
 
   // Si es nuevo, todos los campos vacíos
   const user = profile || {
@@ -62,9 +66,69 @@ export default function Profile() {
 
   const currentLevel = calculateLevel(user.xp);
   const progressToNextLevel = getXPProgress(user.xp);
-  const userBadges = BADGES.filter(badge => (user.badges || []).includes(badge.id));
 
-  const getRarityColor = (rarity: string) => {
+  // ---- NUEVO: Fetch de insignias del usuario ----
+  useEffect(() => {
+    const fetchUserBadges = async () => {
+      if (!profile?.id) {
+        setEarnedBadges([]);
+        setBadgesLoading(false);
+        return;
+      }
+      setBadgesLoading(true);
+
+      // 1. Obtener user_badges del usuario
+      const { data: userBadges, error } = await supabase
+        .from("user_badges")
+        .select("badge_id, achieved_at")
+        .eq("user_id", profile.id);
+
+      if (error) {
+        setBadgesLoading(false);
+        setEarnedBadges([]);
+        return;
+      }
+      if (!userBadges || userBadges.length === 0) {
+        setEarnedBadges([]);
+        setBadgesLoading(false);
+        return;
+      }
+
+      // 2. Obtener datos de badges
+      const badgeIds = userBadges.map((b) => b.badge_id);
+      const { data: badgesData } = await supabase
+        .from("badges")
+        .select("*")
+        .in("id", badgeIds);
+
+      // 3. Juntar info y asegurar que name/description es JSON
+      const joined = userBadges
+        .map((ub) => {
+          const badge = badgesData.find((b) => b.id === ub.badge_id) || {};
+          // Asegurarse de que name y description son objetos
+          let name = badge.name;
+          let description = badge.description;
+          try {
+            if (typeof name === "string") name = JSON.parse(name);
+            if (typeof description === "string") description = JSON.parse(description);
+          } catch {}
+          return {
+            ...badge,
+            name,
+            description,
+            achieved_at: ub.achieved_at,
+          };
+        })
+        .filter((b) => b.id);
+
+      setEarnedBadges(joined);
+      setBadgesLoading(false);
+    };
+
+    fetchUserBadges();
+  }, [profile?.id]);
+
+  const getRarityColor = (rarity) => {
     switch (rarity) {
       case "common": return "bg-gray-100 text-gray-800";
       case "rare": return "bg-blue-100 text-blue-800";
@@ -75,13 +139,12 @@ export default function Profile() {
   };
 
   // Guardar perfil
-  const handleSaveProfile = async (updatedUser: any) => {
+  const handleSaveProfile = async (updatedUser) => {
     await updateProfile({
       username: updatedUser.name,
       avatar_url: updatedUser.avatar_url,
-      // puedes añadir aquí phone, etc si tu modal lo permite
     });
-    toast({ title: t.profile.updatedProfile});
+    toast({ title: t.profile.updatedProfile });
     setIsEditProfileOpen(false);
   };
 
@@ -99,24 +162,15 @@ export default function Profile() {
     const { data } = await supabase.auth.getSession();
     const access_token = data.session?.access_token;
 
-   /*  const res = await fetch("https://pyecpkccpfeuittnccat.supabase.co/functions/v1/delete-user", {
+    const endpoint = getSupabaseFunctionUrl("delete-user");
+    const res = await fetch(endpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${access_token || ""}`,
       },
       body: JSON.stringify({ user_id: profile.id }),
-    }); */
-
-    const endpoint = getSupabaseFunctionUrl("delete-user");
-const res = await fetch(endpoint, {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${access_token || ""}`,
-  },
-  body: JSON.stringify({ user_id: profile.id }),
-});
+    });
 
     if (!res.ok) {
       const result = await res.json().catch(() => null);
@@ -201,9 +255,9 @@ const res = await fetch(endpoint, {
 
                 {/* Insignias recientes */}
                 <div className="flex flex-wrap gap-2 justify-center sm:justify-start mb-4">
-                  {userBadges.slice(0, 2).map((badge) => (
+                  {earnedBadges.slice(0, 2).map((badge) => (
                     <Badge key={badge.id} variant="secondary" className={getRarityColor(badge.rarity)}>
-                      {badge.icon} {badge.name.es || badge.name.en || badge.name.de}
+                      {badge.icon} {badge.name?.[language] || badge.name?.en || "Sin nombre"}
                     </Badge>
                   ))}
                 </div>
@@ -254,44 +308,6 @@ const res = await fetch(endpoint, {
           </CardContent>
         </Card>
 
-        {/* Stats Grid */}
-       {/*  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="cursor-pointer hover:shadow-md transition-shadow"
-            onClick={() => navigate("/history?filter=sent")}
-          >
-            <CardContent className="p-4 text-center">
-              <TrendingUp className="h-8 w-8 mx-auto text-blue-600 mb-2" />
-              <p className="text-2xl font-bold text-blue-700">{user.totalSent}</p>
-              <p className="text-sm text-gray-600">Multas Enviadas</p>
-            </CardContent>
-          </Card>
-          <Card className="cursor-pointer hover:shadow-md transition-shadow"
-            onClick={() => navigate("/history?filter=received")}
-          >
-            <CardContent className="p-4 text-center">
-              <TrendingUp className="h-8 w-8 mx-auto text-green-600 mb-2 transform rotate-180" />
-              <p className="text-2xl font-bold text-green-700">{user.totalReceived}</p>
-              <p className="text-sm text-gray-600">Multas Recibidas</p>
-            </CardContent>
-          </Card>
-          <Card className="cursor-pointer hover:shadow-md transition-shadow"
-            onClick={() => navigate("/history?filter=paid")}
-          >
-            <CardContent className="p-4 text-center">
-              <span className="text-2xl mb-2 block">💰</span>
-              <p className="text-2xl font-bold text-red-700">{user.totalPaid} CHF</p>
-              <p className="text-sm text-gray-600">Total Pagado</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4 text-center">
-              <span className="text-2xl mb-2 block">💸</span>
-              <p className="text-2xl font-bold text-green-700">{user.totalEarned} CHF</p>
-              <p className="text-sm text-gray-600">Total Recibido</p>
-            </CardContent>
-          </Card>
-        </div> */}
-
         {/* Insignias */}
         <Card>
           <CardHeader>
@@ -301,114 +317,37 @@ const res = await fetch(endpoint, {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {userBadges.map((badge) => (
-                <div key={badge.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className="text-2xl">{badge.icon}</span>
-                    <div className="flex-1">
-                      <h3 className="font-semibold">{badge.name.es || badge.name.en || badge.name.de}</h3>
-                      <Badge variant="secondary" className={getRarityColor(badge.rarity)}>
-                        {badge.rarity}
-                      </Badge>
+            {badgesLoading ? (
+              <div className="text-gray-400">{t.profile.loadingBadges || "Cargando insignias..."}</div>
+            ) : earnedBadges.length === 0 ? (
+              <div className="text-gray-400">{t.profile.noBadges || "Aún no tienes insignias"}</div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {earnedBadges.map((badge) => (
+                  <div key={badge.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="text-2xl">{badge.icon}</span>
+                      <div className="flex-1">
+                        <h3 className="font-semibold">
+                          {badge.name?.[language] || badge.name?.en || "Sin nombre"}
+                        </h3>
+                        <Badge variant="secondary" className={getRarityColor(badge.rarity)}>
+                          {badge.rarity || ""}
+                        </Badge>
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-600">
+                      {badge.description?.[language] || badge.description?.en || "Sin descripción"}
+                    </p>
+                    <div className="text-xs text-gray-400 mt-2">
+                      {badge.achieved_at && `Obtenida: ${new Date(badge.achieved_at).toLocaleDateString()}`}
                     </div>
                   </div>
-                  <p className="text-sm text-gray-600">{badge.description.es || badge.name.en || badge.name.de}</p>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
-
-        {/* Recompensas */}
-       {/*  <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Trophy className="h-5 w-5" />
-              Recompensas
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {rewards.map((reward, index) => (
-                <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                  <span className="text-2xl">{reward.icon}</span>
-                  <div>
-                    <h3 className="font-semibold">{reward.title}</h3>
-                    <p className="text-sm text-gray-600">{reward.description}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card> */}
-
-        {/* Grupos */}
-        {/* <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5" />
-              Mis Grupos
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {user.groups.length > 0 ? user.groups.map((group: any) => (
-                <div key={group.id || group.name} className="flex items-center justify-between p-4 border rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                      <Users className="h-5 w-5 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold">{group.name}</h3>
-                      <p className="text-sm text-gray-600">{group.members || 1} miembros</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Badge variant={group.role === "admin" ? "default" : "secondary"}>
-                      {group.role === "admin" ? "Admin" : "Miembro"}
-                    </Badge>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => navigate("/groups")}
-                    >
-                      Ver Grupo
-                    </Button>
-                  </div>
-                </div>
-              )) : (
-                <p className="text-gray-500">No tienes grupos aún.</p>
-              )}
-            </div>
-          </CardContent>
-        </Card> */}
-
-        {/* Código QR TWINT */}
-        {/* <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <QrCode className="h-5 w-5" />
-              Mi Código TWINT
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-center">
-            <div className="max-w-48 mx-auto mb-4">
-              <div className="bg-white p-4 rounded-lg border-2 border-dashed border-gray-300">
-                <QrCode className="h-32 w-32 mx-auto text-gray-400" />
-              </div>
-            </div>
-            <p className="text-sm text-gray-600 mb-4">
-              Comparte este código para que te puedan enviar multas
-            </p>
-            <Button
-              variant="outline"
-              onClick={() => navigate("/my-qr")}
-            >
-              Compartir QR
-            </Button>
-          </CardContent>
-        </Card> */}
 
         {/* Modal editar perfil */}
         <EditProfileModal

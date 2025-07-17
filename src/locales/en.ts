@@ -272,6 +272,8 @@ showInstallBanner: "To install on iOS: Tap “Share” 📤 and select “Add to
     confirmDeleteAccountDescription: "This action cannot be undone. All your data, fines, and history will be permanently deleted.",
     Cancel: "Cancel",
     deleteAccountButton: "Delete account",
+    loadingBadges: "Loading badges...",
+    noBadges: "You don't have any badges yet",
   },
   
   // Auth

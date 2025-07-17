@@ -278,6 +278,8 @@ onboard: {
     confirmDeleteAccountDescription: "Esta acción no se puede deshacer. Se eliminarán permanentemente todos tus datos, multas e historial de la aplicación.",
     Cancel: "Cancelar",
     deleteAccountButton: "Eliminar cuenta",
+    loadingBadges: "Cargando insignias...",
+    noBadges: "Aún no tienes insignias",
   },
   
   // Auth

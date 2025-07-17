@@ -272,6 +272,8 @@ showInstallBanner: "Per installare su iOS: Tocca “Condividi” 📤 e selezion
     confirmDeleteAccountDescription: "Questa azione non può essere annullata. Tutti i tuoi dati, multe e storico verranno eliminati definitivamente.",
     Cancel: "Annulla",
     deleteAccountButton: "Elimina account",
+    loadingBadges: "Caricamento badge...",
+    noBadges: "Non hai ancora badge",
   },
 
   // Auth

@@ -272,6 +272,8 @@ showInstallBanner: "Pour installer sur iOS : Appuie sur « Partager » 📤 puis
     confirmDeleteAccountDescription: "Cette action est irréversible. Toutes tes données, amendes et historique seront définitivement supprimés.",
     Cancel: "Annuler",
     deleteAccountButton: "Supprimer le compte",
+    loadingBadges: "Chargement des badges...",
+    noBadges: "Tu n’as pas encore de badges",
   },
 
   // Auth

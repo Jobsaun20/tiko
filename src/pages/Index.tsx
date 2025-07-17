@@ -212,9 +212,9 @@ export default function Index() {
         if (user && session?.access_token) {
           const badges = await checkAndAwardBadge(
             user.id,
-            "pay_qr",
-            { amount: selectedFine.amount, fine_id: selectedFine.id },
-            session.access_token
+            "pay_fine_10",
+            { amount: selectedFine.amount, fine_id: selectedFine.id, paid_at: new Date().toISOString(), },
+            session.access_token            
           );
 
           let gainedXp = 0;

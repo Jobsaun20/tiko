@@ -132,7 +132,7 @@ export const getXPProgress = (xp: number): { current: number; needed: number; pe
 export const checkNewAchievements = (
   oldUser: any,
   newUser: any,
-  lang: string = "es"
+  lang: string = "en"
 ): Achievement[] => {
   const achievements: Achievement[] = [];
 

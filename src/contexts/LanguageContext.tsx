@@ -39,19 +39,23 @@ interface LanguageProviderProps {
 }
 
 export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
-  const [language, setLanguage] = useState<Language>(() => {
+  const getInitialLanguage = (): Language => {
     if (typeof window !== "undefined") {
+      // 1. Check saved language
       const saved = localStorage.getItem("app-language");
       if (saved && AVAILABLE_LANGUAGES.includes(saved as Language)) {
         return saved as Language;
       }
+      // 2. Detect browser language
       const browserLang = navigator.language.split("-")[0];
       if (AVAILABLE_LANGUAGES.includes(browserLang as Language)) {
         return browserLang as Language;
       }
     }
-    return "es";
-  });
+    return "en"; // Default fallback
+  };
+
+  const [language, setLanguage] = useState<Language>(getInitialLanguage);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
