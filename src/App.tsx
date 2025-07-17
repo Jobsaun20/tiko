@@ -10,6 +10,9 @@ import { BadgeModalProvider } from '@/contexts/BadgeModalContext';
 import { PWAInstallProvider } from '@/contexts/PWAInstallContext';
 import { InstallBanner } from '@/components/InstallBanner';
 
+// Layout con barra y control de modals globales
+import NavBarLayout from '@/layouts/NavBarLayout';
+
 // Páginas principales
 import Index from '@/pages/Index';
 import History from '@/pages/History';
@@ -34,9 +37,11 @@ import Onboarding from '@/pages/Onboarding';
 
 // Supabase client
 import { supabase } from "@/supabaseClient";
+import ContactsModalPage from "./pages/NewFineModalPage";
+import InstallAppIOS from "./pages/InstallAppIOS";
 
 // FUNCION: Decodifica clave VAPID (para PushManager)
-function urlBase64ToUint8Array(base64String) {
+function urlBase64ToUint8Array(base64String: string) {
   const padding = "=".repeat((4 - base64String.length % 4) % 4);
   const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
   const rawData = window.atob(base64);
@@ -44,15 +49,15 @@ function urlBase64ToUint8Array(base64String) {
 }
 
 // HOOK: Registra push notifications y guarda la suscripción en Supabase
-function usePushNotifications(user) {
+function usePushNotifications(user: any) {
   useEffect(() => {
     if (!user) return;
     const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY;
     if ("serviceWorker" in navigator && "PushManager" in window) {
       navigator.serviceWorker
-        .register("/service-worker.js")
+        /* .register("/service-worker.js")
         .then((reg) => console.log("Service Worker registrado:", reg.scope))
-        .catch((err) => console.error("Error registrando SW:", err));
+        .catch((err) => console.error("Error registrando SW:", err)); */
       Notification.requestPermission().then((permission) => {
         if (permission === "granted") {
           (async () => {
@@ -99,19 +104,67 @@ function AppRoutes() {
       <Route path="/legal/haftungsausschluss" element={<HaftungsausschlussPage />} />
       <Route path="/legal/impressum" element={<ImpressumPage />} />
 
-      {/* Protegidas */}
-      <Route path="/" element={user ? (
+      {/* Protegidas - SIEMPRE dentro de NavBarLayout */}
+      <Route path="/" element={
         <ProtectedRoute>
-          <Index />
+          <NavBarLayout>
+            <Index />
+          </NavBarLayout>
         </ProtectedRoute>
-      ) : <Navigate to="/welcome" replace />} />
-      <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
-      <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-      <Route path="/contacts" element={<ProtectedRoute><Contacts /></ProtectedRoute>} />
-      <Route path="/groups" element={<ProtectedRoute><Groups /></ProtectedRoute>} />
-      <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-      <Route path="/my-qr" element={<ProtectedRoute><MyQR /></ProtectedRoute>} />
-      <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
+      } />
+      <Route path="/history" element={
+        <ProtectedRoute>
+          <NavBarLayout>
+            <History />
+          </NavBarLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/profile" element={
+        <ProtectedRoute>
+          <NavBarLayout>
+            <Profile />
+          </NavBarLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/contacts" element={
+        <ProtectedRoute>
+          <NavBarLayout>
+            <Contacts />
+          </NavBarLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/groups" element={
+        <ProtectedRoute>
+          <NavBarLayout>
+            <Groups />
+          </NavBarLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/settings" element={
+        <ProtectedRoute>
+          <NavBarLayout>
+            <Settings />
+          </NavBarLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/my-qr" element={
+        <ProtectedRoute>
+          <NavBarLayout>
+            <MyQR />
+          </NavBarLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/notifications" element={
+        <ProtectedRoute>
+          <NavBarLayout>
+            <Notifications />
+          </NavBarLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/fine-modal" element={<ContactsModalPage />} />
+      <Route path="/install-ios" element={<InstallAppIOS />} />
+
+
 
       {/* Catch-all */}
       <Route path="*" element={user ? <Navigate to="/" replace /> : <Navigate to="/welcome" replace />} />

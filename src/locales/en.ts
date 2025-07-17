@@ -1,55 +1,70 @@
+import { add } from "date-fns";
 
 export const en = {
   // Header
- app: {
-  name: "DESWG",
-  subtitle: "Among friends",
-  installApp: "Install app",
-},
+  app: {
+    name: "DESWG",
+    subtitle: "Among friends",
+    installApp: "Install app",
+    installIosGuide: "Install on iOS",
+  },
 
-share: {
-   title: "Comparte DESWG",
-    description: "Comparte esta web con tus amigos o familiares:",
-    copy: "Copiar enlace",
-    copied: "¡Copiado!",
-    close: "Cerrar",
-    button: "Compartir app",
-    buttonDesc: "Comparte DESWG con tus amigos"
-},
+  installApp: {
+    iosTitle: "Install app on iOS",
+    iosIntro: "Install the website as an app on your iPhone or iPad for faster access.",
+    iosStep1: "Open Safari and go to this website.",
+    iosStep2: "Tap the 'Share' button.",
+    iosShareDesc: "It's the icon with a square and an upward arrow at the bottom.",
+    iosStep3: "Select 'Add to Home Screen'.",
+    iosStep4: "Confirm by tapping 'Add' in the top right corner.",
+    iosDone: "Done! Now you can open the app directly from your home screen."
+  },
 
-banner: {
-  title: "Want to install the app for quick access?",
-  install: "Install",
-  close: "Close",
-    showInstallBanner: "To install the app: 🔽 tap Share and select “Add to Home Screen”",
+  share: {
+    title: "Share DESWG",
+    description: "Share this website with your friends or family:",
+    copy: "Copy link",
+    copied: "Copied!",
+    close: "Close",
+    button: "Share app",
+    buttonDesc: "Share DESWG with your friends",
+    intro: "Share the app with your friends:",
+    share: "Send...",
+    text: "Try this app!"
+  },
+
+  banner: {
+    title: "Do you want to install the app for quick access?",
+    install: "Install",
+    close: "Close",
+showInstallBanner: "To install on iOS: Tap “Share” 📤 and select “Add to Home Screen”.",
     phoneWarning: "You must add your phone number to receive payments with DESWG.",
     phoneWarningButton: "Add number",
+  },
 
-},
+  welcome: {
+    title: "Welcome to DESWG",
+    subtitle1: "Fines among friends",
+    description: "Manage fun fines and social rules with your friends and family. Discover a new way to stay motivated and have fun!",
+    login: "Log in",
+    newUser: "New user",
+  },
 
-welcome: {
-  title: "Welcome to DESWG",
-  subtitle1: "Fines among friends",
-  description: "Manage fun fines and social rules with your friends and family. Discover a new way to motivate and have fun!",
-  login: "Login",
-  newUser: "New user",
-},
-
-onboard: {
-  whatIsDESWG: "What is DESWG?",
-  whatIsDESWGDescription: "DESWG is the easiest way to manage fines, social rules and group motivation with your friends. No more arguments—just fun!",
-  createGroups: "Create Groups & Rules",
-  createGroupsDescription: "Create private groups, set custom rules, and track who breaks them. All rules must be accepted by everyone.",
-  payAndLevelUp: "Pay & Level Up",
-  payAndLevelUpDescription: "Every fine is transparent. Pay instantly. Collect badges, level up, and become the most responsible in your group!",
-  back: "Back",
-  next: "Next",
-  createAccount: "Create Account",
-},
+  onboard: {
+    whatIsDESWG: "What is DESWG?",
+    whatIsDESWGDescription: "DESWG is the easiest way to manage fines, social rules, and group motivation with your friends. No arguments, just fun!",
+    createGroups: "Create groups and rules",
+    createGroupsDescription: "Create private groups, set custom rules, and control who breaks them. All rules must be accepted by everyone.",
+    payAndLevelUp: "Pay and level up",
+    payAndLevelUpDescription: "Every fine is transparent. Pay instantly. Earn badges, level up, and become the most responsible in the group.",
+    back: "Back",
+    next: "Next",
+    createAccount: "Create account",
+  },
 
   // Index Page
   index: {
-    hola: "Hello",
+    hola: "Hi",
     level: "Level",
     noinsignias: "No badges",
     lastFineRecived: "Last fine received",
@@ -59,13 +74,13 @@ onboard: {
     payed: "Paid",
     congrats: "Congratulations!",
     noPendentFines: "You have no pending fines",
-    continueLikeThis: "Keep up this good behavior",
-    quickActions: "Quick Actions",
+    continueLikeThis: "Keep up the good work",
+    quickActions: "Quick actions",
     quickQuickActionsDescription: "Manage your fines efficiently",
-    recivedFines: "Received fines",
-    recentRecivedFines: "Recent received fines",
-    noRecivedFines: "You have not received any fines",
-    seeAllRecivedFines: "See all received fines",
+    recivedFines: "Fines received",
+    recentRecivedFines: "Recently received fines",
+    noRecivedFines: "You haven't received any fines",
+    seeAllRecivedFines: "View all received fines",
     recentInsignias: "Recent badges",
     recentHitos: "Your most recent achievements",
     seeAllInsignias: "See all badges",
@@ -75,25 +90,26 @@ onboard: {
   contacts: {
     error: "Error",
     errorDescription: "The selected contact is not registered as a user. The fine cannot be sent.",
-    deletedContactConfirmed: "Contact successfully deleted.",
+    deletedContactConfirmed: "Contact deleted successfully.",
     contactSearchPlaceholder: "Search contact by name or email",
     loading: "Loading...",
     addedContactConfirmed: "Contact added successfully",
+    titleFineModalPage: "Create new fine",
   },
 
   // Groups Page
   groups: {
     notIdentifiedUser: "User not identified",
     theGroup: "The group",
-    createdSuccessfully: "has been created successfully",
-    letTheGroup: "You have left the group",
+    createdSuccessfully: "was created successfully",
+    letTheGroup: "You left the group",
     groupDeleted: "The group has been deleted.",
     updatedGroup: "Group updated successfully",
-    savedCorrectly: "Changes have been saved successfully",
+    savedCorrectly: "Changes saved successfully",
     deletedMember: "Member removed",
     deletedMemberDescription: "The user has been removed from the group",
     memberAdded: "Member added",
-    memberAddedDescription: "The new member has been added successfully",
+    memberAddedDescription: "The new member was added successfully",
     contactNotFounError: "No registered contact found for this member.",
     groupNotFound: "Group not found",
     notDeterminedUser: "Could not determine the user to fine.",
@@ -109,27 +125,27 @@ onboard: {
   // History Page
   history: {
     newFineReceived: "New fine received!",
-    newFineFrom: "You have received a new fine from",
+    newFineFrom: "You've received a new fine from",
     fineForAmount: "Fine of",
-    correctlyPaid: "successfully paid",
+    correctlyPaid: "paid successfully",
     experienceUpdateError: "Error updating user experience",
     xpUpdated: "Experience updated successfully",
-    xpGained: "You have gained experience!",
-    xpGainedDescription1: "You gained",
+    xpGained: "You've gained experience!",
+    xpGainedDescription1: "You've gained",
     xpGainedDescription2: "XP for your action.",
   },
 
   // Navigation & Actions
   nav: {
     notifications: "Notifications",
-    profile: "My Profile",
+    profile: "My profile",
     settings: "Settings",
-    logout: "Logout",
-    login: "Login",
-    register: "Sign up",
-    invite: "Invite Friends"
+    logout: "Log out",
+    login: "Log in",
+    register: "Create account",
+    invite: "Invite friends"
   },
-
+  
   // Dashboard Stats
   stats: {
     pending: "Pending",
@@ -139,24 +155,24 @@ onboard: {
     issuedFines: "Issued fines",
     totalSent: "Total sent",
     received: "Received",
-    receivedFines: "Received fines",
+    receivedFines: "Fines received",
     totalReceived: "Total received"
   },
-
+  
   // Quick Actions
   quickActions: {
-    title: "Quick Actions",
+    title: "Quick actions",
     description: "Manage your social fines",
-    newFine: "New Fine",
+    newFine: "New fine",
     contacts: "Contacts",
     myQR: "My QR",
     history: "History",
     notifications: "Notifications"
   },
-
+  
   // Fines List
   fines: {
-    title: "My Fines",
+    title: "My fines",
     description: "Manage your received and sent fines",
     from: "From",
     to: "To",
@@ -169,13 +185,13 @@ onboard: {
     noSent: "You haven't sent any fines yet",
     phone: "Phone"
   },
-
+  
   // Create Fine Modal
   createFine: {
     title: "Create new fine",
     description: "Create a social fine to send to a friend or family member",
-    reason: "Fine reason",
-    reasonPlaceholder: "E.g.: Being late for dinner, forgetting to buy bread...",
+    reason: "Reason for fine",
+    reasonPlaceholder: "e.g. Late for dinner, forgot to buy bread...",
     amount: "Amount (CHF)",
     amountPlaceholder: "25.00",
     recipientType: "Recipient type",
@@ -183,23 +199,23 @@ onboard: {
     email: "Email",
     selectContact: "Select contact",
     selectContactPlaceholder: "Select a contact",
-    recipientEmail: "Recipient email",
+    recipientEmail: "Recipient's email",
     recipientEmailPlaceholder: "friend@example.com",
     cancel: "Cancel",
     create: "Create fine",
     created: "Fine created!",
-    sentTo: "{amount} CHF fine sent to {recipient}",
-    seeAndManageContacts: "See and manage contacts",
-    seeHistoryComplete: "View complete history",
+    sentTo: "Fine of {amount} CHF sent to {recipient}",
+    seeAndManageContacts: "View and manage contacts",
+    seeHistoryComplete: "View full history",
     manageGroups: "Manage groups",
     groups: "Groups",
     errors: {
       complete: "Please complete all required fields",
       selectRecipient: "Please select a recipient",
-      validEmail: "Please enter a valid email"
+      validEmail: "Enter a valid email"
     }
   },
-
+  
   // Payment Modal
   payment: {
     title: "Pay fine - {amount} CHF",
@@ -217,19 +233,19 @@ onboard: {
     processing: "Processing...",
     confirmed: "Payment confirmed!"
   },
-
+  
   // User Profile
   profile: {
-    title: "My Profile",
+    title: "My profile",
     description: "Update your personal information and set up your TWINT payment method",
     changePhoto: "Change photo",
     personalInfo: "Personal information",
     fullName: "Full name",
     phone: "Phone",
-    twintConfig: "TWINT Configuration",
+    twintConfig: "TWINT configuration",
     uploadQR: "Upload your TWINT QR code",
     uploadButton: "Upload QR",
-    qrDescription: "This QR will be shown when someone needs to pay you a fine",
+    qrDescription: "This QR will be shown when someone has to pay you a fine",
     save: "Save changes",
     updated: "Profile updated",
     updateDescription: "Your data has been saved successfully",
@@ -237,9 +253,9 @@ onboard: {
     twintUploadDescription: "QR upload feature coming soon",
     updatedProfile: "Profile updated",
     deleteAccountError: "Error deleting account",
-    deleteAccountDescription: "Could not delete the account. Contact support.",
+    deleteAccountDescription: "Account could not be deleted. Please contact support.",
     accountDeleted: "Account deleted successfully",
-    accountDeletedDescription: "Your account and all your data have been deleted successfully.",
+    accountDeletedDescription: "Your account and all data have been deleted.",
     goBack: "Go back",
     noName: "No name",
     editProfile: "Edit profile",
@@ -248,21 +264,21 @@ onboard: {
     deleteAccount: "Delete account",
     insignias: "Badges",
     confirmDeleteAccount: "Delete account?",
-    confirmDeleteAccountDescription: "This action cannot be undone. All your data, fines, and history will be permanently deleted from the app.",
+    confirmDeleteAccountDescription: "This action cannot be undone. All your data, fines, and history will be permanently deleted.",
     Cancel: "Cancel",
     deleteAccountButton: "Delete account",
   },
-
+  
   // Auth
   auth: {
-    login: "Login",
-    register: "Sign up",
+    login: "Log in",
+    register: "Create account",
     email: "Email",
     password: "Password",
     confirmPassword: "Confirm password",
     fullName: "Full name",
     loginButton: "Login",
-    registerButton: "Sign up",
+    registerButton: "Create account",
     forgotPassword: "Forgot your password?",
     noAccount: "Don't have an account?",
     hasAccount: "Already have an account?",
@@ -278,7 +294,7 @@ onboard: {
       weakPassword: "Password must be at least 6 characters"
     }
   },
-
+  
   // Pages
   pages: {
     contacts: {
@@ -318,7 +334,7 @@ onboard: {
       invite: "Invite",
       manage: "Manage",
       code: "Code",
-      enterCode: "Enter the group code",
+      enterCode: "Enter group code",
       join: "Join",
       create: "Create",
       groupCreated: "Group created",
@@ -349,7 +365,7 @@ onboard: {
     },
     history: {
       title: "History",
-      description: "Complete fine history",
+      description: "Complete fines history",
       filter: "Filter",
       all: "All",
       sent: "Sent",
@@ -357,7 +373,7 @@ onboard: {
       paid: "Paid",
       pending: "Pending",
       noResults: "No results",
-      noResultsDescription: "No fines found with selected filters",
+      noResultsDescription: "No fines found with the selected filters",
       viewAll: "View all",
       total: "Total"
     },
@@ -369,38 +385,42 @@ onboard: {
       fine_received: "{{sender}} sent you a fine of {{amount}} CHF for \"{{reason}}\"",
       fine_received_title: "Fine received",
       payment_received: "{{sender}} has paid your fine of {{amount}} CHF",
-      group_invite: "{{sender}} has invited you to the group \"{{group}}\"",
+      group_invite: "{{sender}} invited you to the group \"{{group}}\"",
       lessThanHour: "Less than 1 hour ago",
       hoursAgo: "{hours} hours ago",
       daysAgo: "{days} days ago",
       marked: "Notifications marked",
-      allRead: "All notifications have been marked as read",
+      allRead: "All notifications marked as read",
       emptyMessage: "When you have notifications, they'll appear here",
       newRuleProposed: "New rule proposed",
     }
   },
-
+  
   // Invite
   invite: {
     title: "Invite friends",
     description: "Invite your friends to use DESWG",
     shareText: "Join DESWG and manage social fines among friends! 🎉",
+    shareTextShort: "Join DESWG!",
     copyLink: "Copy link",
     linkCopied: "Link copied!",
-    sendInvite: "Send invitation"
+    linkCopiedDescription: "The link has been copied to the clipboard",
+    sendInvite: "Send invite",
+    invitationLink: "Invitation link",
   },
-
+  
   // Achievements
   achievements: {
     title: "Achievement unlocked!",
     close: "Close",
-    xpGained: "Experience points gained",
+    xpGained: "Experience points earned",
     levelUp: "You leveled up!",
     newBadge: "New badge!"
   },
-
+  
   // Common
   common: {
+    goHome: "Go home",
     currency: "CHF",
     required: "*",
     ok: "OK",
@@ -423,42 +443,40 @@ onboard: {
     total: "Total",
   },
 
-  // Inglés
-modal: {
-  close: "Close",
-  confirm: "Confirm",
-  cancel: "Cancel",
-  delete: "Delete",
-  save: "Save",
-  edit: "Edit",
-  create: "Create",
-  update: "Update",
-  add: "Add",
-  addMember: "Add group member",
-  searchContactToAdd: "Search for a contact to add",
-  noContactsFound: "No contacts found",
-  startWriteToFind: "Start typing to search for contacts",
-   searchNameOrEmail: "Search by name or email",
-  searching: "Searching…",
-  errorSelectUser: "You must select an existing user.",
-  editGroup: "Edit group",
-  editGroupDescription: "Manage your group's information and members.",
-  generalTab: "General",
-  avatarTab: "Image",
-  membersTab: "Members",
-  groupName: "Group name",
-  description: "Description",
-  avatarLabel: "Group image",
-  changeAvatarTitle: "Click to change image",
-  changeAvatar: "Change image",
-  uploading: "Uploading...",
-  avatarHelpAdmin: "(Only the admin can change the image. Click or use the button to upload a new photo.)",
-  avatarHelpUser: "Only the admin can change the group's image.",
-  uploadSuccess: "Image uploaded successfully. Don’t forget to save!",
-  currentMembers: "Current members:",
-  adminLabel: "Admin",
-  removeMemberTitle: "Remove from group",
-  saveChanges: "Save changes",
-}
-
+  modal: {
+    close: "Close",
+    confirm: "Confirm",
+    cancel: "Cancel",
+    delete: "Delete",
+    save: "Save",
+    edit: "Edit",
+    create: "Create",
+    update: "Update",
+    add: "Add",
+    addMember: "Add member to group",
+    searchContactToAdd: "Search a contact to add",
+    noContactsFound: "No contacts found",
+    startWriteToFind: "Start typing to search contacts",
+    searchNameOrEmail: "Search by name or email",
+    searching: "Searching...",
+    errorSelectUser: "You must select an existing user.",
+    editGroup: "Edit group",
+    editGroupDescription: "Manage your group's information and members.",
+    generalTab: "General",
+    avatarTab: "Image",
+    membersTab: "Members",
+    groupName: "Group name",
+    description: "Description",
+    avatarLabel: "Group image",
+    changeAvatarTitle: "Click to change the image",
+    changeAvatar: "Change image",
+    uploading: "Uploading...",
+    avatarHelpAdmin: "(Only the admin can change the image. Click or use the button to upload a new photo.)",
+    avatarHelpUser: "Only the admin can change the group image.",
+    uploadSuccess: "Image uploaded successfully. Don't forget to save!",
+    currentMembers: "Current members:",
+    adminLabel: "Admin",
+    removeMemberTitle: "Remove from group",
+    saveChanges: "Save changes",
+  }
 };

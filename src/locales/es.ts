@@ -6,7 +6,21 @@ export const es = {
   name: "DESWG",
   subtitle: "Entre amigos",
   installApp: "Instalar app",
+  
+  installIosGuide: "Instalar IOS",
 },
+
+installApp: {
+  iosTitle: "Instalar app en iOS",
+  iosIntro: "Instala la web como app en tu iPhone o iPad para un acceso más rápido.",
+  iosStep1: "Abre Safari y entra en esta web.",
+  iosStep2: "Pulsa el botón 'Compartir'",
+  iosShareDesc: "Es el icono con un cuadrado y una flecha hacia arriba, en la parte inferior.",
+  iosStep3: "Selecciona 'Añadir a pantalla de inicio'.",
+  iosStep4: "Confirma pulsando 'Añadir' en la esquina superior derecha.",
+  iosDone: "¡Listo! Ahora puedes abrir la app directamente desde tu pantalla de inicio."
+},
+
 
 share: {
    title: "Comparte DESWG",
@@ -15,7 +29,12 @@ share: {
     copied: "¡Copiado!",
     close: "Cerrar",
     button: "Compartir app",
-    buttonDesc: "Comparte DESWG con tus amigos"
+    buttonDesc: "Comparte DESWG con tus amigos",
+    
+  intro: "Comparte la app con tus amigos:",
+  
+  share: "Enviar...",
+  text: "¡Prueba esta app!"
 },
 
 
@@ -23,7 +42,7 @@ banner: {
   title: "¿Quieres instalar la app para acceso directo?",
   install: "Instalar",
   close: "Cerrar",
-  showInstallBanner: "Para instalar la app: 🔽 pulsa Compartir y selecciona “Añadir a pantalla de inicio",
+  showInstallBanner: "Para instalar en IOS: Pulsa “Compartir“ 📤 y selecciona “Añadir a pantalla de inicio“",
   phoneWarning: "Debes añadir tu número de teléfono para recibir pagos con DESWG.",
   phoneWarningButton: "Añadir número",
 },
@@ -81,6 +100,7 @@ onboard: {
     contactSearchPlaceholder: "Buscar contacto por nombre o email",
     loading: "Cargando...",
     addedContactConfirmed: "Contacto añadido correctamente",
+    titleFineModalPage: "Crear nueva multa",
   },
 
  // Groups Page
@@ -387,9 +407,12 @@ onboard: {
     title: "Invitar amigos",
     description: "Invita a tus amigos a usar DESWG",
     shareText: "¡Únete a DESWG y gestiona multas sociales entre amigos! 🎉",
+    shareTextShort: "¡Únete a DESWG!",
     copyLink: "Copiar enlace",
     linkCopied: "¡Enlace copiado!",
-    sendInvite: "Enviar invitación"
+    linkCopiedDescription: "El enlace ha sido copiado al portapapeles",
+    sendInvite: "Enviar invitación",
+    invitationLink: "Enlace de invitación",
   },
   
   // Achievements
@@ -403,6 +426,8 @@ onboard: {
   
   // Common
   common: {
+     
+  goHome: "Ir al inicio",
     currency: "CHF",
     required: "*",
     ok: "OK",

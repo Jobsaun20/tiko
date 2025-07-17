@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/supabaseClient";
 import { useAuthContext } from "@/contexts/AuthContext";
 
@@ -10,7 +10,7 @@ export interface Contact {
   phone?: string;
   avatar?: string;
   status?: string;
-  user_supabase_id?: string | null; // Nuevo campo: id del usuario registrado, si existe
+  user_supabase_id?: string | null; // id del usuario registrado, si existe
 }
 
 export function useContacts() {
@@ -19,8 +19,8 @@ export function useContacts() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch contactos al iniciar o cuando cambia el usuario
-  useEffect(() => {
+  // Fetch contactos (reusable)
+  const fetchContacts = useCallback(async () => {
     if (!user) {
       setContacts([]);
       setLoading(false);
@@ -29,25 +29,27 @@ export function useContacts() {
     }
     setLoading(true);
     setError(null);
-
-    supabase
+    const { data, error } = await supabase
       .from("contacts")
       .select("*")
-      .eq("user_id", user.id)
-      .then(({ data, error }) => {
-        if (error) {
-          setError(error.message);
-          setContacts([]);
-        } else {
-          setContacts(data || []);
-        }
-        setLoading(false);
-      });
+      .eq("user_id", user.id);
+    if (error) {
+      setError(error.message);
+      setContacts([]);
+    } else {
+      setContacts(data || []);
+    }
+    setLoading(false);
   }, [user]);
+
+  // Carga contactos al iniciar o cuando cambia el usuario
+  useEffect(() => {
+    fetchContacts();
+  }, [fetchContacts]);
 
   // Añadir contacto (busca si es usuario registrado)
   async function addContact(contact: Omit<Contact, "id" | "user_id" | "user_supabase_id">) {
-    if (!user) return;
+    if (!user) return null;
 
     // Busca el usuario registrado por email (en tabla users de supabase)
     let userSupabaseId: string | null = null;
@@ -66,7 +68,10 @@ export function useContacts() {
       .select()
       .maybeSingle();
     if (error) throw new Error(error.message);
-    setContacts(prev => [...prev, data]);
+
+    // Refresca la lista (más seguro que solo push en arrays)
+    await fetchContacts();
+
     return data;
   }
 
@@ -89,7 +94,8 @@ export function useContacts() {
       .select()
       .maybeSingle();
     if (error) throw new Error(error.message);
-    setContacts(prev => prev.map(c => (c.id === contact.id ? data : c)));
+
+    await fetchContacts();
     return data;
   }
 
@@ -97,8 +103,11 @@ export function useContacts() {
   async function deleteContact(id: string) {
     const { error } = await supabase.from("contacts").delete().eq("id", id);
     if (error) throw new Error(error.message);
-    setContacts(prev => prev.filter(c => c.id !== id));
+    await fetchContacts();
   }
 
-  return { contacts, loading, error, addContact, updateContact, deleteContact };
+  // Refetch manual (útil si haces insert desde un layout global)
+  const refetch = fetchContacts;
+
+  return { contacts, loading, error, addContact, updateContact, deleteContact, refetch };
 }

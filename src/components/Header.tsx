@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Bell, LogOut, User } from "lucide-react";
+import { Bell, LogOut, User, Share2 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,15 +21,17 @@ import { useNotifications } from "@/hooks/useNotifications";
 // 👇 Importa el hook de instalación PWA
 import { usePWAInstall } from "@/contexts/PWAInstallContext";
 
+// 👇 Importa tu modal de invitar
+import { InviteModal } from "@/components/InviteModal";
+
 export const Header = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isInviteOpen, setInviteOpen] = useState(false); // <- Modal Compartir
   const { t } = useLanguage();
   const navigate = useNavigate();
   const { logout } = useAuthContext();
   const { profile: user } = useUserProfile();
   const { unreadCount } = useNotifications();
-
-  // Hook para la instalación de la PWA
   const { canInstall, promptInstall } = usePWAInstall();
 
   const handleDeleteAccount = () => {
@@ -115,11 +117,26 @@ export const Header = () => {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => navigate("/profile")} className="text-sm">
                     <User className="mr-2 h-4 w-4" />
-                    <span>Perfil</span>
+                    <span>{t.nav.profile}</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate("/notifications")} className="text-sm">
                     <Bell className="mr-2 h-4 w-4" />
                     <span>{t.nav.notifications}</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => navigate("/install-ios")}
+                    className="text-sm  hover:bg-blue-50 flex items-center gap-2"
+                  >
+                    <span role="img" aria-label="iOS">📲</span>
+                    <span>{t.app.installApp}</span>
+                  </DropdownMenuItem>
+                  {/* Compartir la app */}
+                  <DropdownMenuItem
+                    onClick={() => setInviteOpen(true)}
+                    className="text-sm hover:bg-blue-50 flex items-center gap-2"
+                  >
+                    <Share2 className="mr-2 h-4 w-4" />
+                    <span>{t.share?.title || "Compartir app"}</span>
                   </DropdownMenuItem>
                   {/* --- Botón Instalar App SOLO si es instalable --- */}
                   {canInstall && (
@@ -144,7 +161,7 @@ export const Header = () => {
                 variant="outline"
                 className="ml-2"
               >
-                Iniciar sesión
+                {t.welcome.login}
               </Button>
             )}
           </div>
@@ -158,6 +175,12 @@ export const Header = () => {
           onDeleteAccount={handleDeleteAccount}
         />
       )}
+      {/* Modal Compartir App */}
+      <InviteModal
+        isOpen={isInviteOpen}
+        onClose={() => setInviteOpen(false)}
+        
+      />
     </header>
   );
 };

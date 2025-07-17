@@ -537,7 +537,7 @@ export default function Index() {
           </div>
 
           {/* Acciones rápidas */}
-          <Card>
+          {/* <Card>
             <CardHeader>
               <CardTitle>{t.index.quickActions}</CardTitle>
               <CardDescription>{t.index.quickQuickActionsDescription}</CardDescription>
@@ -559,7 +559,7 @@ export default function Index() {
                 ))}
               </div>
             </CardContent>
-          </Card>
+          </Card> */}
 
           {/* Actividad reciente */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

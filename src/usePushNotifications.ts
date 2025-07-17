@@ -19,9 +19,7 @@ export function usePushNotifications() {
 
     if ("serviceWorker" in navigator && "PushManager" in window) {
       navigator.serviceWorker
-        .register("/service-worker.js")
-        .then((reg) => console.log("Service Worker registrado:", reg.scope))
-        .catch((err) => console.error("Error registrando SW:", err));
+       
 
       Notification.requestPermission().then((permission) => {
         if (permission === "granted") {

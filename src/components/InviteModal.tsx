@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Copy, Share2, Mail, MessageSquare } from "lucide-react";
+import { Copy, Share2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -23,16 +22,15 @@ interface InviteModalProps {
 export const InviteModal = ({ isOpen, onClose }: InviteModalProps) => {
   const { t } = useLanguage();
   const { toast } = useToast();
-  const [email, setEmail] = useState("");
-  
-  const inviteLink = "https://Pic.app/invite/abc123";
+
+  const inviteLink = "https://picpic-ruby.vercel.app/welcome";
   const shareText = t.invite.shareText;
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(inviteLink);
     toast({
       title: t.invite.linkCopied,
-      description: "El enlace ha sido copiado al portapapeles"
+      description: t.invite.linkCopiedDescription
     });
   };
 
@@ -40,36 +38,16 @@ export const InviteModal = ({ isOpen, onClose }: InviteModalProps) => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'Únete a DESWG',
+          title: t.invite.shareTextShort,
           text: shareText,
           url: inviteLink
         });
       } catch (err) {
-        console.log('Error sharing:', err);
+        // usuario canceló o error
       }
     } else {
       handleCopyLink();
     }
-  };
-
-  const handleSendEmail = () => {
-    if (!email) {
-      toast({
-        title: t.common.error,
-        description: "Por favor ingresa un email",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    // Simulate sending email
-    toast({
-      title: t.common.success,
-      description: `Invitación enviada a ${email}`
-    });
-    
-    setEmail("");
-    onClose();
   };
 
   return (
@@ -83,58 +61,26 @@ export const InviteModal = ({ isOpen, onClose }: InviteModalProps) => {
         </DialogHeader>
         
         <div className="space-y-6">
-          {/* Share Link */}
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label>Enlace de invitación</Label>
-              <div className="flex gap-2">
-                <Input
-                  value={inviteLink}
-                  readOnly
-                  className="bg-gray-50"
-                />
-                <Button variant="outline" size="icon" onClick={handleCopyLink}>
-                  <Copy className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-2">
-              <Button onClick={handleShare} variant="outline" className="w-full">
-                <Share2 className="h-4 w-4 mr-2" />
-                {t.common.share}
-              </Button>
-              <Button onClick={handleCopyLink} variant="outline" className="w-full">
-                <Copy className="h-4 w-4 mr-2" />
-                {t.invite.copyLink}
-              </Button>
-            </div>
-          </div>
-
-          {/* Send by Email */}
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Enviar por email</Label>
+          <div className="space-y-2">
+            <Label>{t.invite.invitationLink}</Label>
+            <div className="flex gap-2">
               <Input
-                id="email"
-                type="email"
-                placeholder="amigo@ejemplo.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={inviteLink}
+                readOnly
+                className="bg-gray-50"
               />
+              <Button variant="outline" size="icon" onClick={handleCopyLink}>
+                <Copy className="h-4 w-4" />
+              </Button>
             </div>
-            
-            <Button onClick={handleSendEmail} className="w-full">
-              <Mail className="h-4 w-4 mr-2" />
-              {t.invite.sendInvite}
-            </Button>
           </div>
-        </div>
-
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
-            {t.common.close}
+          <Button onClick={handleShare} variant="default" className="w-full">
+            <Share2 className="h-4 w-4 mr-2" />
+            {t.common.share}
           </Button>
+        </div>
+        <DialogFooter>
+          
         </DialogFooter>
       </DialogContent>
     </Dialog>
