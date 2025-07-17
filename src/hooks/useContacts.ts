@@ -47,26 +47,42 @@ export function useContacts() {
     fetchContacts();
   }, [fetchContacts]);
 
-  // Añadir contacto (busca si es usuario registrado)
-  async function addContact(contact: Omit<Contact, "id" | "user_id" | "user_supabase_id">) {
+  // Añadir contacto (busca si es usuario registrado Y su avatar)
+  async function addContact(
+    contact: Omit<Contact, "id" | "user_id" | "user_supabase_id">
+  ) {
     if (!user) return null;
 
     // Busca el usuario registrado por email (en tabla users de supabase)
     let userSupabaseId: string | null = null;
+    let avatar: string = contact.avatar ?? "/placeholder.svg";
+
     if (contact.email) {
       const { data: foundUser } = await supabase
         .from("users")
-        .select("id")
+        .select("id, avatar_url")
         .eq("email", contact.email)
         .maybeSingle();
       userSupabaseId = foundUser?.id || null;
+      // Si el usuario existe y tiene avatar_url, úsalo
+      if (foundUser?.avatar_url) {
+        avatar = foundUser.avatar_url;
+      }
     }
 
     const { data, error } = await supabase
       .from("contacts")
-      .insert([{ ...contact, user_id: user.id, user_supabase_id: userSupabaseId }])
+      .insert([
+        {
+          ...contact,
+          user_id: user.id,
+          user_supabase_id: userSupabaseId,
+          avatar, // guarda la url en el campo avatar
+        },
+      ])
       .select()
       .maybeSingle();
+
     if (error) throw new Error(error.message);
 
     // Refresca la lista (más seguro que solo push en arrays)
@@ -75,21 +91,29 @@ export function useContacts() {
     return data;
   }
 
-  // Editar contacto (si cambia el email, actualiza user_supabase_id)
+  // Editar contacto (si cambia el email, actualiza user_supabase_id y avatar)
   async function updateContact(contact: Contact) {
     let userSupabaseId: string | null = contact.user_supabase_id || null;
+    let avatar: string = contact.avatar ?? "/placeholder.svg";
     // Busca usuario registrado si el email ha cambiado o es nuevo
     if (contact.email) {
       const { data: foundUser } = await supabase
         .from("users")
-        .select("id")
+        .select("id, avatar_url")
         .eq("email", contact.email)
         .maybeSingle();
       userSupabaseId = foundUser?.id || null;
+      if (foundUser?.avatar_url) {
+        avatar = foundUser.avatar_url;
+      }
     }
     const { data, error } = await supabase
       .from("contacts")
-      .update({ ...contact, user_supabase_id: userSupabaseId })
+      .update({
+        ...contact,
+        user_supabase_id: userSupabaseId,
+        avatar,
+      })
       .eq("id", contact.id)
       .select()
       .maybeSingle();
@@ -109,5 +133,13 @@ export function useContacts() {
   // Refetch manual (útil si haces insert desde un layout global)
   const refetch = fetchContacts;
 
-  return { contacts, loading, error, addContact, updateContact, deleteContact, refetch };
+  return {
+    contacts,
+    loading,
+    error,
+    addContact,
+    updateContact,
+    deleteContact,
+    refetch,
+  };
 }

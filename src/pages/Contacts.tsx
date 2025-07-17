@@ -183,12 +183,15 @@ export default function Contacts() {
                 <CardContent className="p-6">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="flex items-center gap-4 flex-1">
-                      <Avatar className="h-12 w-12">
-                        <AvatarImage src={contact.avatar} alt={contact.name} />
-                        <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
-                          {contact.name?.charAt(0)?.toUpperCase() || "U"}
-                        </AvatarFallback>
-                      </Avatar>
+                       <Avatar className="h-12 w-12">
+  <AvatarImage
+    src={contact.avatar}
+    alt={contact.name}
+  />
+  <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
+    {contact.name?.charAt(0)?.toUpperCase() || "U"}
+  </AvatarFallback>
+</Avatar>
                       <div className="flex-1">
                         <h3 className="font-semibold text-lg">{contact.name}</h3>
                         <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600 mt-1">
@@ -270,7 +273,7 @@ export default function Contacts() {
         }}
         onSubmit={async contactData => {
           try {
-            await addContact({ ...contactData, status: "active", avatar: "/placeholder.svg" });
+            await addContact({ ...contactData, status: "active", avatar: "" });
             toast({
               title: t.pages.contacts.contactAdded,
               description: t.contacts.addedContactConfirmed,
