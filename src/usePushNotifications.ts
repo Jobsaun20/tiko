@@ -25,7 +25,10 @@ export function usePushNotifications() {
     if ("serviceWorker" in navigator && "PushManager" in window) {
       (async () => {
         try {
-          const reg = await navigator.serviceWorker.register("/service-worker.js");
+          const reg = await navigator.serviceWorker.register("/service-worker.js", {
+            type: "module",
+            updateViaCache: "none",
+          });
           console.log("✅ Service Worker registrado:", reg.scope);
 
           const permission = await Notification.requestPermission();
@@ -47,7 +50,6 @@ export function usePushNotifications() {
             console.log("🔁 Ya existía suscripción previa");
           }
 
-          // Guarda la suscripción en Supabase
           const { error } = await supabase
             .from("push_subscriptions")
             .upsert({
