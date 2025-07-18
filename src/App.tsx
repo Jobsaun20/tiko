@@ -54,8 +54,7 @@ function usePushNotifications(user: any) {
     if (!user) return;
     const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY;
     if ("serviceWorker" in navigator && "PushManager" in window) {
-      navigator.serviceWorker
-         .register("/service-worker.js")
+      navigator.serviceWorker.register("/service-worker.js")
         .then((reg) => console.log("Service Worker registrado:", reg.scope))
         .catch((err) => console.error("Error registrando SW:", err)); 
       Notification.requestPermission().then((permission) => {

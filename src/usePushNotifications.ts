@@ -18,7 +18,9 @@ export function usePushNotifications() {
     if (!user) return; // Espera a que haya usuario logueado
 
     if ("serviceWorker" in navigator && "PushManager" in window) {
-      navigator.serviceWorker
+      navigator.serviceWorker.register("/service-worker.js")
+        .then((reg) => console.log("Service Worker registrado:", reg.scope))
+        .catch((err) => console.error("Error registrando SW:", err)); 
        
 
       Notification.requestPermission().then((permission) => {
