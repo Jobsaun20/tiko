@@ -28,13 +28,24 @@ import { GroupRulesModal } from "@/components/GroupRulesModal";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CreateFineModal } from "@/components/CreateFineModal";
 
+// BADGES
+import { useBadgeModal } from "@/contexts/BadgeModalContext";
+import { checkAndAwardBadge } from "@/utils/checkAndAwardBadge";
+import { useAuthContext } from "@/contexts/AuthContext";
+
 // Fallback por si no hay avatar (URL o base64)
 const DEFAULT_GROUP_AVATAR = "https://ui-avatars.com/api/?background=6552F5&color=fff&name=GR";
 
+// URL de tu edge function badges (usa la misma que en Contacts)
+const CHECK_BADGES_URL = "https://pyecpkccpfeuittnccat.supabase.co/functions/v1/check_badges";
+
+
 export default function Groups() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { showBadges } = useBadgeModal();
+  const { user: userAuth, session } = useAuthContext();
   const {
     groups,
     loading,
@@ -65,26 +76,51 @@ export default function Groups() {
   // Modal handlers
   const handleCreateGroup = () => setIsCreateGroupModalOpen(true);
 
+  // BADGE: CREAR GRUPO
   const handleSubmitGroup = async (groupData: any) => {
-    if (!user) {
-      toast({ title: "Error", description: t.groups.notIdentifiedUser, variant: "destructive" });
-      return;
-    }
-    try {
-      await addGroup({
-        name: groupData.name,
-        description: groupData.description,
-      });
-      setIsCreateGroupModalOpen(false);
-      toast({
-        title: t.pages.groups.groupCreated,
-        description: `${t.groups.theGroup} "${groupData.name}" ${t.groups.createdSuccessfully}`,
-      });
-    } catch (err: any) {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
-    }
-  };
+  if (!user) {
+    toast({ title: "Error", description: t.groups.notIdentifiedUser, variant: "destructive" });
+    return;
+  }
+  try {
+    // 1. Crear grupo
+    const newGroup = await addGroup({
+      name: groupData.name,
+      description: groupData.description,
+    });
 
+    setIsCreateGroupModalOpen(false);
+    toast({
+      title: t.pages.groups.groupCreated,
+      description: `${t.groups.theGroup} "${groupData.name}" ${t.groups.createdSuccessfully}`,
+    });
+
+    // --- Chequear insignias Edge Function ---
+    if (userAuth && session?.access_token && newGroup) {
+      const response = await fetch(CHECK_BADGES_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + session.access_token,
+        },
+        body: JSON.stringify({
+          user_id: userAuth.id,
+          action: "group_create", // tu key de badge para crear grupo
+          action_data: {
+            group_id: newGroup.id,
+            lang: language || "es",
+          },
+        }),
+      });
+      const result = await response.json();
+      if (result?.newlyEarned?.length > 0) {
+        showBadges(result.newlyEarned, language);
+      }
+    }
+  } catch (err: any) {
+    toast({ title: "Error", description: err.message, variant: "destructive" });
+  }
+};
   const handleLeaveGroup = async (groupId: string) => {
     try {
       await leaveGroup(groupId);
@@ -137,24 +173,51 @@ export default function Groups() {
     }
   };
 
+  // BADGE: AGREGAR MIEMBRO
+  const handleSubmitAddMember = async (selectedUserId: string) => {
+  if (!selectedGroupId) return;
+  try {
+    const result = await addMemberToGroup(selectedGroupId, selectedUserId, "member");
+    toast({
+      title: t.groups.memberAdded,
+      description: t.groups.memberAddedDescription,
+    });
+
+    // Chequear badge por añadir miembro
+    if (userAuth && session?.access_token) {
+      const response = await fetch(CHECK_BADGES_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + session.access_token,
+        },
+        body: JSON.stringify({
+          user_id: userAuth.id,
+          action: "add_group_member", // tu key de badge para añadir miembro
+          action_data: {
+            group_id: selectedGroupId,
+            new_member_id: selectedUserId,
+            lang: language || "es",
+          },
+        }),
+      });
+      const resultBadge = await response.json();
+      if (resultBadge?.newlyEarned?.length > 0) {
+        showBadges(resultBadge.newlyEarned, language);
+      }
+    }
+
+  } catch (err: any) {
+    toast({ title: "Error", description: err.message, variant: "destructive" });
+  }
+  setShowAddMemberModal(false);
+  setSelectedGroupId(null);
+};
+
   // Agregar miembro desde edición
   const handleAddMember = (groupId: string) => {
     setSelectedGroupId(groupId);
     setShowAddMemberModal(true);
-  };
-  const handleSubmitAddMember = async (selectedUserId: string) => {
-    if (!selectedGroupId) return;
-    try {
-      await addMemberToGroup(selectedGroupId, selectedUserId, "member");
-      toast({
-        title: t.groups.memberAdded,
-        description: t.groups.memberAddedDescription,
-      });
-    } catch (err: any) {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
-    }
-    setShowAddMemberModal(false);
-    setSelectedGroupId(null);
   };
 
   // Encuentra el contacto real (user_supabase_id debe coincidir con el id del miembro)
