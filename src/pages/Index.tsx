@@ -1,5 +1,5 @@
 // src/pages/index.tsx
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -31,6 +31,8 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+
+
 
 // URL de tu Edge Function en Supabase
 const CHECK_BADGES_URL = "https://pyecpkccpfeuittnccat.supabase.co/functions/v1/check_badges";
@@ -135,6 +137,11 @@ export default function Index() {
   const [showPhoneModal, setShowPhoneModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
 
+    // ---- NUEVO: Estados para insignias reales ----
+  const [earnedBadges, setEarnedBadges] = useState([]);
+  const [badgesLoading, setBadgesLoading] = useState(true);
+
+
   // Si no hay perfil, inicializa datos vacíos para nuevo usuario
   const userData = profile || {
     id: "",
@@ -188,6 +195,71 @@ export default function Index() {
     setShowPhoneModal(false);
     toast({ title: "Teléfono actualizado", description: "Ahora puedes enviar y recibir multas con Twint" });
   };
+useEffect(() => {
+  const fetchUserBadges = async () => {
+    if (!profile?.id) {
+      setEarnedBadges([]);
+      setBadgesLoading(false);
+      return;
+    }
+    setBadgesLoading(true);
+
+    // 1. Obtener user_badges del usuario
+    const { data: userBadges, error } = await supabase
+      .from("user_badges")
+      .select("badge_id, achieved_at")
+      .eq("user_id", profile.id);
+
+    if (error) {
+      setBadgesLoading(false);
+      setEarnedBadges([]);
+      return;
+    }
+    if (!userBadges || userBadges.length === 0) {
+      setEarnedBadges([]);
+      setBadgesLoading(false);
+      return;
+    }
+
+    // 2. Obtener datos de badges
+    const badgeIds = userBadges.map((b) => b.badge_id);
+    const { data: badgesData } = await supabase
+      .from("badges")
+      .select("*")
+      .in("id", badgeIds);
+
+    // 3. Juntar info y asegurar que name/description es JSON
+    const joined = userBadges
+      .map((ub) => {
+        const badge = badgesData.find((b) => b.id === ub.badge_id) || {};
+        // Asegúrate de que name y description son objetos
+        let name = badge.name;
+        let description = badge.description;
+        try {
+          if (typeof name === "string") name = JSON.parse(name);
+          if (typeof description === "string") description = JSON.parse(description);
+        } catch {}
+        return {
+          ...badge,
+          name,
+          description,
+          achieved_at: ub.achieved_at,
+        };
+      })
+      .filter((b) => b.id);
+
+    // Ordenar por fecha: el más reciente primero
+    joined.sort((a, b) => {
+  const dateA = a.achieved_at ? new Date(a.achieved_at).getTime() : 0;
+  const dateB = b.achieved_at ? new Date(b.achieved_at).getTime() : 0;
+  return dateB - dateA;
+});
+    setEarnedBadges(joined);
+    setBadgesLoading(false);
+  };
+
+  fetchUserBadges();
+}, [profile?.id]);
 
   // ACCIONES
   const handleCreateFine = async (newFine: any) => {
@@ -276,6 +348,16 @@ export default function Index() {
   setPaymentModalOpen(false);
   setSelectedFine(null);
 };
+
+const getRarityColor = (rarity) => {
+    switch (rarity) {
+      case "common": return "bg-gray-100 text-gray-800";
+      case "rare": return "bg-blue-100 text-blue-800";
+      case "epic": return "bg-purple-100 text-purple-800";
+      case "legendary": return "bg-yellow-100 text-yellow-800";
+      default: return "bg-gray-100 text-gray-800";
+    }
+  };
 
 
   const handleStatsCardClick = (filter: string) => {
@@ -369,6 +451,9 @@ export default function Index() {
     );
   }
 
+
+
+  
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-50 to-pink-50">
       <Header />
@@ -411,14 +496,14 @@ export default function Index() {
               <Badge variant="secondary" className="bg-purple-100 text-purple-800">
                 Nivel {currentLevel}
               </Badge>
-              <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+              {/* <Badge variant="secondary" className="bg-blue-100 text-blue-800">
                 {userData.xp} XP
-              </Badge>
+              </Badge> */}
             </div>
             <div className="w-full mb-4">
-              <div className="flex justify-between text-sm text-gray-600 mb-1">
+              <div className="flex justify-center text-sm text-gray-600 mb-1">
                 <span>{xpProgress.current} XP</span>
-                <span>{t.index.level} {currentLevel + 1}</span>
+                {/* <span>{t.index.level} {currentLevel + 1}</span> */}
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div
@@ -426,20 +511,29 @@ export default function Index() {
                   style={{ width: `${xpProgress.percentage}%` }}
                 ></div>
               </div>
-            </div>
+            </div>            
 
             {/* Insignias */}
-            <div className="flex flex-wrap gap-2 justify-center mb-4">
-              {userBadges.length === 0 ? (
-                <Badge variant="secondary" className="bg-gray-100 text-gray-700">
+           <div className="w-full flex flex-col items-center mb-2">
+              {badgesLoading ? (
+                <div className="text-gray-400 text-xs">{t.profile.loadingBadges || "Cargando insignias..."}</div>
+              ) : earnedBadges.length === 0 ? (
+                <Badge variant="secondary" className="bg-gray-100 text-gray-700 text-xs py-1 px-2">
                   {t.index.noinsignias}
                 </Badge>
               ) : (
-                userBadges.slice(0, 3).map((badge) => (
-                  <Badge key={badge.id} variant="secondary" className="bg-yellow-100 text-yellow-800">
-                    {badge.icon} {badge.name.es || badge.name.en || badge.name.de}
-                  </Badge>
-                ))
+                <Badge
+                  key={earnedBadges[0].id}
+                  variant="secondary"
+                  className={
+                    getRarityColor(earnedBadges[0].rarity) +
+                    " flex items-center gap-1 text-xs font-medium py-1 px-3"
+                  }
+                  style={{ fontWeight: 500 }}
+                >
+                  <span className="mr-1 text-base">{earnedBadges[0].icon}</span>
+                  {earnedBadges[0].name?.[language] || earnedBadges[0].name?.en || "Sin nombre"}
+                </Badge>
               )}
             </div>
           </div>
@@ -654,7 +748,7 @@ export default function Index() {
             </Card>
 
             {/* Insignias recientes */}
-            <Card>
+            {/* <Card>
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Award className="h-5 w-5" />
@@ -683,7 +777,7 @@ export default function Index() {
                   {t.index.seeAllInsignias}
                 </Button>
               </CardContent>
-            </Card>
+            </Card> */}
           </div>
         </div>
       </div>
