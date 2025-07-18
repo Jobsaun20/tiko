@@ -5,18 +5,20 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useToast } from "@/hooks/use-toast";
 import { useContacts } from "@/hooks/useContacts";
 import { useFines } from "@/hooks/useFines";
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Users, UserPlus, ArrowLeft, Mail, Phone, Trash2, X } from "lucide-react";
-
 import { Header } from "@/components/Header";
 import { CreateFineModal } from "@/components/CreateFineModal";
 import { AddContactModal } from "@/components/AddContactModal";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { supabase } from "@/supabaseClient";
+import { useBadgeModal } from "@/contexts/BadgeModalContext";
+
+// URL de tu edge function badges
+const CHECK_BADGES_URL = "https://pyecpkccpfeuittnccat.supabase.co/functions/v1/check_badges";
 
 // Buscar el user_id a partir del email
 async function getUserIdByEmail(email: string): Promise<string | null> {
@@ -30,13 +32,14 @@ async function getUserIdByEmail(email: string): Promise<string | null> {
 }
 
 export default function Contacts() {
-  const { user } = useAuthContext();
+  const { user, session } = useAuthContext();
   const { profile: currentUser } = useUserProfile();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { contacts, loading, addContact, updateContact, deleteContact } = useContacts();
   const { createFine } = useFines();
+  const { showBadges } = useBadgeModal();
 
   const [isCreateFineModalOpen, setIsCreateFineModalOpen] = useState(false);
   const [isAddContactModalOpen, setIsAddContactModalOpen] = useState(false);
@@ -173,7 +176,7 @@ export default function Contacts() {
           </div>
         </div>
 
-        {/* Lista de contactos filtrada s*/}
+        {/* Lista de contactos filtrada */}
         <div className="space-y-4">
           {loading ? (
             <div className="text-center text-gray-400 py-8">{t.contacts.loading}</div>
@@ -183,15 +186,15 @@ export default function Contacts() {
                 <CardContent className="p-6">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="flex items-center gap-4 flex-1">
-                       <Avatar className="h-12 w-12">
-  <AvatarImage
-    src={contact.avatar}
-    alt={contact.name}
-  />
-  <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
-    {contact.name?.charAt(0)?.toUpperCase() || "U"}
-  </AvatarFallback>
-</Avatar>
+                      <Avatar className="h-12 w-12">
+                        <AvatarImage
+                          src={contact.avatar}
+                          alt={contact.name}
+                        />
+                        <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
+                          {contact.name?.charAt(0)?.toUpperCase() || "U"}
+                        </AvatarFallback>
+                      </Avatar>
                       <div className="flex-1">
                         <h3 className="font-semibold text-lg">{contact.name}</h3>
                         <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600 mt-1">
@@ -213,21 +216,21 @@ export default function Contacts() {
                     </div>
                     {/* Acciones: multar derecha, borrar izquierda en móvil */}
                     <div className="flex flex-row justify-between w-full px-4 gap-2 mt-3">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDeleteContact(contact.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      className="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600"
-                      onClick={() => handleFineContact(contact)}
-                    >
-                      {t.pages.contacts.fine}
-                    </Button>
-                  </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDeleteContact(contact.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        className="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600"
+                        onClick={() => handleFineContact(contact)}
+                      >
+                        {t.pages.contacts.fine}
+                      </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -273,11 +276,35 @@ export default function Contacts() {
         }}
         onSubmit={async contactData => {
           try {
-            await addContact({ ...contactData, status: "active", avatar: "" });
+            // Añade el contacto
+            const nuevoContacto = await addContact({ ...contactData, status: "active", avatar: "" });
             toast({
               title: t.pages.contacts.contactAdded,
               description: t.contacts.addedContactConfirmed,
             });
+
+            // --- Chequear insignias Edge Function ---
+            if (user && session?.access_token && nuevoContacto) {
+              const response = await fetch(CHECK_BADGES_URL, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": "Bearer " + session.access_token,
+                },
+                body: JSON.stringify({
+                  user_id: user.id,
+                  action: "add_contact", // o el "key" de tu badge
+                  action_data: {
+                    contact_id: nuevoContacto.id,
+                    lang: language || "es",
+                  },
+                }),
+              });
+              const result = await response.json();
+              if (result?.newlyEarned?.length > 0) {
+                showBadges(result.newlyEarned, language);
+              }
+            }
           } catch (err: any) {
             toast({ title: "Error", description: err.message, variant: "destructive" });
           }
