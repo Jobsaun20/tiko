@@ -15,8 +15,8 @@ export default function Onboarding() {
   const slides = [
     {
       lottie: "https://lottie.host/b7826704-df29-4a8b-a785-6f10c66c9468/YShWMObADu.json",
-      title: t.onboard.whatIsPic,
-      desc: t.onboard.whatIsPicDescription,
+      title: t.onboard.whatIsDeswg,
+      desc: t.onboard.whatIsDeswgDescription,
     },
     {
       lottie: "https://lottie.host/a9b25b68-7a1d-4f4f-be12-60dfc31814d8/b3dGcYKY5h.json",
@@ -67,7 +67,7 @@ export default function Onboarding() {
           ))}
         </div>
         {/* Animación Lottie */}
-        <div className="w-32 h-32 rounded-xl overflow-hidden mb-6 bg-[#f3f3f3] flex items-center justify-center shadow">
+        <div className="w-38 h-38 rounded-xl overflow-hidden mb-6 bg-[#f3f3f3] flex items-center justify-center shadow">
           {animationData ? (
             <Lottie
               animationData={animationData}

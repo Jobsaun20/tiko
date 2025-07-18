@@ -32,6 +32,9 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 
+// URL de tu Edge Function en Supabase
+const CHECK_BADGES_URL = "https://pyecpkccpfeuittnccat.supabase.co/functions/v1/check_badges";
+
 // Footer
 function Footer() {
   return (
@@ -62,7 +65,7 @@ function Footer() {
 
 // --------- MODAL PARA COMPARTIR LA APP ---------
 function ShareAppModal({ isOpen, onClose, appUrl }: { isOpen: boolean; onClose: () => void; appUrl: string; }) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const inputRef = useRef<HTMLInputElement>(null);
   const [copied, setCopied] = useState(false);
 
@@ -115,7 +118,7 @@ function ShareAppModal({ isOpen, onClose, appUrl }: { isOpen: boolean; onClose: 
 }
 
 export default function Index() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user, session } = useAuthContext();
@@ -200,67 +203,80 @@ export default function Index() {
 
   // --------- FUNCIÓN DE PAGO CON XP Y BADGES ---------
   const handlePayment = async () => {
-    if (selectedFine) {
-      try {
-        await payFine(selectedFine.id);
-        toast({
-          title: t.fines.finePaid,
-          description: `Multa de ${selectedFine.amount} CHF pagada correctamente`,
+  if (selectedFine) {
+    try {
+      await payFine(selectedFine.id);
+      toast({
+        title: t.fines.finePaid,
+        description: `Multa de ${selectedFine.amount} CHF pagada correctamente`,
+      });
+
+      // --- SUMA XP BASE ---
+      const BASE_XP = 2;
+      let gainedXp = BASE_XP;
+
+      // --- CHEQUEAR Y OTORGAR BADGES (EDGE FUNCTION) ---
+      if (user && session?.access_token) {
+        const response = await fetch(CHECK_BADGES_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + session.access_token,
+          },
+          body: JSON.stringify({
+            user_id: user.id,
+            action: "pay_fine", // asegúrate de que la acción coincida con tu lógica de badges
+            action_data: {
+              amount: selectedFine.amount,
+              fine_id: selectedFine.id,
+              lang: language || "es", // si tienes un campo language
+            },
+          }),
         });
-
-        // --------- CHEQUEAR BADGES Y SUMAR XP ---------
-        if (user && session?.access_token) {
-          const badges = await checkAndAwardBadge(
-            user.id,
-            "pay_fine_10",
-            { amount: selectedFine.amount, fine_id: selectedFine.id, paid_at: new Date().toISOString(), },
-            session.access_token            
-          );
-
-          let gainedXp = 0;
-          if (badges && badges.length > 0) {
-            showBadges(badges);
-            badges.forEach((badge: any) => {
-              gainedXp += badge.xp_reward || badge.xpReward || 0;
-            });
-          }
-
-          gainedXp += 2;
-
-          if (gainedXp > 0 && profile) {
-            const nuevoXP = (profile.xp || 0) + gainedXp;
-            const result = await updateProfile({ xp: nuevoXP });
-
-            if (result.error) {
-              toast({
-                title: "Error XP",
-                description: "No se pudo actualizar la experiencia: " + result.error,
-                variant: "destructive",
-              });
-              alert("No se pudo actualizar la experiencia: " + result.error);
-            } else {
-              toast({
-                title: t.achievements.title || "¡Has ganado experiencia!",
-                description: t.achievements.xpGained
-                  ? t.achievements.xpGained.replace("{xp}", String(gainedXp))
-                  : `Has ganado ${gainedXp} XP por tu acción.`,
-                variant: "default",
-              });
-              if (typeof fetchProfile === "function") fetchProfile();
-            }
-          }
+        const result = await response.json();
+        if (result?.newlyEarned?.length > 0) {
+          showBadges(result.newlyEarned, language || "es");
+          result.newlyEarned.forEach((badge: any) => {
+            gainedXp += badge.xp_reward || badge.xpReward || 0;
+          });
         }
-      } catch (err: any) {
-        toast({
-          title: "Error",
-          description: err?.message || "Error desconocido",
-          variant: "destructive",
-        });
       }
+
+      // --- ACTUALIZAR XP SIEMPRE, TENGA BADGE O NO ---
+      if (gainedXp > 0 && profile) {
+        const nuevoXP = (profile.xp || 0) + gainedXp;
+        const result = await updateProfile({ xp: nuevoXP });
+
+        if (result.error) {
+          toast({
+            title: "Error XP",
+            description: "No se pudo actualizar la experiencia: " + result.error,
+            variant: "destructive",
+          });
+          alert("No se pudo actualizar la experiencia: " + result.error);
+        } else {
+          toast({
+            title: t.achievements.title || "¡Has ganado experiencia!",
+            description: t.achievements.xpGained
+              ? t.achievements.xpGained.replace("{xp}", String(gainedXp))
+              : `Has ganado ${gainedXp} XP por tu acción.`,
+            variant: "default",
+          });
+          if (typeof fetchProfile === "function") fetchProfile();
+        }
+      }
+    } catch (err: any) {
+      toast({
+        title: "Error",
+        description: err?.message || "Error desconocido",
+        variant: "destructive",
+      });
     }
-    setPaymentModalOpen(false);
-    setSelectedFine(null);
-  };
+  }
+  setPaymentModalOpen(false);
+  setSelectedFine(null);
+};
+
 
   const handleStatsCardClick = (filter: string) => {
     navigate(`/history?filter=${filter}`);

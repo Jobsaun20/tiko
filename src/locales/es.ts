@@ -56,8 +56,8 @@ welcome: {
 },
 
 onboard: {
-  whatIsDESWG: "¿Qué es DESWG?",
-  whatIsDESWGDescription: "DESWG es la forma más fácil de gestionar multas, reglas sociales y motivación en grupo con tus amigos. ¡Sin discusiones, solo diversión!",
+  whatIsDeswg: "¿Qué es DESWG?",
+  whatIsDeswgDescription: "DESWG es la forma más fácil de gestionar multas, reglas sociales y motivación en grupo con tus amigos. ¡Sin discusiones, solo diversión!",
   createGroups: "Crea grupos y reglas",
   createGroupsDescription: "Crea grupos privados, define reglas personalizadas y controla quién las rompe. Todas las reglas deben ser aceptadas por todos.",
   payAndLevelUp: "Paga y sube de nivel",

@@ -14,6 +14,9 @@ import { useAuthContext } from "@/contexts/AuthContext";
 import { useBadgeModal } from "@/contexts/BadgeModalContext";
 import { checkAndAwardBadge } from "@/utils/checkAndAwardBadge";
 
+// URL de tu Edge Function en Supabase
+const CHECK_BADGES_URL = "https://pyecpkccpfeuittnccat.supabase.co/functions/v1/check_badges";
+
 export default function History() {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
@@ -44,7 +47,7 @@ export default function History() {
     prevReceivedRef.current = received.length;
   }, [fines, user, toast]);
 
-  // Pago de multa - suma XP siempre
+  // -------- PAGO DE MULTA Y CHEQUEO DE BADGES --------
   const handlePayment = async () => {
     if (selectedFine) {
       try {
@@ -54,21 +57,34 @@ export default function History() {
           description: `${t.history.fineForAmount} ${selectedFine.amount} CHF ${t.history.correctlyPaid}`,
         });
 
-        // --- SIEMPRE SUMA AL MENOS 2 XP POR PAGO ---
+        // --- SUMA XP BASE ---
         const BASE_XP = 2;
         let gainedXp = BASE_XP;
 
-        // --------- CHEQUEAR BADGES (XP extra si corresponde) ---------
+        // --- CHEQUEAR Y OTORGAR BADGES (EDGE FUNCTION) ---
         if (authUser && session?.access_token) {
-          const badges = await checkAndAwardBadge(
-            authUser.id,
-            "pay_qr",
-            { amount: selectedFine.amount, fine_id: selectedFine.id, lang: language },
-            session.access_token
-          );
-          if (badges && badges.length > 0) {
-            showBadges(badges, language);
-            badges.forEach((badge: any) => {
+          const response = await fetch(CHECK_BADGES_URL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + session.access_token,
+            },
+            body: JSON.stringify({
+              user_id: authUser.id,
+              action: "pay_fine", // o el nombre exacto de la acción de tu badge
+              action_data: {
+                amount: selectedFine.amount,
+                fine_id: selectedFine.id,
+                lang: language,
+              },
+            }),
+          });
+          const result = await response.json();
+          if (result?.newlyEarned?.length > 0) {
+            // Muestra el modal/toast de badges nuevos
+            showBadges(result.newlyEarned, language);
+            // Suma XP adicional si el badge tiene recompensa XP
+            result.newlyEarned.forEach((badge: any) => {
               gainedXp += badge.xp_reward || badge.xpReward || 0;
             });
           }

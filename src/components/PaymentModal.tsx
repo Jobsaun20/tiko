@@ -9,7 +9,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { QrCode, Smartphone, Copy, CheckCircle } from "lucide-react";
+import { QrCode, Smartphone, Copy, CheckCircle, ExternalLink } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Fine } from "@/types/Fine";
 
@@ -30,7 +30,7 @@ export const PaymentModal = ({
   const { toast } = useToast();
 
   useEffect(() => {
-    setIsPaid(false); // Resetear cuando se cambia la multa/modal
+    setIsPaid(false);
   }, [fine, isOpen]);
 
   const copyToClipboard = (text: string) => {
@@ -47,6 +47,22 @@ export const PaymentModal = ({
       onPayment();
       setIsPaid(false);
     }, 1500);
+  };
+
+  // --- NUEVO: Función para abrir la app de TWINT con el número ---
+  const openTwintApp = () => {
+    if (fine.sender_phone) {
+      // El intento más compatible: abrir la app TWINT (Android/iOS)
+      // Si no funciona, abrir la web genérica de Twint
+      const twintUrl = `twint://sendmoney?phone=${fine.sender_phone.replace(/\D/g, "")}&amount=${fine.amount}`;
+      // Intenta abrir el deep link de TWINT
+      window.location.href = twintUrl;
+
+      // Fallback opcional: después de 1s, abre la web oficial de Twint (el usuario debe copiar el número)
+      setTimeout(() => {
+        window.open("https://www.twint.ch/en/", "_blank");
+      }, 1000);
+    }
   };
 
   const isAlreadyPaid = fine.status === "paid";
@@ -108,6 +124,15 @@ export const PaymentModal = ({
                       <Copy className="h-3 w-3" />
                     </Button>
                   </div>
+                  {/* --- NUEVO: Botón Abrir TWINT --- */}
+                  <Button
+                    type="button"
+                    className="mt-3 w-full flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white"
+                    onClick={openTwintApp}
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                    Abrir TWINT
+                  </Button>
                 </div>
               ) : (
                 <div className="flex items-center justify-center text-orange-600 gap-2 py-2">
