@@ -14,6 +14,8 @@ export default defineConfig(({ mode }) => ({
     react(),
     mode === 'development' && componentTagger(),
     VitePWA({
+      // ✅ Este es el cambio clave:
+      filename: 'service-worker.js',
       registerType: 'autoUpdate',
       manifest: {
         name: "DESWG",
