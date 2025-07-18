@@ -4,7 +4,6 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 import { VitePWA } from "vite-plugin-pwa";
 
-// https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
@@ -14,9 +13,13 @@ export default defineConfig(({ mode }) => ({
     react(),
     mode === 'development' && componentTagger(),
     VitePWA({
-      // ✅ Este es el cambio clave:
-      filename: 'service-worker.js',
+      strategies: 'injectManifest', // 👈 obligatorio para usar tu SW personalizado
+      srcDir: 'src',
+      filename: 'service-worker.js', // 👈 nombre final en producción
       registerType: 'autoUpdate',
+      devOptions: {
+        enabled: true,
+      },
       manifest: {
         name: "DESWG",
         short_name: "DESWG",
