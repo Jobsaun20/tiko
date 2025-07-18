@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/supabaseClient";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { useBadgeModal } from "@/contexts/BadgeModalContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export interface Fine {
   id: string;
@@ -18,8 +20,14 @@ export interface Fine {
   type: string; // "sent", "received", etc
 }
 
+// URL del Edge Function de badges
+const CHECK_BADGES_URL = "https://pyecpkccpfeuittnccat.supabase.co/functions/v1/check_badges";
+
 export function useFines() {
-  const { user } = useAuthContext();
+  const { user, session } = useAuthContext();
+  const { showBadges } = useBadgeModal();
+  const { language } = useLanguage();
+
   const [fines, setFines] = useState<Fine[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -167,6 +175,35 @@ export function useFines() {
       } catch (err) {
         // Opcional: manejar el error
         console.error("Error enviando push notification:", err);
+      }
+    }
+
+    // === NUEVO: CHEQUEO Y DESPLIEGUE DE BADGES ===
+    if (user && session?.access_token && data) {
+      try {
+        const response = await fetch(CHECK_BADGES_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + session.access_token,
+          },
+          body: JSON.stringify({
+            user_id: user.id,
+            action: "create_fine", // Asegúrate de tener esta key en la tabla badges
+            action_data: {
+              fine_id: data.id,
+              amount: data.amount,
+              lang: language || "es",
+            },
+          }),
+        });
+        const result = await response.json();
+        if (result?.newlyEarned?.length > 0) {
+          showBadges(result.newlyEarned, language);
+        }
+      } catch (err) {
+        // Opcional: mostrar error o log
+        console.error("Error check_badges:", err);
       }
     }
 
