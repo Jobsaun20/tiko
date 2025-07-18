@@ -1,8 +1,9 @@
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/supabaseClient";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { useBadgeModal } from "@/contexts/BadgeModalContext";
+import { calculateLevel } from "@/utils/gamification";
 
-// Definición del tipo UserProfile
 export type UserProfile = {
   id: string;
   email?: string;
@@ -21,15 +22,18 @@ export type UserProfile = {
   totalPaid?: number;
   totalEarned?: number;
   contacts?: any[];
-  // Agrega aquí otros campos personalizados si los necesitas
 };
 
 type UpdateProfileResult = {
   error: string | null;
 };
 
+// URL Edge Function para chequear badges por XP/level
+const CHECK_BADGES_URL = "https://pyecpkccpfeuittnccat.supabase.co/functions/v1/check_badges";
+
 export function useUserProfile() {
-  const { user } = useAuthContext();
+  const { user, session } = useAuthContext();
+  const { showBadges } = useBadgeModal();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -55,7 +59,6 @@ export function useUserProfile() {
       setError(error.message);
       setProfile(null);
     } else if (!data) {
-      // Si no hay perfil, crea uno por defecto en el frontend (opcional: crea también en la BD)
       const defaultProfile: UserProfile = {
         id: user.id,
         email: user.email,
@@ -84,27 +87,66 @@ export function useUserProfile() {
     setLoading(false);
   }, [user]);
 
-  // Recargar el perfil cada vez que cambia el usuario (login/logout)
   useEffect(() => {
     fetchProfile();
   }, [fetchProfile]);
 
-  // Actualizar el perfil y refrescar datos desde la BD
+  /**
+   * Actualiza el perfil y otorga badge automáticamente si se sube XP/Level
+   */
   async function updateProfile(fields: Partial<UserProfile>): Promise<UpdateProfileResult> {
     if (!user) return { error: "No hay usuario logueado" };
     setLoading(true);
 
-    // Actualiza la base de datos
+    // 1. Guarda el XP anterior (para comparar si hay level up)
+    const prevXp = profile?.xp || 0;
+    const prevLevel = calculateLevel(prevXp);
+    const nextXp = fields.xp !== undefined ? fields.xp : prevXp;
+    const nextLevel = calculateLevel(nextXp);
+
+    // 2. Actualiza en la BD
     const { error } = await supabase
       .from("users")
       .update(fields)
       .eq("id", user.id);
 
-    // Refresca siempre el perfil tras update
+    // 3. Lógica de badge XP/NIVEL
+    try {
+      if (!error && user && session?.access_token && fields.xp !== undefined) {
+        // Si subió de nivel, dispara el check (puedes cambiar la condición si quieres sólo badge en "level up")
+        if (nextLevel > prevLevel) {
+          const response = await fetch(CHECK_BADGES_URL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + session.access_token,
+            },
+            body: JSON.stringify({
+              user_id: user.id,
+              action: "level_up", // ajusta el nombre a como tengas tu lógica backend
+              action_data: {
+                xp: nextXp,
+                prev_level: prevLevel,
+                level: nextLevel,
+                lang: "es", // O el idioma actual
+              },
+            }),
+          });
+          const result = await response.json();
+          if (result?.newlyEarned?.length > 0) {
+            showBadges(result.newlyEarned, "es");
+          }
+        }
+        // Si quieres badge por cada XP ganado, pon el check aquí fuera del if (nextLevel > prevLevel)
+      }
+    } catch (err) {
+      // Silencia error para no romper experiencia usuario
+      // Puedes poner un console.warn si quieres debug
+    }
+
     await fetchProfile();
     setLoading(false);
 
-    // Devuelve el resultado como objeto con error o null
     return { error: error ? error.message : null };
   }
 
