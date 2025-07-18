@@ -255,7 +255,7 @@ export default function Profile() {
 
                 {/* Insignias recientes */}
                 <div className="flex flex-wrap gap-2 justify-center sm:justify-start mb-4">
-                  {earnedBadges.slice(0, 2).map((badge) => (
+                  {earnedBadges.slice(0, 1).map((badge) => (
                     <Badge key={badge.id} variant="secondary" className={getRarityColor(badge.rarity)}>
                       {badge.icon} {badge.name?.[language] || badge.name?.en || "Sin nombre"}
                     </Badge>
@@ -267,7 +267,10 @@ export default function Profile() {
                     <span>{progressToNextLevel.current} XP</span>
                     <span>{t.index.level} {currentLevel + 1}</span>
                   </div>
-                  <Progress value={progressToNextLevel.percentage} className="h-2" />
+                  <div
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-300"
+                  style={{ width: `${progressToNextLevel.percentage}%` }}
+                ></div>
                 </div>
 
                 {/* Botón Editar */}
