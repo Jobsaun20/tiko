@@ -62,24 +62,25 @@ showInstallBanner: "To install on iOS: Tap “Share” 📤 and select “Add to
   },
 
   welcome: {
-    title: "Welcome to DESWG",
-    subtitle1: "Fines among friends",
-    description: "Manage fun fines and social rules with your friends and family. Discover a new way to stay motivated and have fun!",
-    login: "Log in",
-    newUser: "New user",
-  },
+  title: "Welcome to DESWG",
+  subtitle1: "They fail, you win",
+  description: "Did you do your tasks? And the others? If someone forgot… or 'did it again', let them clean their karma by PAYING!",
+  login: "Log in",
+  newUser: "New user",
+},
 
-  onboard: {
-    whatIsDeswg: "What is DESWG?",
-    whatIsDeswgDescription: "DESWG is the easiest way to manage fines, social rules, and group motivation with your friends. No arguments, just fun!",
-    createGroups: "Create groups and rules",
-    createGroupsDescription: "Create private groups, set custom rules, and control who breaks them. All rules must be accepted by everyone.",
-    payAndLevelUp: "Pay and level up",
-    payAndLevelUpDescription: "Every fine is transparent. Pay instantly. Earn badges, level up, and become the most responsible in the group.",
-    back: "Back",
-    next: "Next",
-    createAccount: "Create account",
-  },
+onboard: {
+  whatIsDeswg: "What is DESWG?",
+  whatIsDeswgDescription: "DESWG turns co-living into a game where the one who follows and enforces the rules wins. Each group sets its own rules: from cleaning the kitchen, being on time, or not leaving messages on read.",
+  createGroups: "Create groups and rules",
+  createGroupsDescription: "If someone breaks the rules… you can fine them and earn points! And if you get fined, it’s not the end: pay, clean your karma and keep gaining experience.",
+  payAndLevelUp: "Pay and level up",
+  payAndLevelUpDescription: "Doing your tasks + Good behavior + Following accepted rules = Perfect Coexistence. At DESWG, it's not about punishing, but about playing as a team, building better habits, and having fun while becoming THE PERFECT ROOMMATE",
+  back: "Back",
+  next: "Next",
+  createAccount: "Create account",
+},
+
 
   // Index Page
   index: {

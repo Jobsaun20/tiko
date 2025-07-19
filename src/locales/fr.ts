@@ -62,24 +62,24 @@ showInstallBanner: "Pour installer sur iOS : Appuie sur « Partager » 📤 puis
   },
 
   welcome: {
-    title: "Bienvenue sur DESWG",
-    subtitle1: "Amendes entre amis",
-    description: "Gère des amendes ludiques et des règles sociales avec tes amis ou ta famille. Découvre une nouvelle façon de te motiver et de t’amuser !",
-    login: "Connexion",
-    newUser: "Nouvel utilisateur",
-  },
+  title: "Bienvenue sur DESWG",
+  subtitle1: "Leurs erreurs, ton avantage",
+  description: "Tu as fait tes tâches ? Et les autres ? Si quelqu’un a oublié… ou 'a recommencé', qu’il nettoie son karma en PAYANT !",
+  login: "Se connecter",
+  newUser: "Nouvel utilisateur",
+},
 
-  onboard: {
-    whatIsDeswg: "Qu’est-ce que DESWG ?",
-    whatIsDeswgDescription: "DESWG est la manière la plus simple de gérer des amendes, des règles sociales et la motivation de groupe entre amis. Pas de disputes, juste du fun !",
-    createGroups: "Crée des groupes et des règles",
-    createGroupsDescription: "Crée des groupes privés, définis des règles personnalisées et contrôle qui les enfreint. Toutes les règles doivent être acceptées par tous.",
-    payAndLevelUp: "Paie et monte de niveau",
-    payAndLevelUpDescription: "Chaque amende est transparente. Paie instantanément. Gagne des badges, monte de niveau et deviens le plus responsable du groupe.",
-    back: "Retour",
-    next: "Suivant",
-    createAccount: "Créer un compte",
-  },
+onboard: {
+  whatIsDeswg: "Qu’est-ce que DESWG ?",
+  whatIsDeswgDescription: "DESWG transforme la cohabitation en un jeu où gagne celui qui respecte et fait respecter les règles. Chaque groupe définit ses propres règles : nettoyer la cuisine, respecter les horaires ou ne pas laisser les messages en vu.",
+  createGroups: "Crée des groupes et des règles",
+  createGroupsDescription: "Si quelqu’un ne respecte pas les règles… tu peux le sanctionner et gagner des points ! Et si c’est toi qui es sanctionné, ce n’est pas la fin : paie, nettoie ton karma et continue à progresser.",
+  payAndLevelUp: "Paie et monte de niveau",
+  payAndLevelUpDescription: "Faire ses tâches + Bon comportement + Règles acceptées = Coexistence parfaite. Chez DESWG, il ne s’agit pas de punir, mais de jouer en équipe, améliorer ses habitudes et s’amuser tout en devenant LE COLOC PARFAIT.",
+  back: "Retour",
+  next: "Suivant",
+  createAccount: "Créer un compte",
+},
 
   // Index Page
   index: {

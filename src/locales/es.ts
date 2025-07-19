@@ -68,19 +68,19 @@ banner: {
 
 welcome: {
   title: "Bienvenido a DESWG",
-  subtitle1: "Multas entre amigos",
-  description: "Gestiona multas divertidas y reglas sociales con tus amigos y familiares. ¡Descubre una nueva forma de motivar y divertirte!",
+  subtitle1: "Ellos fallan, tú ganas",
+description: "¿Hiciste tus tareas? ¿Y los demás? Si alguien se olvidó… o 'lo volvió a hacer', ¡que limpie su karma PAGANDO!",
   login: "Iniciar sesión",
   newUser: "Nuevo usuario",
 },
 
 onboard: {
   whatIsDeswg: "¿Qué es DESWG?",
-  whatIsDeswgDescription: "DESWG es la forma más fácil de gestionar multas, reglas sociales y motivación en grupo con tus amigos. ¡Sin discusiones, solo diversión!",
+  whatIsDeswgDescription: "DESWG transforma la convivencia en un juego donde gana quien cumple y hace cumplir las reglas. Cada grupo define sus propias reglas: desde recoger la cocina, respetar horarios o no dejar a nadie en visto.",
   createGroups: "Crea grupos y reglas",
-  createGroupsDescription: "Crea grupos privados, define reglas personalizadas y controla quién las rompe. Todas las reglas deben ser aceptadas por todos.",
+  createGroupsDescription: "Si alguien no cumple las reglas… ¡puedes multarlo y ganar puntos! Y si te multan, no todo está perdido: pagas, limpias tu karma y sigues sumando experiencia.",
   payAndLevelUp: "Paga y sube de nivel",
-  payAndLevelUpDescription: "Cada multa es transparente. Paga al instante. Consigue medallas, sube de nivel y conviértete en el más responsable del grupo.",
+  payAndLevelUpDescription: "Cumplir tus tareas + Buen comportamiento + Cumplir las reglas aceptadas = Convivencia Perfecta. En DESWG, no se trata de castigar, sino de jugar en equipo, mejorar hábitos y reírse en el proceso mientras te conviertes en EL COMPAÑERO PERFECTO",
   back: "Atrás",
   next: "Siguiente",
   createAccount: "Crear cuenta",

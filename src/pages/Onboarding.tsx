@@ -67,7 +67,7 @@ export default function Onboarding() {
           ))}
         </div>
         {/* Animación Lottie */}
-        <div className="w-38 h-38 rounded-xl overflow-hidden mb-6 bg-[#f3f3f3] flex items-center justify-center shadow">
+        <div className="w-32 h-32 rounded-xl overflow-hidden mb-6 bg-[#f3f3f3] flex items-center justify-center shadow">
           {animationData ? (
             <Lottie
               animationData={animationData}

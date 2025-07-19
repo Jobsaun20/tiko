@@ -62,24 +62,24 @@ showInstallBanner: "Für die Installation auf iOS: Tippe auf „Teilen“ 📤 u
   },
 
   welcome: {
-    title: "Willkommen bei DESWG",
-    subtitle1: "Strafen unter Freunden",
-    description: "Verwalte lustige Strafen und soziale Regeln mit deinen Freunden und deiner Familie. Entdecke eine neue Art, dich zu motivieren und Spaß zu haben!",
-    login: "Anmelden",
-    newUser: "Neuer Benutzer",
-  },
+  title: "Willkommen bei DESWG",
+  subtitle1: "Ihre Fehler – dein Gewinn",
+  description: "Hast du deine Aufgaben erledigt? Und die anderen? Wenn jemand es vergessen hat… oder 'es schon wieder getan hat', soll er sein Karma durch ZAHLEN reinigen!",
+  login: "Einloggen",
+  newUser: "Neuer Benutzer",
+},
 
-  onboard: {
-    whatIsDeswg: "Was ist DESWG?",
-    whatIsDeswgDescription: "DESWG ist der einfachste Weg, Strafen, soziale Regeln und Motivation in der Gruppe zu verwalten. Kein Streit, nur Spaß!",
-    createGroups: "Gruppen und Regeln erstellen",
-    createGroupsDescription: "Erstelle private Gruppen, definiere eigene Regeln und kontrolliere, wer sie bricht. Alle Regeln müssen von allen akzeptiert werden.",
-    payAndLevelUp: "Bezahle und steige auf",
-    payAndLevelUpDescription: "Jede Strafe ist transparent. Bezahle sofort. Erhalte Abzeichen, steige auf und werde der Verantwortlichste in deiner Gruppe.",
-    back: "Zurück",
-    next: "Weiter",
-    createAccount: "Konto erstellen",
-  },
+onboard: {
+  whatIsDeswg: "Was ist DESWG?",
+  whatIsDeswgDescription: "DESWG macht das Zusammenleben zu einem Spiel, bei dem der gewinnt, der die Regeln befolgt – und dafür sorgt, dass andere sie auch einhalten. Jede Gruppe legt ihre eigenen Regeln fest: von Küche putzen bis pünktlich sein oder niemanden auf „gelesen“ lassen.",
+  createGroups: "Gruppen und Regeln erstellen",
+  createGroupsDescription: "Wenn jemand die Regeln nicht beachtet… kannst du ihn freundlich bestrafen und Punkte sammeln! Und wenn du selbst bestraft wirst: Kein Problem – zahl, reinige dein Karma und sammle weiter Erfahrung.",
+  payAndLevelUp: "Zahlen und Level aufsteigen",
+  payAndLevelUpDescription: "Aufgaben erledigen + Gutes Verhalten + Regeln einhalten = Perfektes Zusammenleben. Bei DESWG geht es nicht ums Bestrafen, sondern darum, im Team zu spielen, Gewohnheiten zu verbessern und Spaß zu haben – auf dem Weg zum PERFEKTEN MITBEWOHNER.",
+  back: "Zurück",
+  next: "Weiter",
+  createAccount: "Konto erstellen",
+},
 
   // Index Page
   index: {

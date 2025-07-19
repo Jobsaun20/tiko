@@ -105,12 +105,14 @@ function AppRoutes() {
 
       {/* Protegidas - SIEMPRE dentro de NavBarLayout */}
       <Route path="/" element={
-        <ProtectedRoute>
-          <NavBarLayout>
-            <Index />
-          </NavBarLayout>
-        </ProtectedRoute>
-      } />
+  !user ? <Navigate to="/welcome" replace /> : (
+    <ProtectedRoute>
+      <NavBarLayout>
+        <Index />
+      </NavBarLayout>
+    </ProtectedRoute>
+  )
+} />
       <Route path="/history" element={
         <ProtectedRoute>
           <NavBarLayout>

@@ -62,24 +62,24 @@ showInstallBanner: "Per installare su iOS: Tocca “Condividi” 📤 e selezion
   },
 
   welcome: {
-    title: "Benvenuto su DESWG",
-    subtitle1: "Multe tra amici",
-    description: "Gestisci multe divertenti e regole sociali con amici e familiari. Scopri un nuovo modo per motivarti e divertirti!",
-    login: "Accedi",
-    newUser: "Nuovo utente",
-  },
+  title: "Benvenuto su DESWG",
+  subtitle1: "I loro errori, il tuo vantaggio",
+  description: "Hai fatto i tuoi compiti? E gli altri? Se qualcuno ha dimenticato… o 'l’ha rifatto', che si purifichi il karma PAGANDO!",
+  login: "Accedi",
+  newUser: "Nuovo utente",
+},
 
-  onboard: {
-    whatIsDeswg: "Cos'è DESWG?",
-    whatIsDeswgDescription: "DESWG è il modo più semplice per gestire multe, regole sociali e motivazione di gruppo con i tuoi amici. Niente discussioni, solo divertimento!",
-    createGroups: "Crea gruppi e regole",
-    createGroupsDescription: "Crea gruppi privati, definisci regole personalizzate e controlla chi le infrange. Tutte le regole devono essere accettate da tutti.",
-    payAndLevelUp: "Paga e sali di livello",
-    payAndLevelUpDescription: "Ogni multa è trasparente. Paga all'istante. Guadagna badge, sali di livello e diventa il più responsabile del gruppo.",
-    back: "Indietro",
-    next: "Avanti",
-    createAccount: "Crea account",
-  },
+onboard: {
+  whatIsDeswg: "Cos'è DESWG?",
+  whatIsDeswgDescription: "DESWG trasforma la convivenza in un gioco dove vince chi rispetta e fa rispettare le regole. Ogni gruppo stabilisce le proprie: come pulire la cucina, essere puntuali o non lasciare nessuno in visualizzato.",
+  createGroups: "Crea gruppi e regole",
+  createGroupsDescription: "Se qualcuno non rispetta le regole… puoi multarlo e guadagnare punti! E se multano te, nessun problema: paga, pulisci il tuo karma e continua a fare esperienza.",
+  payAndLevelUp: "Paga e sali di livello",
+  payAndLevelUpDescription: "Completare i compiti + Buon comportamento + Rispetto delle regole = Convivenza perfetta. In DESWG non si tratta di punire, ma di giocare in squadra, migliorare le abitudini e divertirsi mentre diventi IL COINQUILINO PERFETTO.",
+  back: "Indietro",
+  next: "Avanti",
+  createAccount: "Crea account",
+},
 
   // Index Page
   index: {
