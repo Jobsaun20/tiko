@@ -156,7 +156,7 @@ export const CreateGroupModal = ({ isOpen, onClose, onSubmit }: CreateGroupModal
 
           {/* --- Nuevo Selector de Miembros --- */}          
           <div className="space-y-2">
-            <Label>Miembros del grupo</Label>
+            {/* <Label>Miembros del grupo</Label>
             <Input
               placeholder="Buscar contacto por nombre o email"
               value={search}
@@ -176,7 +176,7 @@ export const CreateGroupModal = ({ isOpen, onClose, onSubmit }: CreateGroupModal
                   </div>
                 ))}
               </div>
-            )}
+            )} */}
 
             {/* Chips de seleccionados */}
             {selectedContacts.length > 0 && (
@@ -201,7 +201,7 @@ export const CreateGroupModal = ({ isOpen, onClose, onSubmit }: CreateGroupModal
           </div>
 
           {/* Payment Mode */}
-          <div className="space-y-4">
+          {/* <div className="space-y-4">
             <Label>Modo de Pago</Label>
             <RadioGroup
               value={formData.paymentMode}
@@ -222,10 +222,10 @@ export const CreateGroupModal = ({ isOpen, onClose, onSubmit }: CreateGroupModal
                 </p>
               </div>
             </RadioGroup>
-          </div>
+          </div> */}
 
           {/* TWINT QR (if admin mode) */}
-          {formData.paymentMode === "admin" && (
+          {/* {formData.paymentMode === "admin" && (
             <div className="space-y-4 p-4 border rounded-lg bg-blue-50">
               <div className="flex items-center gap-2">
                 <QrCode className="h-5 w-5 text-blue-600" />
@@ -242,7 +242,7 @@ export const CreateGroupModal = ({ isOpen, onClose, onSubmit }: CreateGroupModal
                 </Button>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="twintQR">O ingresa el enlace TWINT</Label>
+                <Label htmlFor="twintQR">O ingresa el Numero TWINT</Label>
                 <Input
                   id="twintQR"
                   value={formData.twintQR}
@@ -251,10 +251,10 @@ export const CreateGroupModal = ({ isOpen, onClose, onSubmit }: CreateGroupModal
                 />
               </div>
               <p className="text-xs text-blue-600">
-                Al activar este modo, todas las multas del grupo mostrarán este QR para el pago
+                Al activar este modo, todas las multas del grupo mostrarán este Numero para el pago
               </p>
             </div>
-          )}
+          )} */}
 
           <DialogFooter className="gap-2">
             <Button type="button" variant="outline" onClick={handleCancel}>
