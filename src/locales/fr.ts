@@ -9,6 +9,25 @@ export const fr = {
     installIosGuide: "Installer sur iOS",
   },
 
+paymentModal: {
+  title: "Payer l'amende",
+description: "Copie le numéro de l'expéditeur et utilise-le pour payer avec TWINT",
+  fine: "Amende",
+  amount: "Montant",
+  sender: "Expéditeur",
+  reason: "Motif",
+scanQR: "Numéro TWINT",
+  useNumber: "Copie le numéro",
+  copyNumber: "Copier le numéro",
+  copied: "Copié",
+  markAsPaid: "Marquer comme payée",
+  processing: "Traitement...",
+  paid: "Paiement confirmé !",
+  close: "Fermer",
+  noTwintNumber: "L'expéditeur n'a pas configuré son numéro TWINT",
+},
+
+
   installApp: {
     iosTitle: "Installer l'app sur iOS",
     iosIntro: "Installe le site comme une application sur ton iPhone ou iPad pour un accès plus rapide.",
@@ -51,8 +70,8 @@ showInstallBanner: "Pour installer sur iOS : Appuie sur « Partager » 📤 puis
   },
 
   onboard: {
-    whatIsDESWG: "Qu’est-ce que DESWG ?",
-    whatIsDESWGDescription: "DESWG est la manière la plus simple de gérer des amendes, des règles sociales et la motivation de groupe entre amis. Pas de disputes, juste du fun !",
+    whatIsDeswg: "Qu’est-ce que DESWG ?",
+    whatIsDeswgDescription: "DESWG est la manière la plus simple de gérer des amendes, des règles sociales et la motivation de groupe entre amis. Pas de disputes, juste du fun !",
     createGroups: "Crée des groupes et des règles",
     createGroupsDescription: "Crée des groupes privés, définis des règles personnalisées et contrôle qui les enfreint. Toutes les règles doivent être acceptées par tous.",
     payAndLevelUp: "Paie et monte de niveau",

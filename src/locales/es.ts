@@ -1,3 +1,4 @@
+import { PaymentModal } from "@/components/PaymentModal";
 import { add } from "date-fns";
 
 export const es = {
@@ -9,6 +10,24 @@ export const es = {
   
   installIosGuide: "Instalar IOS",
 },
+
+paymentModal: {
+  title: "Pagar multa",
+  description: "Copiando el numero del emisor y usalo para pagar en TWINT",
+  fine: "Multa",
+  amount: "Importe",
+  sender: "Remitente",
+  reason: "Motivo",
+  scanQR: "Numero para TWINT",
+  useNumber: "Copia el número",
+  copyNumber: "Copiar número",
+  copied: "Copiado",
+  markAsPaid: "Marcar como pagada",
+  processing: "Procesando...",
+  paid: "¡Pago confirmado!",
+  close: "Cerrar",
+  noTwintNumber: "El remitente no ha configurado su número de TWINT",
+  },
 
 installApp: {
   iosTitle: "Instalar app en iOS",

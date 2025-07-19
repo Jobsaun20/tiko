@@ -8,6 +8,25 @@ export const en = {
     installApp: "Install app",
     installIosGuide: "Install on iOS",
   },
+paymentModal: {
+  title: "Pay fine",
+description: "Copy the sender's number and use it to pay with TWINT",
+  fine: "Fine",
+  amount: "Amount",
+  sender: "Sender",
+  reason: "Reason",
+scanQR: "TWINT number",
+  useNumber: "Copy the Number",
+  copyNumber: "Copy number",
+  copied: "Copied",
+  markAsPaid: "Mark as paid",
+  processing: "Processing...",
+  paid: "Payment confirmed!",
+  close: "Close",
+  noTwintNumber: "The sender has not set up their TWINT number",
+},
+
+
 
   installApp: {
     iosTitle: "Install app on iOS",
@@ -51,8 +70,8 @@ showInstallBanner: "To install on iOS: Tap “Share” 📤 and select “Add to
   },
 
   onboard: {
-    whatIsDESWG: "What is DESWG?",
-    whatIsDESWGDescription: "DESWG is the easiest way to manage fines, social rules, and group motivation with your friends. No arguments, just fun!",
+    whatIsDeswg: "What is DESWG?",
+    whatIsDeswgDescription: "DESWG is the easiest way to manage fines, social rules, and group motivation with your friends. No arguments, just fun!",
     createGroups: "Create groups and rules",
     createGroupsDescription: "Create private groups, set custom rules, and control who breaks them. All rules must be accepted by everyone.",
     payAndLevelUp: "Pay and level up",

@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { QrCode, Smartphone, Copy, CheckCircle, ExternalLink } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Fine } from "@/types/Fine";
+import { useLanguage } from "@/contexts/LanguageContext"; // <--- usa tu contexto de idioma
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -28,6 +29,7 @@ export const PaymentModal = ({
 }: PaymentModalProps) => {
   const [isPaid, setIsPaid] = useState(false);
   const { toast } = useToast();
+  const { t } = useLanguage(); // <--- obtiene el objeto de idioma actual
 
   useEffect(() => {
     setIsPaid(false);
@@ -36,8 +38,8 @@ export const PaymentModal = ({
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     toast({
-      title: "Copiado",
-      description: "Número TWINT copiado al portapapeles",
+      title: t.paymentModal.copied,
+      description: t.paymentModal.copyNumber,
     });
   };
 
@@ -49,16 +51,10 @@ export const PaymentModal = ({
     }, 1500);
   };
 
-  // --- NUEVO: Función para abrir la app de TWINT con el número ---
   const openTwintApp = () => {
     if (fine.sender_phone) {
-      // El intento más compatible: abrir la app TWINT (Android/iOS)
-      // Si no funciona, abrir la web genérica de Twint
       const twintUrl = `twint://sendmoney?phone=${fine.sender_phone.replace(/\D/g, "")}&amount=${fine.amount}`;
-      // Intenta abrir el deep link de TWINT
       window.location.href = twintUrl;
-
-      // Fallback opcional: después de 1s, abre la web oficial de Twint (el usuario debe copiar el número)
       setTimeout(() => {
         window.open("https://www.twint.ch/en/", "_blank");
       }, 1000);
@@ -73,10 +69,10 @@ export const PaymentModal = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <QrCode className="h-5 w-5 text-green-500" />
-            Pagar Multa - {fine.amount} CHF
+            {t.paymentModal.title} - {fine.amount} CHF
           </DialogTitle>
           <DialogDescription>
-            Paga tu multa usando TWINT escaneando el código QR o usando el número
+            {t.paymentModal.description}
           </DialogDescription>
         </DialogHeader>
 
@@ -84,19 +80,19 @@ export const PaymentModal = ({
           {/* Fine Details */}
           <Card className="bg-red-50 border-red-200">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm text-red-800">Detalles de la multa</CardTitle>
+              <CardTitle className="text-sm text-red-800">{t.paymentModal.fine}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Motivo:</span>
+                <span className="text-sm text-gray-600">{t.paymentModal.reason}:</span>
                 <span className="text-sm font-medium">{fine.reason}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Emisor:</span>
+                <span className="text-sm text-gray-600">{t.paymentModal.sender}:</span>
                 <span className="text-sm font-medium">{fine.sender_name}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Monto:</span>
+                <span className="text-sm text-gray-600">{t.paymentModal.amount}:</span>
                 <span className="text-lg font-bold text-red-600">{fine.amount} CHF</span>
               </div>
             </CardContent>
@@ -107,13 +103,13 @@ export const PaymentModal = ({
             <CardHeader>
               <CardTitle className="text-sm flex items-center gap-2">
                 <Smartphone className="h-4 w-4" />
-                Opciones de pago TWINT
+                {t.paymentModal.scanQR}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {fine.sender_phone ? (
                 <div className="text-center">
-                  <p className="text-sm text-gray-600 mb-2">Número TWINT:</p>
+                  <p className="text-sm text-gray-600 mb-2">{t.paymentModal.useNumber}</p>
                   <div className="flex items-center justify-center gap-2 p-2 bg-gray-50 rounded-lg">
                     <span className="font-mono text-sm">{fine.sender_phone}</span>
                     <Button
@@ -124,19 +120,18 @@ export const PaymentModal = ({
                       <Copy className="h-3 w-3" />
                     </Button>
                   </div>
-                  {/* --- NUEVO: Botón Abrir TWINT --- */}
-                  <Button
+                  {/* <Button
                     type="button"
                     className="mt-3 w-full flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white"
                     onClick={openTwintApp}
                   >
                     <ExternalLink className="h-4 w-4" />
-                    Abrir TWINT
-                  </Button>
+                    {t.paymentModal.scanQR}
+                  </Button> */}
                 </div>
               ) : (
                 <div className="flex items-center justify-center text-orange-600 gap-2 py-2">
-                  <span>No hay número TWINT disponible.</span>
+                  <span>{t.paymentModal.noTwintNumber ?? "No hay número TWINT disponible."}</span>
                 </div>
               )}
             </CardContent>
@@ -145,21 +140,25 @@ export const PaymentModal = ({
           {(isPaid || isAlreadyPaid) && (
             <div className="flex items-center justify-center py-4 text-green-600">
               <CheckCircle className="h-6 w-6 mr-2" />
-              <span className="font-medium">¡Pago confirmado!</span>
+              <span className="font-medium">{t.paymentModal.paid}</span>
             </div>
           )}
         </div>
 
         <DialogFooter className="pt-4">
           <Button variant="outline" onClick={onClose}>
-            Cancelar
+            {t.paymentModal.close}
           </Button>
           <Button
             onClick={markAsPaid}
             disabled={isPaid || !fine.sender_phone || isAlreadyPaid}
             className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white"
           >
-            {isPaid ? "Procesando..." : isAlreadyPaid ? "Pagada" : "Marcar como Pagada"}
+            {isPaid
+              ? t.paymentModal.processing
+              : isAlreadyPaid
+                ? t.paymentModal.paid
+                : t.paymentModal.markAsPaid}
           </Button>
         </DialogFooter>
       </DialogContent>
