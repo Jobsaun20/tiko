@@ -432,7 +432,7 @@ onboard: {
   invite: {
     title: "Invitar amigos",
     description: "Invita a tus amigos a usar DESWG",
-    shareText: "¡Únete a DESWG y gestiona multas sociales entre amigos! 🎉",
+    shareText: "Donde romper las reglas te hace ganar (si no eres tú el que las rompe 😏)",
     shareTextShort: "¡Únete a DESWG!",
     copyLink: "Copiar enlace",
     linkCopied: "¡Enlace copiado!",
