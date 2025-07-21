@@ -832,7 +832,7 @@ const getRarityColor = (rarity) => {
       <ShareAppModal
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}
-        appUrl="https://picpic-ruby.vercel.app/welcome"
+        appUrl="https://deswg.vercel.app/welcome"
       />
 
       {/* Footer siempre al final */}

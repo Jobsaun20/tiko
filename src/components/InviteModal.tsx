@@ -23,7 +23,7 @@ export const InviteModal = ({ isOpen, onClose }: InviteModalProps) => {
   const { t } = useLanguage();
   const { toast } = useToast();
 
-  const inviteLink = "https://picpic-ruby.vercel.app/welcome";
+  const inviteLink = "https://deswg.vercel.app/welcome";
   const shareText = t.invite.shareText;
 
   const handleCopyLink = () => {
