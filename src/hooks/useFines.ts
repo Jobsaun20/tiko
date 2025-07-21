@@ -24,7 +24,7 @@ export interface Fine {
 const CHECK_BADGES_URL = "https://pyecpkccpfeuittnccat.supabase.co/functions/v1/check_badges";
 
 // ENDPOINT push notification
-const PUSH_ENDPOINT = "https://pic-push-server.vercel.app/api/send-push";
+const PUSH_ENDPOINT = import.meta.env.VITE_PUSH_SERVER_URL;
 
 export function useFines() {
   const { user, session } = useAuthContext();

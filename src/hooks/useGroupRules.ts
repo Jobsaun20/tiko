@@ -20,6 +20,7 @@ export function useGroupRules(groupId: string, members: GroupMember[]) {
   const [rules, setRules] = useState<GroupRule[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+const PUSH_ENDPOINT = import.meta.env.VITE_PUSH_SERVER_URL;
 
   // Obtener reglas y sus aceptaciones
   async function fetchRules() {
@@ -107,7 +108,7 @@ export function useGroupRules(groupId: string, members: GroupMember[]) {
 
             // Si tiene subs, manda la push
             if (subs.length > 0) {
-              await fetch("https://pic-push-server.vercel.app/api/send-push", {
+              await fetch(PUSH_ENDPOINT, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
