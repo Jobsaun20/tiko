@@ -18,7 +18,7 @@ export default defineConfig(({ mode }) => ({
       manifest: {
         name: "DESWG",
         short_name: "DESWG",
-        description: "Fines among friends",
+        description: "They fail, you win",
         start_url: "/",
         scope: "/",
         display: "standalone",

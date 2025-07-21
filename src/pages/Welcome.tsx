@@ -26,7 +26,7 @@ export default function Welcome() {
           Pic
         </h1> */}
         <p className="text-yellow-300 text-lg font-semibold">
-          {t.welcome?.subtitle1 || "Fines among friends"}
+          {t.welcome?.subtitle1 || "They fail, you win"}
         </p>
       </div>
 
