@@ -8,6 +8,23 @@ export const en = {
     installApp: "Install app",
     installIosGuide: "Install on iOS",
   },
+
+  createGroupModal: {
+    createGroup: "Create New Group",
+    createGroupDescription: "Set up your group to manage social fines among members",
+    groupName: "Group Name",
+    groupNamePlaceholder: "e.g.: Roommates",
+    groupDescription: "Description",
+    groupDescriptionPlaceholder: "Briefly describe the purpose of the group",
+    uploadAvatar: "Upload Avatar",
+    cancel: "Cancel",
+    createGroupButton: "Create Group",
+    errorNoName: "Group name is required",
+    errorNoQR: "You must provide the TWINT QR code for the 'Admin Pay' mode",
+    toastSuccess: "Group created successfully!",
+    toastSuccessDesc: "The group “{groupName}” has been created successfully.",
+  },
+
 paymentModal: {
   title: "Pay fine",
 description: "Copy the sender's number and use it to pay with TWINT",

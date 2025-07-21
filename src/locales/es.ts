@@ -1,3 +1,4 @@
+import { CreateGroupModal } from "@/components/CreateGroupModal";
 import { PaymentModal } from "@/components/PaymentModal";
 import { add } from "date-fns";
 
@@ -9,6 +10,22 @@ export const es = {
   installApp: "Instalar app",
   
   installIosGuide: "Instalar IOS",
+},
+
+createGroupModal: {
+  createGroup: "Crear nuevo grupo",
+    createGroupDescription: "Configura tu grupo para gestionar multas sociales entre miembros",
+    groupName: "Nombre del grupo",
+    groupNamePlaceholder: "Ej.: Compañeros de Piso",
+    groupDescription: "Descripción",
+    groupDescriptionPlaceholder: "Describe brevemente el propósito del grupo",
+    uploadAvatar: "Subir Avatar",
+    cancel: "Cancelar",
+    createGroupButton: "Crear Grupo",
+    errorNoName: "El nombre del grupo es obligatorio",
+    errorNoQR: "Debes proporcionar el QR TWINT del grupo para el modo 'Pago al Admin'",
+    toastSuccess: "¡Grupo creado exitosamente!",
+    toastSuccessDesc: "El grupo {groupName} ha sido creado correctamente.",
 },
 
 paymentModal: {

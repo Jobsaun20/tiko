@@ -9,6 +9,22 @@ export const fr = {
     installIosGuide: "Installer sur iOS",
   },
 
+createGroupModal: {
+    createGroup: "Créer un nouveau groupe",
+    createGroupDescription: "Configurez votre groupe pour gérer les amendes sociales entre membres",
+    groupName: "Nom du groupe",
+    groupNamePlaceholder: "Ex. : colocataires",
+    groupDescription: "Description",
+    groupDescriptionPlaceholder: "Décrivez brièvement l'objectif du groupe",
+    uploadAvatar: "Téléverser l’avatar",
+    cancel: "Annuler",
+    createGroupButton: "Créer le groupe",
+    errorNoName: "Le nom du groupe est obligatoire",
+    errorNoQR: "Vous devez fournir le QR TWINT pour le mode « Paiement par l’admin »",
+    toastSuccess: "Groupe créé avec succès !",
+    toastSuccessDesc: "Le groupe « {groupName} » a été créé avec succès.",
+  },
+
 paymentModal: {
   title: "Payer l'amende",
 description: "Copie le numéro de l'expéditeur et utilise-le pour payer avec TWINT",

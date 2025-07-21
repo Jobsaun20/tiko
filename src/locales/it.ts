@@ -8,6 +8,22 @@ export const it = {
     installApp: "Installa app",
     installIosGuide: "Installa su iOS",
   },
+ createGroupModal: {
+    createGroup: "Crea nuovo gruppo",
+    createGroupDescription: "Configura il tuo gruppo per gestire multe sociali tra i membri",
+    groupName: "Nome del gruppo",
+    groupNamePlaceholder: "Es.: Coinquilini",
+    groupDescription: "Descrizione",
+    groupDescriptionPlaceholder: "Descrivi brevemente lo scopo del gruppo",
+    uploadAvatar: "Carica avatar",
+    cancel: "Annulla",
+    createGroupButton: "Crea gruppo",
+    errorNoName: "Il nome del gruppo è obbligatorio",
+    errorNoQR: "Devi fornire il codice QR TWINT per la modalità “Pagamento all’amministratore”",
+    toastSuccess: "Gruppo creato con successo!",
+    toastSuccessDesc: "Il gruppo “{groupName}” è stato creato con successo.",
+  },
+
 
 paymentModal: {
   title: "Paga la multa",

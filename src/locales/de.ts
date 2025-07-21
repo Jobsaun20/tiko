@@ -9,6 +9,22 @@ export const de = {
     installIosGuide: "iOS installieren",
   },
 
+createGroupModal: {
+    createGroup: "Neue Gruppe erstellen",
+    createGroupDescription: "Richte deine Gruppe ein, um soziale Geldstrafen unter Mitgliedern zu verwalten",
+    groupName: "Gruppenname",
+    groupNamePlaceholder: "z. B.: Mitbewohner",
+    groupDescription: "Beschreibung",
+    groupDescriptionPlaceholder: "Beschreibe kurz den Zweck der Gruppe",
+    uploadAvatar: "Avatar hochladen",
+    cancel: "Abbrechen",
+    createGroupButton: "Gruppe erstellen",
+    errorNoName: "Der Gruppenname ist erforderlich",
+    errorNoQR: "Du musst den TWINT-QR-Code für den Modus „Admin bezahlt“ angeben",
+    toastSuccess: "Gruppe erfolgreich erstellt!",
+    toastSuccessDesc: "Die Gruppe „{groupName}“ wurde erfolgreich erstellt.",
+  },
+
 paymentModal: {
   title: "Busse bezahlen",
 description: "Kopiere die Nummer des Absenders und verwende sie zum Bezahlen mit TWINT",
