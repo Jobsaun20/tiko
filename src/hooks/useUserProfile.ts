@@ -98,6 +98,11 @@ export function useUserProfile() {
     if (!user) return { error: "No hay usuario logueado" };
     setLoading(true);
 
+    // Protección extra: nunca mandes username vacío (ni sobrescribas si no cambia)
+    if ('username' in fields && (!fields.username || fields.username.trim() === "")) {
+      delete fields.username;
+    }
+
     // 1. Guarda el XP anterior (para comparar si hay level up)
     const prevXp = profile?.xp || 0;
     const prevLevel = calculateLevel(prevXp);
@@ -141,7 +146,6 @@ export function useUserProfile() {
       }
     } catch (err) {
       // Silencia error para no romper experiencia usuario
-      // Puedes poner un console.warn si quieres debug
     }
 
     await fetchProfile();
