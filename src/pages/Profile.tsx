@@ -9,7 +9,7 @@ import { Header } from "@/components/Header";
 import { EditProfileModal } from "@/components/EditProfileModal";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useToast } from "@/hooks/use-toast";
-import { Award, Users, QrCode, TrendingUp, Trophy, Edit, ArrowLeft, LogOut, Trash2 } from "lucide-react";
+import { Award, Edit, ArrowLeft, LogOut, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { calculateLevel, getXPProgress } from "@/utils/gamification";
 import {
@@ -34,7 +34,7 @@ const rewards = [
 ];
 
 export default function Profile() {
-  const { t, language } = useLanguage(); // language añadido aquí
+  const { t, language } = useLanguage();
   const { toast } = useToast();
   const navigate = useNavigate();
   const { logout } = useAuthContext();
@@ -43,7 +43,7 @@ export default function Profile() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
 
-  // ---- NUEVO: Estados para insignias reales ----
+  // Estados para insignias reales
   const [earnedBadges, setEarnedBadges] = useState([]);
   const [badgesLoading, setBadgesLoading] = useState(true);
 
@@ -51,6 +51,7 @@ export default function Profile() {
   const user = profile || {
     username: "",
     email: "",
+    phone: "",
     avatar_url: "",
     xp: 0,
     level: 1,
@@ -67,7 +68,7 @@ export default function Profile() {
   const currentLevel = calculateLevel(user.xp);
   const progressToNextLevel = getXPProgress(user.xp);
 
-  // ---- NUEVO: Fetch de insignias del usuario ----
+  // Fetch de insignias del usuario
   useEffect(() => {
     const fetchUserBadges = async () => {
       if (!profile?.id) {
@@ -77,7 +78,6 @@ export default function Profile() {
       }
       setBadgesLoading(true);
 
-      // 1. Obtener user_badges del usuario
       const { data: userBadges, error } = await supabase
         .from("user_badges")
         .select("badge_id, achieved_at")
@@ -94,18 +94,15 @@ export default function Profile() {
         return;
       }
 
-      // 2. Obtener datos de badges
       const badgeIds = userBadges.map((b) => b.badge_id);
       const { data: badgesData } = await supabase
         .from("badges")
         .select("*")
         .in("id", badgeIds);
 
-      // 3. Juntar info y asegurar que name/description es JSON
       const joined = userBadges
         .map((ub) => {
           const badge = badgesData.find((b) => b.id === ub.badge_id) || {};
-          // Asegurarse de que name y description son objetos
           let name = badge.name;
           let description = badge.description;
           try {
@@ -138,12 +135,23 @@ export default function Profile() {
     }
   };
 
-  // Guardar perfil
+  // Guardar perfil (CORREGIDO)
   const handleSaveProfile = async (updatedUser) => {
-    await updateProfile({
-      username: updatedUser.name,
+    // Mandar todos los campos relevantes y nunca sobreescribir username si está vacío
+    const updateFields = {
+      username: updatedUser.username,           // <- correcto ahora!
+      email: updatedUser.email,
+      phone: updatedUser.phone,
       avatar_url: updatedUser.avatar_url,
+    };
+    // Quita los campos vacíos para evitar sobrescribir en blanco
+    Object.keys(updateFields).forEach(key => {
+      if (updateFields[key] === undefined || updateFields[key] === "") {
+        delete updateFields[key];
+      }
     });
+
+    await updateProfile(updateFields);
     toast({ title: t.profile.updatedProfile });
     setIsEditProfileOpen(false);
   };
@@ -157,8 +165,6 @@ export default function Profile() {
   // Eliminar cuenta real (Edge Function)
   const handleDeleteAccount = async () => {
     if (!profile?.id) return;
-
-    // Obtenemos el access_token de sesión con Supabase v2
     const { data } = await supabase.auth.getSession();
     const access_token = data.session?.access_token;
 
@@ -181,8 +187,6 @@ export default function Profile() {
       });
       return;
     }
-
-    // Logout y feedback
     await logout();
     toast({
       title: t.profile.accountDeleted,
@@ -229,7 +233,6 @@ export default function Profile() {
                   </AvatarFallback>
                 </Avatar>
               </div>
-
               <div className="flex-1 text-center sm:text-left">
                 <h1 className="text-2xl font-bold text-gray-800 mb-2">
                   {user.username
@@ -252,7 +255,6 @@ export default function Profile() {
                     {user.xp} XP
                   </Badge>
                 </div>
-
                 {/* Insignias recientes */}
                 <div className="flex flex-wrap gap-2 justify-center sm:justify-start mb-4">
                   {earnedBadges.slice(0, 1).map((badge) => (
@@ -261,19 +263,16 @@ export default function Profile() {
                     </Badge>
                   ))}
                 </div>
-
                 <div className="flex-1 min-w-48 mb-4">
                   <div className="flex justify-between text-sm text-gray-600 mb-1">
                     <span>{progressToNextLevel.current} XP</span>
                     <span>{t.index.level} {currentLevel + 1}</span>
                   </div>
                   <div
-                  className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${progressToNextLevel.percentage}%` }}
-                ></div>
+                    className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${progressToNextLevel.percentage}%` }}
+                  ></div>
                 </div>
-
-                {/* Botón Editar */}
                 <Button
                   onClick={() => setIsEditProfileOpen(true)}
                   className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white"

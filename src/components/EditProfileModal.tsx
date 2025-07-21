@@ -28,14 +28,13 @@ export const EditProfileModal = ({
   user,
   onSave
 }: EditProfileModalProps) => {
-  // INCLUYE USERNAME SIEMPRE EN EL FORM DATA
+  // Incluye SIEMPRE todos los campos editables
   const [formData, setFormData] = useState({
     username: user?.username || "",
     email: user?.email || "user@example.com",
     phone: user?.phone || "+41 76 123 45 67"
   });
 
-  // Actualiza formData si cambian los datos del usuario
   useEffect(() => {
     setFormData({
       username: user?.username || "",
@@ -49,12 +48,11 @@ export const EditProfileModal = ({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { toast } = useToast();
 
-  // Mostrar selector archivo
   const handlePhotoUpload = () => {
     if (fileInputRef.current) fileInputRef.current.click();
   };
 
-  // Subir a storage y obtener url pública
+  // Subida de avatar
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -85,12 +83,12 @@ export const EditProfileModal = ({
     toast({ title: "Foto subida correctamente. ¡No olvides guardar!" });
   };
 
+  // Siempre manda todos los campos editables
   const handleSave = () => {
-    // Siempre mandamos username
     const updatedUser = {
       ...user,
       ...formData,
-      avatar_url: avatarUrl,
+      avatar_url: avatarUrl || undefined, // Si no hay avatar, no lo manda
     };
     onSave(updatedUser);
     toast({
@@ -124,7 +122,7 @@ export const EditProfileModal = ({
         </DialogHeader>
 
         <div className="space-y-6">
-          {/* Profile Picture */}
+          {/* Foto de perfil */}
           <div className="flex flex-col items-center space-y-4">
             <Avatar className="h-24 w-24">
               <AvatarImage src={avatarUrl} alt={formData.username || "Usuario"} />
@@ -152,7 +150,7 @@ export const EditProfileModal = ({
             />
           </div>
 
-          {/* Form Fields */}
+          {/* Campos del formulario */}
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="username">Nombre de usuario</Label>

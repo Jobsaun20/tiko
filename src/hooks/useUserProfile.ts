@@ -103,6 +103,13 @@ export function useUserProfile() {
       delete fields.username;
     }
 
+    // LOG PROFESIONAL DE ENTRADA
+    console.log("[updateProfile] INICIO", {
+      userId: user.id,
+      fields,
+      profileBefore: profile,
+    });
+
     // 1. Guarda el XP anterior (para comparar si hay level up)
     const prevXp = profile?.xp || 0;
     const prevLevel = calculateLevel(prevXp);
@@ -110,15 +117,21 @@ export function useUserProfile() {
     const nextLevel = calculateLevel(nextXp);
 
     // 2. Actualiza en la BD
-    const { error } = await supabase
+    const { error, data } = await supabase
       .from("users")
       .update(fields)
       .eq("id", user.id);
 
+    // LOG DE RESPUESTA SUPABASE
+    console.log("[updateProfile] RESULTADO update", {
+      error,
+      data,
+      fields,
+    });
+
     // 3. Lógica de badge XP/NIVEL
     try {
       if (!error && user && session?.access_token && fields.xp !== undefined) {
-        // Si subió de nivel, dispara el check (puedes cambiar la condición si quieres sólo badge en "level up")
         if (nextLevel > prevLevel) {
           const response = await fetch(CHECK_BADGES_URL, {
             method: "POST",
@@ -128,12 +141,12 @@ export function useUserProfile() {
             },
             body: JSON.stringify({
               user_id: user.id,
-              action: "level_up", // ajusta el nombre a como tengas tu lógica backend
+              action: "level_up",
               action_data: {
                 xp: nextXp,
                 prev_level: prevLevel,
                 level: nextLevel,
-                lang: "es", // O el idioma actual
+                lang: "es",
               },
             }),
           });
@@ -141,15 +154,21 @@ export function useUserProfile() {
           if (result?.newlyEarned?.length > 0) {
             showBadges(result.newlyEarned, "es");
           }
+          // LOG extra de badges
+          console.log("[updateProfile] BADGES result", result);
         }
-        // Si quieres badge por cada XP ganado, pon el check aquí fuera del if (nextLevel > prevLevel)
       }
     } catch (err) {
-      // Silencia error para no romper experiencia usuario
+      console.warn("[updateProfile] ERROR al chequear badges:", err);
     }
 
     await fetchProfile();
     setLoading(false);
+
+    // LOG de perfil tras actualizar y recargar
+    setTimeout(() => {
+      console.log("[updateProfile] PROFILE after update", { profile });
+    }, 500);
 
     return { error: error ? error.message : null };
   }
