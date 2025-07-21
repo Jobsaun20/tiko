@@ -9,6 +9,33 @@ export const en = {
     installIosGuide: "Install on iOS",
   },
 
+  groupRulesModal: {
+  title: "Group Rules",
+  newRulePlaceholder: "Be punctual, pick up dirty clothes...",
+  propose: "Propose",
+  loading: "Loading rules...",
+  noRules: "No rules proposed yet.",
+  validated: "Validated",
+  rejected: "Rejected",
+  pendingOthers: "Pending others",
+  youRejected: "You rejected",
+  accept: "Accept",
+  reject: "Reject",
+  deleteTitle: "Delete rule",
+  close: "Close",
+  toastProposedTitle: "New rule proposed",
+  toastDeletedTitle: "Rule deleted",
+  toastDeletedDesc: "The rule has been deleted successfully.",
+},
+
+ badgeUnlocked: {
+    titleSingle: "Achievement Unlocked!",
+    titleMultiple: "New Achievements Unlocked!",
+    descriptionSingle: "You've unlocked a new badge!",
+    descriptionMultiple: "You've unlocked new badges!",
+    close: "Close",
+  },
+  
   createGroupModal: {
     createGroup: "Create New Group",
     createGroupDescription: "Set up your group to manage social fines among members",

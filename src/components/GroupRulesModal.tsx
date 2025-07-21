@@ -8,6 +8,7 @@ import { useUserProfile } from "@/hooks/useUserProfile";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, Hourglass, Users, Plus, X, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface GroupRulesModalProps {
   isOpen: boolean;
@@ -32,6 +33,8 @@ export function GroupRulesModal({ isOpen, onClose, group }: GroupRulesModalProps
   } = useGroupRules(group.id, group.members);
 
   const { toast } = useToast();
+  const { t } = useLanguage();
+  const m = t.groupRulesModal;
 
   // Proponer nueva regla
   async function handlePropose() {
@@ -40,7 +43,7 @@ export function GroupRulesModal({ isOpen, onClose, group }: GroupRulesModalProps
     try {
       await proposeRule(newRule.trim());
       toast({
-        title: "Nueva regla propuesta",
+        title: m.toastProposedTitle,
         description: newRule.trim(),
       });
       setNewRule("");
@@ -77,7 +80,7 @@ export function GroupRulesModal({ isOpen, onClose, group }: GroupRulesModalProps
     setSubmitting(true);
     try {
       await deleteRule(ruleId);
-      toast({ title: "Regla eliminada", description: "La regla ha sido eliminada correctamente." });
+      toast({ title: m.toastDeletedTitle, description: m.toastDeletedDesc });
     } catch (e: any) {
       alert(e.message);
     }
@@ -98,7 +101,7 @@ export function GroupRulesModal({ isOpen, onClose, group }: GroupRulesModalProps
       >
         <DialogHeader className="p-4 pb-2 border-b">
           <DialogTitle className="flex items-center gap-2 text-lg md:text-xl">
-            <Users className="h-6 w-6" /> Reglas del grupo
+            <Users className="h-6 w-6" /> {m.title}
           </DialogTitle>
         </DialogHeader>
 
@@ -108,7 +111,7 @@ export function GroupRulesModal({ isOpen, onClose, group }: GroupRulesModalProps
             <Input
               value={newRule}
               onChange={e => setNewRule(e.target.value)}
-              placeholder="Escribe una nueva regla..."
+              placeholder={m.newRulePlaceholder}
               disabled={submitting}
               onKeyDown={e => {
                 if (e.key === "Enter") handlePropose();
@@ -121,18 +124,18 @@ export function GroupRulesModal({ isOpen, onClose, group }: GroupRulesModalProps
               className="flex items-center gap-1 w-full sm:w-auto"
             >
               <Plus className="h-4 w-4" />
-              Proponer
+              {m.propose}
             </Button>
           </div>
 
           {/* Listado de reglas */}
           <div>
             {loading ? (
-              <div className="text-center text-gray-400 py-4">Cargando reglas...</div>
+              <div className="text-center text-gray-400 py-4">{m.loading}</div>
             ) : (
               <ul className="space-y-2">
                 {rules.length === 0 && (
-                  <li className="text-gray-500 text-center">Aún no hay reglas propuestas.</li>
+                  <li className="text-gray-500 text-center">{m.noRules}</li>
                 )}
                 {rules.map(rule => (
                   <li
@@ -148,15 +151,15 @@ export function GroupRulesModal({ isOpen, onClose, group }: GroupRulesModalProps
                     `}
                   >
                     <span className="flex-1 break-words text-base">{rule.description}</span>
-                    <div className="flex flex-row flex-wrap gap-2 items-center">
+                    <div className="flex flex-row flex-wrap gap-2 items-center justify-end sm:justify-end ml-auto">
                       {rule.validated ? (
                         <Badge variant="default" className="bg-green-500 text-white flex items-center gap-1">
-                          <CheckCircle2 className="h-4 w-4" /> Validada
+                          <CheckCircle2 className="h-4 w-4" /> {m.validated}
                         </Badge>
                       ) : rule.rejected ? (
                         <>
                           <Badge variant="destructive" className="flex items-center gap-1">
-                            <X className="h-4 w-4" /> Rechazada
+                            <X className="h-4 w-4" /> {m.rejected}
                           </Badge>
                           {isAdmin && (
                             <Button
@@ -165,7 +168,7 @@ export function GroupRulesModal({ isOpen, onClose, group }: GroupRulesModalProps
                               onClick={() => handleDelete(rule.id)}
                               disabled={submitting}
                               className="flex items-center gap-1"
-                              title="Eliminar regla"
+                              title={m.deleteTitle}
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
@@ -173,11 +176,11 @@ export function GroupRulesModal({ isOpen, onClose, group }: GroupRulesModalProps
                         </>
                       ) : hasUserAccepted(rule) ? (
                         <Badge variant="secondary" className="flex items-center gap-1">
-                          <Hourglass className="h-4 w-4" /> Pendiente de otros
+                          <Hourglass className="h-4 w-4" /> {m.pendingOthers}
                         </Badge>
                       ) : hasUserRejected(rule) ? (
                         <Badge variant="destructive" className="flex items-center gap-1">
-                          <X className="h-4 w-4" /> Has rechazado
+                          <X className="h-4 w-4" /> {m.youRejected}
                         </Badge>
                       ) : (
                         <>
@@ -188,7 +191,7 @@ export function GroupRulesModal({ isOpen, onClose, group }: GroupRulesModalProps
                             disabled={submitting}
                             className="flex items-center gap-1"
                           >
-                            <CheckCircle2 className="h-4 w-4" /> Aceptar
+                            <CheckCircle2 className="h-4 w-4" /> {m.accept}
                           </Button>
                           <Button
                             size="sm"
@@ -197,7 +200,7 @@ export function GroupRulesModal({ isOpen, onClose, group }: GroupRulesModalProps
                             disabled={submitting}
                             className="flex items-center gap-1"
                           >
-                            <X className="h-4 w-4" /> Rechazar
+                            <X className="h-4 w-4" /> {m.reject}
                           </Button>
                         </>
                       )}
@@ -211,7 +214,7 @@ export function GroupRulesModal({ isOpen, onClose, group }: GroupRulesModalProps
 
         <DialogFooter className="p-4 pt-2 border-t flex justify-end">
           <Button variant="outline" onClick={onClose} className="flex items-center gap-1">
-            <X className="h-4 w-4" /> Cerrar
+            <X className="h-4 w-4" /> {m.close}
           </Button>
         </DialogFooter>
       </DialogContent>

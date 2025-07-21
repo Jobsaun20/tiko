@@ -8,6 +8,36 @@ export const it = {
     installApp: "Installa app",
     installIosGuide: "Installa su iOS",
   },
+
+groupRulesModal: {
+  title: "Regole del gruppo",
+  newRulePlaceholder: "Essere puntuale, raccogliere i vestiti sporchi...",
+  propose: "Proponi",
+  loading: "Caricamento delle regole...",
+  noRules: "Nessuna regola proposta al momento.",
+  validated: "Validata",
+  rejected: "Rifiutata",
+  pendingOthers: "In attesa degli altri",
+  youRejected: "Hai rifiutato",
+  accept: "Accetta",
+  reject: "Rifiuta",
+  deleteTitle: "Elimina regola",
+  close: "Chiudi",
+  toastProposedTitle: "Nuova regola proposta",
+  toastDeletedTitle: "Regola eliminata",
+  toastDeletedDesc: "La regola è stata eliminata con successo.",
+},
+
+
+ badgeUnlocked: {
+    titleSingle: "Risultato sbloccato!",
+    titleMultiple: "Nuovi risultati sbloccati!",
+    descriptionSingle: "Hai sbloccato un nuovo badge!",
+    descriptionMultiple: "Hai sbloccato nuovi badge!",
+    close: "Chiudi",
+  },
+
+
  createGroupModal: {
     createGroup: "Crea nuovo gruppo",
     createGroupDescription: "Configura il tuo gruppo per gestire multe sociali tra i membri",

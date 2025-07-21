@@ -9,6 +9,33 @@ export const fr = {
     installIosGuide: "Installer sur iOS",
   },
 
+  groupRulesModal: {
+  title: "Règles du groupe",
+  newRulePlaceholder: "Être ponctuel, ramasser les vêtements sales...",
+  propose: "Proposer",
+  loading: "Chargement des règles...",
+  noRules: "Aucune règle proposée pour l’instant.",
+  validated: "Validée",
+  rejected: "Rejetée",
+  pendingOthers: "En attente des autres",
+  youRejected: "Vous avez rejeté",
+  accept: "Accepter",
+  reject: "Rejeter",
+  deleteTitle: "Supprimer la règle",
+  close: "Fermer",
+  toastProposedTitle: "Nouvelle règle proposée",
+  toastDeletedTitle: "Règle supprimée",
+  toastDeletedDesc: "La règle a été supprimée avec succès.",
+},
+
+badgeUnlocked: {
+    titleSingle: "Succès débloqué !",
+    titleMultiple: "Nouveaux succès débloqués !",
+    descriptionSingle: "Vous avez débloqué un nouveau badge !",
+    descriptionMultiple: "Vous avez débloqué de nouveaux badges !",
+    close: "Fermer",
+  },
+
 createGroupModal: {
     createGroup: "Créer un nouveau groupe",
     createGroupDescription: "Configurez votre groupe pour gérer les amendes sociales entre membres",

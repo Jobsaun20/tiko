@@ -12,6 +12,35 @@ export const es = {
   installIosGuide: "Instalar IOS",
 },
 
+groupRulesModal: {
+  title: "Reglas del grupo",
+  newRulePlaceholder: "Ser puntual, recoger la ropa sucia...",
+  propose: "Proponer",
+  loading: "Cargando reglas...",
+  noRules: "Aún no hay reglas propuestas.",
+  validated: "Validada",
+  rejected: "Rechazada",
+  pendingOthers: "Pendiente de otros",
+  youRejected: "Has rechazado",
+  accept: "Aceptar",
+  reject: "Rechazar",
+  deleteTitle: "Eliminar regla",
+  close: "Cerrar",
+  toastProposedTitle: "Nueva regla propuesta",
+  toastDeletedTitle: "Regla eliminada",
+  toastDeletedDesc: "La regla ha sido eliminada correctamente.",
+},
+
+
+
+badgeUnlocked: {  
+  titleSingle: "¡Has desbloqueado un logro!",
+    titleMultiple: "¡Nuevos logros desbloqueados!",
+    descriptionSingle: "¡Has desbloqueado un nuevo badge!",
+    descriptionMultiple: "¡Has desbloqueado nuevos badges!",
+    close: "Cerrar",
+},
+
 createGroupModal: {
   createGroup: "Crear nuevo grupo",
     createGroupDescription: "Configura tu grupo para gestionar multas sociales entre miembros",
