@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,12 +28,22 @@ export const EditProfileModal = ({
   user,
   onSave
 }: EditProfileModalProps) => {
+  // INCLUYE USERNAME SIEMPRE EN EL FORM DATA
   const [formData, setFormData] = useState({
+    username: user?.username || "",
     email: user?.email || "user@example.com",
     phone: user?.phone || "+41 76 123 45 67"
   });
 
-  // Usar avatar_url, forzar recarga con timestamp
+  // Actualiza formData si cambian los datos del usuario
+  useEffect(() => {
+    setFormData({
+      username: user?.username || "",
+      email: user?.email || "user@example.com",
+      phone: user?.phone || "+41 76 123 45 67"
+    });
+  }, [user]);
+
   const [avatarUrl, setAvatarUrl] = useState(user?.avatar_url || "");
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -54,11 +64,9 @@ export const EditProfileModal = ({
     }
     setUploading(true);
     const fileExt = file.name.split('.').pop();
-    // Agrega timestamp para romper caché y sobreescribir anterior
     const timestamp = Date.now();
     const filePath = `users/${user.id}/avatar_${timestamp}.${fileExt}`;
 
-    // Subir al bucket avatars
     const { error: uploadError } = await supabase.storage
       .from("avatars")
       .upload(filePath, file, { upsert: true });
@@ -69,10 +77,8 @@ export const EditProfileModal = ({
       return;
     }
 
-    // Obtener URL pública
     const { data } = supabase.storage.from("avatars").getPublicUrl(filePath);
     const publicUrl = data.publicUrl;
-    // Añade un query param para forzar recarga de imagen (cache bust)
     setAvatarUrl(publicUrl + "?r=" + timestamp);
 
     setUploading(false);
@@ -80,6 +86,7 @@ export const EditProfileModal = ({
   };
 
   const handleSave = () => {
+    // Siempre mandamos username
     const updatedUser = {
       ...user,
       ...formData,
@@ -95,6 +102,7 @@ export const EditProfileModal = ({
 
   const handleCancel = () => {
     setFormData({
+      username: user?.username || "",
       email: user?.email || "user@example.com",
       phone: user?.phone || "+41 76 123 45 67"
     });
@@ -119,9 +127,9 @@ export const EditProfileModal = ({
           {/* Profile Picture */}
           <div className="flex flex-col items-center space-y-4">
             <Avatar className="h-24 w-24">
-              <AvatarImage src={avatarUrl} alt={user?.username || "Usuario"} />
+              <AvatarImage src={avatarUrl} alt={formData.username || "Usuario"} />
               <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white text-2xl">
-                {(user?.username?.charAt(0) || "U").toUpperCase()}
+                {(formData.username?.charAt(0) || "U").toUpperCase()}
               </AvatarFallback>
               {uploading && (
                 <div className="absolute inset-0 flex items-center justify-center bg-white/50 rounded-full">
@@ -150,7 +158,7 @@ export const EditProfileModal = ({
               <Label htmlFor="username">Nombre de usuario</Label>
               <Input
                 id="username"
-                value={user?.username || ""}
+                value={formData.username}
                 disabled
                 readOnly
                 className="bg-gray-100 cursor-not-allowed"
