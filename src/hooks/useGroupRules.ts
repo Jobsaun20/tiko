@@ -112,8 +112,8 @@ const PUSH_ENDPOINT = import.meta.env.VITE_PUSH_SERVER_URL;
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                  subs,
-                  notif: {
+                   subscriptions: subs,
+                  notification: {
                     title: notif.title,
                     body: notif.message,
                     url: notif.link
