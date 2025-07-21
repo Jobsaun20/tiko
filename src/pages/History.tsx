@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { History as HistoryIcon, ArrowLeft, Filter, Search } from "lucide-react";
 import { Header } from "@/components/Header";
-import { FineCard } from "@/components/FineCard";
 import { PaymentModal } from "@/components/PaymentModal";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useToast } from "@/hooks/use-toast";
@@ -12,7 +11,6 @@ import { useUserProfile } from "@/hooks/useUserProfile";
 import { useFines } from "@/hooks/useFines";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useBadgeModal } from "@/contexts/BadgeModalContext";
-import { checkAndAwardBadge } from "@/utils/checkAndAwardBadge";
 
 // URL de tu Edge Function en Supabase
 const CHECK_BADGES_URL = "https://pyecpkccpfeuittnccat.supabase.co/functions/v1/check_badges";
@@ -25,6 +23,7 @@ export default function History() {
   const { user: authUser, session } = useAuthContext();
   const { showBadges } = useBadgeModal();
   const { fines, loading, payFine } = useFines();
+
   const [filter, setFilter] = useState<string>("all");
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [selectedFine, setSelectedFine] = useState<any>(null);
@@ -34,148 +33,141 @@ export default function History() {
   useEffect(() => {
     if (!user) return;
     const received = fines.filter(
-      (f: any) => f.recipient_id === user.id && f.status === "pending"
+      f => f.recipient.id === user.id && f.status === "pending"
     );
     if (prevReceivedRef.current && received.length > prevReceivedRef.current) {
       const lastFine = received[0];
       toast({
         title: t.history.newFineReceived,
-        description: `${t.history.newFineFrom} ${lastFine.sender_name}`,
+        description: `${t.history.newFineFrom} ${lastFine.sender.name}`,
         variant: "default",
       });
     }
     prevReceivedRef.current = received.length;
-  }, [fines, user, toast]);
+  }, [fines, user, toast, t.history.newFineFrom, t.history.newFineReceived]);
 
   // -------- PAGO DE MULTA Y CHEQUEO DE BADGES --------
   const handlePayment = async () => {
-    if (selectedFine) {
-      try {
-        await payFine(selectedFine.id);
-        toast({
-          title: t.fines.finePaid,
-          description: `${t.history.fineForAmount} ${selectedFine.amount} CHF ${t.history.correctlyPaid}`,
-        });
+    if (!selectedFine) return;
+    try {
+      await payFine(selectedFine.id);
+      toast({
+        title: t.fines.finePaid,
+        description: `${t.history.fineForAmount} ${selectedFine.amount} CHF ${t.history.correctlyPaid}`,
+      });
 
-        // --- SUMA XP BASE ---
-        const BASE_XP = 2;
-        let gainedXp = BASE_XP;
+      // XP base
+      const BASE_XP = 2;
+      let gainedXp = BASE_XP;
 
-        // --- CHEQUEAR Y OTORGAR BADGES (EDGE FUNCTION) ---
-        if (authUser && session?.access_token) {
-          const response = await fetch(CHECK_BADGES_URL, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": "Bearer " + session.access_token,
+      // Chequear y otorgar badges
+      if (authUser && session?.access_token) {
+        const resp = await fetch(CHECK_BADGES_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + session.access_token,
+          },
+          body: JSON.stringify({
+            user_id: authUser.id,
+            action: "pay_fine",
+            action_data: {
+              amount: selectedFine.amount,
+              fine_id: selectedFine.id,
+              lang: language,
             },
-            body: JSON.stringify({
-              user_id: authUser.id,
-              action: "pay_fine", // o el nombre exacto de la acción de tu badge
-              action_data: {
-                amount: selectedFine.amount,
-                fine_id: selectedFine.id,
-                lang: language,
-              },
-            }),
-          });
-          const result = await response.json();
-          if (result?.newlyEarned?.length > 0) {
-            // Muestra el modal/toast de badges nuevos
-            showBadges(result.newlyEarned, language);
-            // Suma XP adicional si el badge tiene recompensa XP
-            result.newlyEarned.forEach((badge: any) => {
-              gainedXp += badge.xp_reward || badge.xpReward || 0;
-            });
-          }
-        }
-
-        // --- ACTUALIZAR XP SIEMPRE, TENGA BADGE O NO ---
-        if (gainedXp > 0 && user) {
-          const nuevoXP = (user.xp || 0) + gainedXp;
-          const result = await updateProfile({ xp: nuevoXP });
-
-          if (result.error) {
-            console.error(t.history.experienceUpdateError, result.error);
-            toast({
-              title: "Error XP",
-              description: t.history.experienceUpdateError + result.error,
-              variant: "destructive",
-            });
-            alert(t.history.experienceUpdateError + result.error);
-          } else {
-            console.log(t.history.xpUpdated + "Nuevo XP:", nuevoXP);
-            toast({
-              title: t.achievements.title || t.history.xpGained,
-              description: t.achievements.xpGained
-                ? t.achievements.xpGained.replace("{xp}", String(gainedXp))
-                : `${t.history.xpGainedDescription1} ${gainedXp} ${t.history.xpGainedDescription2}`,
-              variant: "default",
-            });
-            fetchProfile(); // Refresca el perfil para mostrar el nuevo XP actualizado
-          }
-        }
-
-      } catch (err: any) {
-        toast({
-          title: "Error",
-          description: err?.message || "Unknown Error",
-          variant: "destructive",
+          }),
         });
-        console.error("[XP][handlePayment] Error:", err);
+        const result = await resp.json();
+        if (result?.newlyEarned?.length) {
+          showBadges(result.newlyEarned, language);
+          result.newlyEarned.forEach((b: any) => {
+            gainedXp += b.xp_reward || b.xpReward || 0;
+          });
+        }
       }
+
+      // Actualizar XP
+      if (gainedXp > 0 && user) {
+        const nuevoXP = (user.xp || 0) + gainedXp;
+        const res = await updateProfile({ xp: nuevoXP });
+        if (res.error) {
+          toast({
+            title: t.history.experienceUpdateError,
+            description: res.error,
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: t.achievements.title || t.history.xpGained,
+            description: t.achievements.xpGained
+              ? t.achievements.xpGained.replace("{xp}", String(gainedXp))
+              : `${t.history.xpGainedDescription1} ${gainedXp} ${t.history.xpGainedDescription2}`,
+            variant: "default",
+          });
+          fetchProfile();
+        }
+      }
+    } catch (err: any) {
+      toast({
+        title: "Error",
+        description: err?.message || "Unknown Error",
+        variant: "destructive",
+      });
+    } finally {
+      setPaymentModalOpen(false);
+      setSelectedFine(null);
     }
-    setPaymentModalOpen(false);
-    setSelectedFine(null);
   };
 
-  // Abrir modal de pago
   const handlePayFine = (fine: any) => {
     setSelectedFine(fine);
     setPaymentModalOpen(true);
   };
 
-  // Filtro según pestaña
-  const filteredFines = fines.filter((fine: any) => {
+  // --- Filtrado ---
+  const filteredFines = fines.filter(f => {
     if (!user) return false;
-    if (filter === "all") {
-      return fine.sender_id === user.id || fine.recipient_id === user.id;
+    const isSender = f.sender.id === user.id;
+    const isRecipient = f.recipient.id === user.id;
+
+    switch (filter) {
+      case "sent": return isSender;
+      case "received": return isRecipient;
+      case "paid": return f.status === "paid" && (isSender || isRecipient);
+      case "pending": return f.status === "pending" && (isSender || isRecipient);
+      default: return isSender || isRecipient;
     }
-    if (filter === "sent") {
-      return fine.sender_id === user.id;
-    }
-    if (filter === "received") {
-      return fine.recipient_id === user.id;
-    }
-    if (filter === "paid") {
-      return fine.status === "paid" && (fine.sender_id === user.id || fine.recipient_id === user.id);
-    }
-    if (filter === "pending") {
-      return fine.status === "pending" && (fine.sender_id === user.id || fine.recipient_id === user.id);
-    }
-    return true;
   });
 
-  // Suma de multas por tipo para los cuadros
-  const getTotalAmount = (type: string) => {
+  const getTotalCount = (type: string) => {
     if (!user) return 0;
-    return fines
-      .filter((fine: any) => {
-        if (type === "sent") return fine.sender_id === user.id;
-        if (type === "received") return fine.recipient_id === user.id;
-        if (type === "paid")
-          return fine.status === "paid" && (fine.sender_id === user.id || fine.recipient_id === user.id);
-        if (type === "pending")
-          return fine.status === "pending" && (fine.sender_id === user.id || fine.recipient_id === user.id);
-        return true;
-      })
-      .length;
+    return fines.filter(f => {
+      const isSender = f.sender.id === user.id;
+      const isRecipient = f.recipient.id === user.id;
+      switch (type) {
+        case "sent": return isSender;
+        case "received": return isRecipient;
+        case "paid": return f.status === "paid" && (isSender || isRecipient);
+        case "pending": return f.status === "pending" && (isSender || isRecipient);
+      }
+      return false;
+    }).length;
   };
+
+  const colorMap: Record<string, string> = {
+  sent:    "text-blue-600",
+  received:"text-red-600",
+  paid:    "text-green-600",
+  pending: "text-yellow-600",
+};
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
       <Header />
       <div className="container mx-auto max-w-4xl px-4 py-6">
+        {/* Back en móvil */}
         <div className="md:hidden mb-4">
           <Button
             variant="ghost"
@@ -187,6 +179,8 @@ export default function History() {
             {t.common.back}
           </Button>
         </div>
+
+        {/* Título */}
         <div className="mb-6">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 flex items-center gap-3">
             <HistoryIcon className="h-8 w-8" />
@@ -194,6 +188,8 @@ export default function History() {
           </h1>
           <p className="text-gray-600">{t.pages.history.description}</p>
         </div>
+
+        {/* Filtros */}
         <Card className="mb-6">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -203,93 +199,97 @@ export default function History() {
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-2">
-              {[
-                { key: "all", label: t.pages.history.all },
-                { key: "sent", label: t.pages.history.sent },
-                { key: "received", label: t.pages.history.received },
-                { key: "paid", label: t.pages.history.paid },
-                { key: "pending", label: t.pages.history.pending },
-              ].map((filterOption) => (
+              {["all","sent","received","paid","pending"].map(key => (
                 <Button
-                  key={filterOption.key}
-                  variant={filter === filterOption.key ? "default" : "outline"}
+                  key={key}
+                  variant={filter === key ? "default" : "outline"}
                   size="sm"
-                  onClick={() => setFilter(filterOption.key)}
-                  className={filter === filterOption.key ? "bg-purple-600 text-white" : ""}
+                  onClick={() => setFilter(key)}
+                  className={filter === key ? "bg-purple-600 text-white" : ""}
                 >
-                  {filterOption.label}
+                  {t.pages.history[key as keyof typeof t.pages.history]}
                 </Button>
               ))}
             </div>
           </CardContent>
         </Card>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <Card>
-            <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-blue-600">{getTotalAmount("sent")}</div>
-              <div className="text-sm text-gray-600">{t.pages.history.sent}</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-green-600">{getTotalAmount("received")}</div>
-              <div className="text-sm text-gray-600">{t.pages.history.received}</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-emerald-600">{getTotalAmount("paid")}</div>
-              <div className="text-sm text-gray-600">{t.pages.history.paid}</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-orange-600">{getTotalAmount("pending")}</div>
-              <div className="text-sm text-gray-600">{t.pages.history.pending}</div>
-            </CardContent>
-          </Card>
+
+        {/* Estadísticas */}
+<div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+  {(["sent","received","paid","pending"] as const).map((type) => (
+    <Card key={type}>
+      <CardContent className="p-4 text-center">
+        {/* aplica aquí la clase de color según el tipo */}
+        <div className={`text-2xl font-bold ${colorMap[type]}`}>
+          {getTotalCount(type)}
         </div>
+        <div className="text-sm text-gray-600">
+          {t.pages.history[type]}
+        </div>
+      </CardContent>
+    </Card>
+  ))}
+</div>
+
+        {/* Lista de multas */}
         <div className="space-y-4">
           {loading ? (
             <div className="text-center text-gray-400 py-8">{t.contacts.loading}</div>
           ) : filteredFines.length > 0 ? (
-            filteredFines.map((fine: any) => (
+            filteredFines.map(fine => (
               <div
                 key={fine.id}
-                className="flex flex-row items-stretch gap-2 rounded-lg bg-white/80 shadow-sm px-4 py-3 border"
+                className="flex items-stretch gap-2 rounded-lg bg-white/80 shadow-sm px-4 py-3 border"
               >
-                {/* Info multa */}
+                {/* Avatar + info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="rounded-full bg-gradient-to-br from-purple-400 to-pink-500 h-9 w-9 flex items-center justify-center text-white font-bold text-lg">
-                      {fine.sender_name?.charAt(0)?.toUpperCase() || "U"}
-                    </div>
+                    <img
+                      src={
+                        fine.sender.id === user?.id
+                          ? fine.recipient.avatar_url || "/default-avatar.png"
+                          : fine.sender.avatar_url || "/default-avatar.png"
+                      }
+                      alt={
+                        fine.sender.id === user?.id
+                          ? fine.recipient.name
+                          : fine.sender.name
+                      }
+                      className="h-9 w-9 rounded-full object-cover border-2 border-white shadow-sm"
+                    />
                     <div>
                       <div className="font-semibold">
-                        {fine.sender_id === user.id ? `A ${fine.recipient_name}` : `De ${fine.sender_name}`}
+                        {fine.sender.id === user?.id
+                          ? `A ${fine.recipient.name}`
+                          : `De ${fine.sender.name}`}
                       </div>
-                      <span className={
-                        fine.status === "paid"
-                          ? "inline-block bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded font-semibold"
-                          : "inline-block bg-orange-100 text-orange-700 text-xs px-2 py-0.5 rounded font-semibold"
-                      }>
-                        {fine.status === "pending" ? "Pendiente" : "Pagada"}
+                      <span
+                        className={
+                          fine.status === "paid"
+                            ? "inline-block bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded font-semibold"
+                            : "inline-block bg-orange-100 text-orange-700 text-xs px-2 py-0.5 rounded font-semibold"
+                        }
+                      >
+                        {fine.status === "pending" ? t.pages.history.pending : t.pages.history.paid}
                       </span>
                     </div>
                   </div>
                   <div className="text-gray-600 text-sm mb-1">{fine.reason}</div>
                   <div className="text-gray-400 text-xs mb-2">
-                    {fine.date ? new Date(fine.date).toLocaleDateString() : ""}
+                    {fine.date && new Date(fine.date).toLocaleDateString()}
                   </div>
                 </div>
-                {/* Precio y botón alineados a la derecha */}
+
+                {/* Importe y botón */}
                 <div className="flex flex-col items-end justify-between">
-                  <div className="text-xl sm:text-2xl font-bold text-purple-700 mb-2">{fine.amount} CHF</div>
-                  {fine.recipient_id === user.id && fine.status === "pending" && (
+                  <div className="text-xl sm:text-2xl font-bold text-purple-700 mb-2">
+                    {fine.amount} CHF
+                  </div>
+                  {fine.recipient.id === user?.id && fine.status === "pending" && (
                     <Button
                       className="bg-green-500 hover:bg-green-600 text-white font-bold px-4"
-                      onClick={() => handlePayFine(fine)}
                       size="sm"
+                      onClick={() => handlePayFine(fine)}
                     >
                       {t.fines.pay}
                     </Button>
@@ -312,6 +312,8 @@ export default function History() {
           )}
         </div>
       </div>
+
+      {/* Modal de pago */}
       {selectedFine && (
         <PaymentModal
           isOpen={paymentModalOpen}

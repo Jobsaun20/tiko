@@ -1,5 +1,4 @@
-import { useEffect } from "react"; // AÑADE ESTO
-
+import { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,7 +9,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useToast } from "@/hooks/use-toast";
 import { useNotifications } from "@/hooks/useNotifications";
 
-// Utilidad para reemplazar los {{placeholders}} en la traducción
+// Reemplaza {{placeholders}} con datos reales
 function renderNotificationText(template: string, data: Record<string, any>) {
   if (!template) return "";
   return template.replace(/{{(\w+)}}/g, (_, key) => data?.[key] ?? "");
@@ -20,39 +19,33 @@ export default function Notifications() {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const {
-    unreadCount,
-    notifications,
-    loading,
-    markAllAsRead,
-    markAsRead,
-  } = useNotifications();
+  const { unreadCount, notifications, loading, markAllAsRead, markAsRead } =
+    useNotifications();
 
-  // Limpia el badge (puntito rojo) al abrir la página
+  // Limpia badge al montar
   useEffect(() => {
-    if ("clearAppBadge" in navigator) {
-      navigator.clearAppBadge();
-    }
+    if ("clearAppBadge" in navigator) navigator.clearAppBadge();
   }, []);
 
-  // Formatear fecha relativa
-  const formatTime = (timestamp: string) => {
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-    const diffDays = Math.floor(diffHours / 24);
-
-    if (diffHours < 1) {
-      return t?.pages?.notifications?.lessThanHour || "Less than 1 hour ago";
-    } else if (diffHours < 24) {
-      return (t?.pages?.notifications?.hoursAgo || "{hours} hours ago").replace("{hours}", diffHours.toString());
-    } else {
-      return (t?.pages?.notifications?.daysAgo || "{days} days ago").replace("{days}", diffDays.toString());
-    }
+  // Formatea fecha relativa
+  const formatTime = (ts: string) => {
+    const date = new Date(ts),
+      diffMs = Date.now() - date.getTime(),
+      diffH = Math.floor(diffMs / 3_600_000),
+      diffD = Math.floor(diffH / 24);
+    if (diffH < 1) return t?.pages?.notifications?.lessThanHour || "Less than 1 hour ago";
+    if (diffH < 24)
+      return (t?.pages?.notifications?.hoursAgo || "{hours} hours ago").replace(
+        "{hours}",
+        diffH.toString()
+      );
+    return (t?.pages?.notifications?.daysAgo || "{days} days ago").replace(
+      "{days}",
+      diffD.toString()
+    );
   };
 
-  // Icono por tipo de notificación
+  // Icono por tipo
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case "fine_received":
@@ -68,38 +61,41 @@ export default function Notifications() {
     }
   };
 
-  // Marcar todas como leídas
+  // Filtra: descarta data null/{} o mensajes vacíos
+  const visibleNotifications = useMemo(() => {
+    return notifications.filter((n) => {
+      if (!n.data || Object.keys(n.data).length === 0) return false;
+      let tpl = t?.pages?.notifications?.[n.type] || "";
+      if (!tpl && n.type === "group_rule_proposed") tpl = "{{rule_description}}";
+      if (!tpl && n.type === "fine_received")
+        tpl = "{{sender_name}} sent you a fine of {{amount}} CHF for \"{{reason}}\"";
+      const msg = renderNotificationText(tpl, n.data).trim();
+      return msg.length > 0;
+    });
+  }, [notifications, t]);
+
   const handleMarkAllAsRead = async () => {
     await markAllAsRead();
     toast({
       title: t?.pages?.notifications?.marked || "Notifications marked",
-      description: t?.pages?.notifications?.allRead || "All notifications have been marked as read",
+      description:
+        t?.pages?.notifications?.allRead ||
+        "All notifications have been marked as read",
     });
-    // Limpia el badge también aquí por si el usuario está en otra página
-    if ("clearAppBadge" in navigator) {
-      navigator.clearAppBadge();
-    }
+    if ("clearAppBadge" in navigator) navigator.clearAppBadge();
   };
 
-  // Marcar una notificación como leída y navegar si tiene link
   const handleNotificationClick = async (notification: any) => {
-    if (!notification.read) {
-      await markAsRead(notification.id);
-    }
-    if (notification.link) {
-      navigate(notification.link);
-    }
-    // Limpia el badge al abrir cualquier notificación
-    if ("clearAppBadge" in navigator) {
-      navigator.clearAppBadge();
-    }
+    if (!notification.read) await markAsRead(notification.id);
+    if (notification.link) navigate(notification.link);
+    if ("clearAppBadge" in navigator) navigator.clearAppBadge();
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
       <Header />
       <div className="container mx-auto max-w-4xl px-4 py-6">
-        {/* Botón atrás para mobile */}
+        {/* Mobile back */}
         <div className="md:hidden mb-4">
           <Button
             variant="ghost"
@@ -112,7 +108,7 @@ export default function Notifications() {
           </Button>
         </div>
 
-        {/* Header de notificaciones adaptativo */}
+        {/* Header */}
         <div className="mb-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="flex items-center gap-3">
@@ -133,16 +129,18 @@ export default function Notifications() {
                 className="flex items-center gap-2 w-full sm:w-auto mt-3 sm:mt-0"
               >
                 <Check className="h-4 w-4" />
-                {t?.pages?.notifications?.markAllRead || "Mark all as read"}
+                {t?.pages?.notifications?.markAllRead ||
+                  "Mark all as read"}
               </Button>
             )}
           </div>
           <p className="text-gray-600 mt-2">
-            {t?.pages?.notifications?.description || "Your recent notifications"}
+            {t?.pages?.notifications?.description ||
+              "Your recent notifications"}
           </p>
         </div>
 
-        {/* Lista de notificaciones */}
+        {/* Lista */}
         <div className="space-y-4">
           {loading ? (
             <Card className="text-center py-12">
@@ -153,45 +151,33 @@ export default function Notifications() {
                 </h3>
               </CardContent>
             </Card>
-          ) : notifications.length > 0 ? (
-            notifications.map((notification) => {
-              // Traducción dinámica del mensaje
-              let template =
-                t?.pages?.notifications?.[notification.type] || "";
+          ) : visibleNotifications.length > 0 ? (
+            visibleNotifications.map((n) => {
+              let tpl = t?.pages?.notifications?.[n.type] || "";
+              if (!tpl && n.type === "group_rule_proposed") tpl = "{{rule_description}}";
+              if (!tpl && n.type === "fine_received")
+                tpl = "{{sender_name}} sent you a fine of {{amount}} CHF for \"{{reason}}\"";
+              const message = renderNotificationText(tpl, n.data);
 
-              // Fallbacks para tipos concretos
-              if (!template && notification.type === "group_rule_proposed") {
-                template = "{{rule_description}}";
-              }
-              if (!template && notification.type === "fine_received") {
-                template = "{{sender_name}} sent you a fine of {{amount}} CHF for \"{{reason}}\"";
-              }
-
-              const message = renderNotificationText(template, notification.data);
-
-              // Título traducible para tipos conocidos
               let notifTitle = "";
-              if (notification.type === "group_rule_proposed") {
+              if (n.type === "group_rule_proposed")
                 notifTitle = t?.pages?.notifications?.newRuleProposed || "";
-              } else if (notification.type === "fine_received") {
+              if (n.type === "fine_received")
                 notifTitle = t?.pages?.notifications?.fine_received_title || "";
-              }
 
               return (
                 <Card
-                  key={notification.id}
+                  key={n.id}
                   className={`hover:shadow-md transition-shadow cursor-pointer ${
-                    !notification.read
-                      ? "border-l-4 border-l-purple-500 bg-purple-50"
-                      : ""
+                    !n.read ? "border-l-4 border-l-purple-500 bg-purple-50" : ""
                   }`}
-                  onClick={() => handleNotificationClick(notification)}
+                  onClick={() => handleNotificationClick(n)}
                 >
                   <CardContent className="p-4">
                     <div className="flex items-start gap-4">
                       <div className="flex-shrink-0">
                         <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-xl">
-                          {getNotificationIcon(notification.type)}
+                          {getNotificationIcon(n.type)}
                         </div>
                       </div>
                       <div className="flex-1 min-w-0">
@@ -199,7 +185,7 @@ export default function Notifications() {
                           <h4 className="font-semibold text-gray-800">
                             {notifTitle}
                           </h4>
-                          {!notification.read && (
+                          {!n.read && (
                             <div className="w-2 h-2 bg-purple-500 rounded-full flex-shrink-0"></div>
                           )}
                         </div>
@@ -207,7 +193,7 @@ export default function Notifications() {
                           {message}
                         </p>
                         <span className="text-xs text-gray-500">
-                          {formatTime(notification.created_at)}
+                          {formatTime(n.created_at)}
                         </span>
                       </div>
                     </div>

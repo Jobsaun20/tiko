@@ -4,20 +4,24 @@ import { useAuthContext } from "@/contexts/AuthContext";
 import { useBadgeModal } from "@/contexts/BadgeModalContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 
+export interface FineUser {
+  id: string;
+  name: string;
+  avatar_url: string | null;
+}
+
 export interface Fine {
   id: string;
   reason: string;
   amount: number;
   sender_id: string;
-  sender_name: string;
-  sender_phone?: string;
-  sender_email: string;
   recipient_id: string;
-  recipient_name: string;
-  recipient_email: string;
   status: "pending" | "paid";
   date: string;
   type: string; // "sent", "received", etc
+  // ahora tenemos estos objetos anidados
+  sender: FineUser;
+  recipient: FineUser;
 }
 
 // URL del Edge Function de badges
@@ -43,16 +47,30 @@ export function useFines() {
       return;
     }
     setLoading(true);
-    const { data, error } = await supabase
+
+    const { data, error: fetchError } = await supabase
       .from("fines")
-      .select("*")
+      .select(`
+        *,
+        sender:users!sender_id (
+          id,
+          name,
+          avatar_url
+        ),
+        recipient:users!recipient_id (
+          id,
+          name,
+          avatar_url
+        )
+      `)
       .or(`sender_id.eq.${user.id},recipient_id.eq.${user.id}`)
       .order("date", { ascending: false });
-    if (error) {
-      setError(error.message);
+
+    if (fetchError) {
+      setError(fetchError.message);
       setFines([]);
     } else {
-      setFines(data || []);
+      setFines(data as Fine[]);
     }
     setLoading(false);
   }
@@ -62,33 +80,35 @@ export function useFines() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
+  // --- Pagar multa ---
   async function payFine(fineId: string) {
     if (!user) throw new Error("Usuario no autenticado");
-    const { data, error } = await supabase
+
+    const { data, error: updateError } = await supabase
       .from("fines")
       .update({ status: "paid" })
       .eq("id", fineId)
       .select()
       .maybeSingle();
-    if (error) throw new Error(error.message);
+
+    if (updateError) throw new Error(updateError.message);
 
     await refetchFines();
     return data;
   }
 
-  async function createFine(
-    newFine: {
-      reason: string;
-      amount: number;
-      recipient_id: string;
-      recipient_name: string;
-      recipient_email: string;
-      sender_name?: string;
-      sender_phone?: string;
-      date?: string;
-      type?: string;
-    }
-  ) {
+  // --- Crear nueva multa ---
+  async function createFine(newFine: {
+    reason: string;
+    amount: number;
+    recipient_id: string;
+    recipient_name: string;
+    recipient_email: string;
+    sender_name?: string;
+    sender_phone?: string;
+    date?: string;
+    type?: string;
+  }) {
     if (!user) throw new Error("Usuario no autenticado");
     if (newFine.recipient_id === user.id)
       throw new Error("No puedes enviarte una multa a ti mismo.");
@@ -108,58 +128,53 @@ export function useFines() {
         newFine.sender_name ||
         user.user_metadata?.username ||
         user.user_metadata?.name ||
-        user.email,
+        user.email!,
       sender_phone: newFine.sender_phone || "",
-      sender_email: user.email,
+      sender_email: user.email!,
       recipient_id: newFine.recipient_id,
       recipient_name: newFine.recipient_name,
       recipient_email: newFine.recipient_email,
       date: newFine.date || new Date().toISOString(),
-      status: "pending",
-      type: newFine.type || "sent"
+      status: "pending" as const,
+      type: newFine.type || "sent",
     };
 
-    // 1. Inserta la multa en la tabla "fines"
-    const { data, error } = await supabase
+    // 1. Inserta la multa
+    const { data, error: insertError } = await supabase
       .from("fines")
       .insert([fineToInsert])
       .select()
       .maybeSingle();
 
-    if (error) throw new Error(error.message);
+    if (insertError) throw new Error(insertError.message);
 
-    // 2. Crea una notificación en la tabla notifications (para UI)
-    let notificationId: string | undefined;
-    const notifInsert = await supabase
+    // 2. Crea notificación interna
+    const { data: notifData } = await supabase
       .from("notifications")
-      .insert([{
-        user_id: newFine.recipient_id,
-        type: "fine_received",
-        title: "Nueva multa recibida",
-        message: `Has recibido una multa de ${fineToInsert.sender_name} por ${fineToInsert.amount} CHF.`,
-        link: "/history",
-        read: false,
-        created_at: new Date().toISOString()
-      }])
+      .insert([
+        {
+          user_id: newFine.recipient_id,
+          type: "fine_received",
+          title: "Nueva multa recibida",
+          message: `Has recibido una multa de ${fineToInsert.sender_name} por ${fineToInsert.amount} CHF.`,
+          link: "/history",
+          read: false,
+          created_at: new Date().toISOString(),
+        },
+      ])
       .select()
       .maybeSingle();
 
-    if (notifInsert.data && notifInsert.data.id) {
-      notificationId = notifInsert.data.id;
-    }
-
-    // 3. Si se ha insertado la notificación, envía la push
-    if (notificationId) {
+    // 3. Push notification
+    if (notifData?.id) {
       try {
-        // a) Obtén todas las suscripciones push del destinatario
         const { data: pushSubs } = await supabase
           .from("push_subscriptions")
           .select("subscription")
           .eq("user_id", newFine.recipient_id);
 
-        // b) Convierte cada suscripción a objeto JS, filtra solo válidas
         const subs = (pushSubs || [])
-          .map(s => {
+          .map((s: any) => {
             try {
               return typeof s.subscription === "string"
                 ? JSON.parse(s.subscription)
@@ -168,48 +183,47 @@ export function useFines() {
               return null;
             }
           })
-          .filter(sub => sub && typeof sub === "object" && !!sub.endpoint && !!sub.keys && !!sub.keys.auth && !!sub.keys.p256dh);
+          .filter(
+            (s: any) =>
+              s &&
+              s.endpoint &&
+              s.keys?.auth &&
+              s.keys?.p256dh
+          );
 
-        if (subs.length === 0) {
-          console.log("No hay suscripciones push válidas para este usuario.");
-        } else {
-          // c) Prepara el objeto notif con los datos de la notificación push
-          const notif = {
-            title: "New fine received",
-            body: `You have received a fine from ${fineToInsert.sender_name} for ${fineToInsert.amount} CHF.`,
-            url: "/history"
-          };
+        const notifPayload = {
+          title: "New fine received",
+          body: `You have received a fine from ${fineToInsert.sender_name} for ${fineToInsert.amount} CHF.`,
+          url: "/history",
+        };
 
-          // d) Envía la notificación push a cada endpoint del usuario
-          for (const subscription of subs) {
-            try {
-              await fetch(PUSH_ENDPOINT, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  subs: subscription,
-                  notif: notif
-                })
-              });
-            } catch (err) {
-              // Error individual por suscripción (no interrumpe el resto)
-              console.error("Error enviando push a una suscripción:", err);
-            }
+        for (const subscription of subs) {
+          try {
+            await fetch(PUSH_ENDPOINT, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                subs: subscription,
+                notif: notifPayload,
+              }),
+            });
+          } catch (err) {
+            console.error("Error enviando push:", err);
           }
         }
       } catch (err) {
-        console.error("Error enviando push notification:", err);
+        console.error("Error en push notification flow:", err);
       }
     }
 
-    // 4. Chequeo y despliegue de badges
+    // 4. Chequeo de badges
     if (user && session?.access_token && data) {
       try {
-        const response = await fetch(CHECK_BADGES_URL, {
+        const resp = await fetch(CHECK_BADGES_URL, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": "Bearer " + session.access_token,
+            Authorization: "Bearer " + session.access_token,
           },
           body: JSON.stringify({
             user_id: user.id,
@@ -221,8 +235,8 @@ export function useFines() {
             },
           }),
         });
-        const result = await response.json();
-        if (result?.newlyEarned?.length > 0) {
+        const result = await resp.json();
+        if (result?.newlyEarned?.length) {
           showBadges(result.newlyEarned, language);
         }
       } catch (err) {
@@ -230,11 +244,18 @@ export function useFines() {
       }
     }
 
-    // 5. Recarga el listado tras crear multa
+    // 5. Refrescar lista
     await refetchFines();
 
     return data;
   }
 
-  return { fines, loading, error, setFines, payFine, createFine };
+  return {
+    fines,
+    loading,
+    error,
+    setFines,
+    payFine,
+    createFine,
+  };
 }
