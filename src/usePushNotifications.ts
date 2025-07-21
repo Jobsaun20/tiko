@@ -23,6 +23,19 @@ export function usePushNotifications() {
     }
 
     (async () => {
+       // PASO 1: Limpieza automática SIEMPRE (no solo si ha cambiado la VAPID)
+    console.log("Comprobando si hay suscripción push previa...");
+    if ("serviceWorker" in navigator && "PushManager" in window) {
+      const reg = await navigator.serviceWorker.ready;
+      let sub = await reg.pushManager.getSubscription();
+      if (sub) {
+        console.log("Encontrada suscripción previa:", sub);
+        await sub.unsubscribe();
+        console.log("🧹 Subscripción vieja borrada por cambio de VAPID.");
+      } else {
+        console.log("No hay subscripción previa");
+      }
+    }
       // Elimina SIEMPRE la suscripción previa (fuerza limpieza)
       if ("serviceWorker" in navigator && "PushManager" in window) {
         const reg = await navigator.serviceWorker.ready;
