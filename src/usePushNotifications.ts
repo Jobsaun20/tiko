@@ -99,3 +99,5 @@ export function usePushNotifications() {
 
   }, [user, VAPID_PUBLIC_KEY]);
 }
+
+
