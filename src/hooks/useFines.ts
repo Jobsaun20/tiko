@@ -23,6 +23,9 @@ export interface Fine {
 // URL del Edge Function de badges
 const CHECK_BADGES_URL = "https://pyecpkccpfeuittnccat.supabase.co/functions/v1/check_badges";
 
+// ENDPOINT push notification
+const PUSH_ENDPOINT = "https://pic-push-server.vercel.app/api/send-push";
+
 export function useFines() {
   const { user, session } = useAuthContext();
   const { showBadges } = useBadgeModal();
@@ -32,7 +35,7 @@ export function useFines() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // --- Nueva función: Recargar del backend ---
+  // --- Recargar multas desde backend ---
   async function refetchFines() {
     if (!user) {
       setFines([]);
@@ -69,9 +72,7 @@ export function useFines() {
       .maybeSingle();
     if (error) throw new Error(error.message);
 
-    // Refresca desde la base de datos para ambos lados (evita estados inconsistentes)
     await refetchFines();
-
     return data;
   }
 
@@ -127,7 +128,7 @@ export function useFines() {
 
     if (error) throw new Error(error.message);
 
-    // 2. Crea una notificación para el destinatario
+    // 2. Crea una notificación en la tabla notifications (para UI)
     let notificationId: string | undefined;
     const notifInsert = await supabase
       .from("notifications")
@@ -136,7 +137,7 @@ export function useFines() {
         type: "fine_received",
         title: "Nueva multa recibida",
         message: `Has recibido una multa de ${fineToInsert.sender_name} por ${fineToInsert.amount} CHF.`,
-        link: "/", // o el link donde se ve la multa
+        link: "/history",
         read: false,
         created_at: new Date().toISOString()
       }])
@@ -147,38 +148,61 @@ export function useFines() {
       notificationId = notifInsert.data.id;
     }
 
-    // 3. Si se ha insertado la notificación, envía la push (CORREGIDO)
+    // 3. Si se ha insertado la notificación, envía la push
     if (notificationId) {
       try {
-        // 1. Obtén todas las suscripciones push del destinatario
+        // a) Obtén todas las suscripciones push del destinatario
         const { data: pushSubs } = await supabase
           .from("push_subscriptions")
           .select("subscription")
           .eq("user_id", newFine.recipient_id);
 
-        const subs = (pushSubs || []).map(s => s.subscription);
+        // b) Convierte cada suscripción a objeto JS, filtra solo válidas
+        const subs = (pushSubs || [])
+          .map(s => {
+            try {
+              return typeof s.subscription === "string"
+                ? JSON.parse(s.subscription)
+                : s.subscription;
+            } catch {
+              return null;
+            }
+          })
+          .filter(sub => sub && typeof sub === "object" && !!sub.endpoint && !!sub.keys && !!sub.keys.auth && !!sub.keys.p256dh);
 
-        // 2. Prepara el objeto notif con los mismos datos de la notificación
-        const notif = {
-          title: "New fine received",
-          body: `You have received a fine from ${fineToInsert.sender_name} for ${fineToInsert.amount} CHF.`,
-          url: "/history" // O el link a la multa
-        };
+        if (subs.length === 0) {
+          console.log("No hay suscripciones push válidas para este usuario.");
+        } else {
+          // c) Prepara el objeto notif con los datos de la notificación push
+          const notif = {
+            title: "New fine received",
+            body: `You have received a fine from ${fineToInsert.sender_name} for ${fineToInsert.amount} CHF.`,
+            url: "/history"
+          };
 
-        // 3. Llama al endpoint correctamente
-        await fetch("https://pic-push-server.vercel.app/api/send-push", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ subs, notif })
-        });
-
+          // d) Envía la notificación push a cada endpoint del usuario
+          for (const subscription of subs) {
+            try {
+              await fetch(PUSH_ENDPOINT, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  subs: subscription,
+                  notif: notif
+                })
+              });
+            } catch (err) {
+              // Error individual por suscripción (no interrumpe el resto)
+              console.error("Error enviando push a una suscripción:", err);
+            }
+          }
+        }
       } catch (err) {
-        // Opcional: manejar el error
         console.error("Error enviando push notification:", err);
       }
     }
 
-    // === NUEVO: CHEQUEO Y DESPLIEGUE DE BADGES ===
+    // 4. Chequeo y despliegue de badges
     if (user && session?.access_token && data) {
       try {
         const response = await fetch(CHECK_BADGES_URL, {
@@ -189,7 +213,7 @@ export function useFines() {
           },
           body: JSON.stringify({
             user_id: user.id,
-            action: "create_fine", // Asegúrate de tener esta key en la tabla badges
+            action: "create_fine",
             action_data: {
               fine_id: data.id,
               amount: data.amount,
@@ -202,12 +226,11 @@ export function useFines() {
           showBadges(result.newlyEarned, language);
         }
       } catch (err) {
-        // Opcional: mostrar error o log
         console.error("Error check_badges:", err);
       }
     }
 
-    // 4. Recarga listado tras crear multa
+    // 5. Recarga el listado tras crear multa
     await refetchFines();
 
     return data;

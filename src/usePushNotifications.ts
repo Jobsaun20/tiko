@@ -10,20 +10,38 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
   return Uint8Array.from([...rawData].map((c) => c.charCodeAt(0)));
 }
 
+const VAPID_KEY_STORAGE = "vapid_key_used_for_push";
+
 export function usePushNotifications() {
   const { user } = useAuthContext();
   const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY;
 
   useEffect(() => {
-    if (!user) return;
-
-    if (!VAPID_PUBLIC_KEY) {
-      console.error("❌ VAPID_PUBLIC_KEY no está definida en .env");
+    if (!user || !VAPID_PUBLIC_KEY) {
+      console.warn("⛔ No user or VAPID key");
       return;
     }
 
-    if ("serviceWorker" in navigator && "PushManager" in window) {
-      (async () => {
+    // PASO 1: Limpieza automática si la VAPID pública cambió
+    (async () => {
+      const prevVapid = localStorage.getItem(VAPID_KEY_STORAGE);
+      if (prevVapid && prevVapid !== VAPID_PUBLIC_KEY) {
+        // Borra subscripción antigua del navegador
+        if ("serviceWorker" in navigator && "PushManager" in window) {
+          const reg = await navigator.serviceWorker.ready;
+          const sub = await reg.pushManager.getSubscription();
+          if (sub) {
+            await sub.unsubscribe();
+            console.log("🧹 Subscripción vieja borrada por cambio de VAPID.");
+          }
+        }
+        localStorage.removeItem(VAPID_KEY_STORAGE);
+      }
+      // Guarda la VAPID usada para la próxima vez
+      localStorage.setItem(VAPID_KEY_STORAGE, VAPID_PUBLIC_KEY);
+
+      // PASO 2: Registrar el SW y crear subscripción nueva si hace falta
+      if ("serviceWorker" in navigator && "PushManager" in window) {
         try {
           const reg = await navigator.serviceWorker.register("/service-worker.js", {
             type: "module",
@@ -45,11 +63,12 @@ export function usePushNotifications() {
               userVisibleOnly: true,
               applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
             });
-            console.log("🔔 Nueva suscripción generada");
+            console.log("🟢 Nueva suscripción:", sub);
           } else {
-            console.log("🔁 Ya existía suscripción previa");
+            console.log("🟦 Suscripción previa encontrada:", sub);
           }
 
+          // Guarda o actualiza la suscripción en Supabase
           const { error } = await supabase
             .from("push_subscriptions")
             .upsert({
@@ -58,16 +77,17 @@ export function usePushNotifications() {
             });
 
           if (error) {
-            console.error("❌ Error guardando suscripción en Supabase:", error.message);
+            console.error("❌ Error guardando suscripción:", error.message);
           } else {
             console.log("✅ Suscripción guardada en Supabase");
           }
         } catch (err) {
-          console.error("❌ Error durante el registro de notificaciones:", err);
+          console.error("❌ Error al registrar notificaciones:", err);
         }
-      })();
-    } else {
-      console.warn("⚠️ El navegador no soporta Push API o Service Workers");
-    }
-  }, [user]);
+      } else {
+        console.warn("⚠️ El navegador no soporta Push API o Service Workers");
+      }
+    })();
+
+  }, [user, VAPID_PUBLIC_KEY]);
 }

@@ -63,10 +63,13 @@ function usePushNotifications(user: any) {
             const reg = await navigator.serviceWorker.ready;
             let sub = await reg.pushManager.getSubscription();
             if (!sub) {
-              sub = await reg.pushManager.subscribe({
-                userVisibleOnly: true,
-                applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
-              });
+  sub = await reg.pushManager.subscribe({
+    userVisibleOnly: true,
+    applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+  });
+  // LOG clave VAPID y objeto suscripción
+  console.log("🟢 Subscription registrada:", sub);
+  console.log("🟢 Clave VAPID usada:", VAPID_PUBLIC_KEY);
             }
             // Guarda la suscripción en Supabase
             await supabase
