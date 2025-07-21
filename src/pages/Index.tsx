@@ -549,11 +549,19 @@ const getRarityColor = (rarity) => {
                   {/* Info multa */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3 mb-2">
-                      <div className="rounded-full bg-gradient-to-br from-purple-400 to-pink-500 h-10 w-10 flex items-center justify-center text-white font-bold text-xl">
-                        {latestReceivedFine.sender_name?.charAt(0)?.toUpperCase() || "U"}
-                      </div>
+                      {latestReceivedFine.sender.avatar_url ? (
+                        <img
+                          src={latestReceivedFine.sender.avatar_url}
+                          alt={latestReceivedFine.sender.name || "Avatar"}
+                          className="rounded-full h-10 w-10 object-cover border-2 border-purple-300 shadow"
+                        />
+                      ) : (
+                        <div className="rounded-full bg-gradient-to-br from-purple-400 to-pink-500 h-10 w-10 flex items-center justify-center text-white font-bold text-xl">
+                          {latestReceivedFine.sender.name?.charAt(0)?.toUpperCase() || "U"}
+                        </div>
+                      )}
                       <div>
-                        <div className="font-semibold">{t.index.de} {latestReceivedFine.sender_name}</div>
+                        <div className="font-semibold">{t.index.de} {latestReceivedFine.sender.name}</div>
                         {latestReceivedFine.status === "pending" ? (
                           <span className="inline-block bg-orange-100 text-orange-700 text-xs px-2 py-0.5 rounded font-semibold">
                             {t.index.pendent}
@@ -689,12 +697,21 @@ const getRarityColor = (rarity) => {
                       {/* Info multa */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-3 mb-2">
-                          <div className="rounded-full bg-gradient-to-br from-purple-400 to-pink-500 h-9 w-9 flex items-center justify-center text-white font-bold text-lg">
-                            {fine.sender_name?.charAt(0)?.toUpperCase() || "U"}
-                          </div>
+                          {latestReceivedFine.sender.avatar_url ? (
+                            <img
+                              src={latestReceivedFine.sender.avatar_url}
+                              alt={latestReceivedFine.sender.name || "Avatar"}
+                              className="rounded-full h-10 w-10 object-cover border-2 border-purple-300 shadow"
+                            />
+                          ) : (
+                            <div className="rounded-full bg-gradient-to-br from-purple-400 to-pink-500 h-10 w-10 flex items-center justify-center text-white font-bold text-xl">
+                              {latestReceivedFine.sender.name?.charAt(0)?.toUpperCase() || "U"}
+                            </div>
+                          )}
+
                           <div>
                             <div className="font-semibold">
-                              {t.index.de} {fine.sender_name}
+                              {t.index.de} {fine.sender.name}
                             </div>
                             {fine.status === "pending" ? (
                               <span className="inline-block bg-orange-100 text-orange-700 text-xs px-2 py-0.5 rounded font-semibold">
