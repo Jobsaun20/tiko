@@ -22,25 +22,21 @@ export function usePushNotifications() {
       return;
     }
 
-    // PASO 1: Limpieza automática si la VAPID pública cambió
     (async () => {
-      const prevVapid = localStorage.getItem(VAPID_KEY_STORAGE);
-      if (prevVapid && prevVapid !== VAPID_PUBLIC_KEY) {
-        // Borra subscripción antigua del navegador
-        if ("serviceWorker" in navigator && "PushManager" in window) {
-          const reg = await navigator.serviceWorker.ready;
-          const sub = await reg.pushManager.getSubscription();
-          if (sub) {
-            await sub.unsubscribe();
-            console.log("🧹 Subscripción vieja borrada por cambio de VAPID.");
-          }
+      // Elimina SIEMPRE la suscripción previa (fuerza limpieza)
+      if ("serviceWorker" in navigator && "PushManager" in window) {
+        const reg = await navigator.serviceWorker.ready;
+        let sub = await reg.pushManager.getSubscription();
+        if (sub) {
+          await sub.unsubscribe();
+          console.log("🧹 Subscripción anterior eliminada (forzado).");
         }
-        localStorage.removeItem(VAPID_KEY_STORAGE);
       }
-      // Guarda la VAPID usada para la próxima vez
+
+      // Guarda la VAPID usada para futura referencia (opcional)
       localStorage.setItem(VAPID_KEY_STORAGE, VAPID_PUBLIC_KEY);
 
-      // PASO 2: Registrar el SW y crear subscripción nueva si hace falta
+      // Registrar el Service Worker y crear subscripción nueva
       if ("serviceWorker" in navigator && "PushManager" in window) {
         try {
           const reg = await navigator.serviceWorker.register("/service-worker.js", {
@@ -58,17 +54,16 @@ export function usePushNotifications() {
           const sw = await navigator.serviceWorker.ready;
           let sub = await sw.pushManager.getSubscription();
 
+          // ¡Siempre será null, porque acabas de borrar la anterior!
           if (!sub) {
             sub = await sw.pushManager.subscribe({
               userVisibleOnly: true,
               applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
             });
-            console.log("🟢 Nueva suscripción:", sub);
-          } else {
-            console.log("🟦 Suscripción previa encontrada:", sub);
+            console.log("🟢 Nueva suscripción creada con VAPID:", VAPID_PUBLIC_KEY, sub);
           }
 
-          // Guarda o actualiza la suscripción en Supabase
+          // Guarda la suscripción en Supabase
           const { error } = await supabase
             .from("push_subscriptions")
             .upsert({
@@ -77,7 +72,7 @@ export function usePushNotifications() {
             });
 
           if (error) {
-            console.error("❌ Error guardando suscripción:", error.message);
+            console.error("❌ Error guardando suscripción en Supabase:", error.message);
           } else {
             console.log("✅ Suscripción guardada en Supabase");
           }
