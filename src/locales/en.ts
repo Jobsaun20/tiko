@@ -310,6 +310,7 @@ onboard: {
     changePhoto: "Change photo",
     personalInfo: "Personal information",
     fullName: "Full name",
+    userName: "Username",
     phone: "Phone",
     twintConfig: "TWINT configuration",
     uploadQR: "Upload your TWINT QR code",

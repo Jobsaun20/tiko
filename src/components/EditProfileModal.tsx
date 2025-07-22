@@ -14,6 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Upload, User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/supabaseClient";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface EditProfileModalProps {
   isOpen: boolean;
@@ -47,7 +48,8 @@ export const EditProfileModal = ({
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { toast } = useToast();
-
+  const { t } = useLanguage();
+  const m = t.profile;
   const handlePhotoUpload = () => {
     if (fileInputRef.current) fileInputRef.current.click();
   };
@@ -70,7 +72,7 @@ export const EditProfileModal = ({
       .upload(filePath, file, { upsert: true });
 
     if (uploadError) {
-      toast({ title: "Error subiendo avatar", description: uploadError.message, variant: "destructive" });
+      toast({ title: "Error", description: uploadError.message, variant: "destructive" });
       setUploading(false);
       return;
     }
@@ -80,7 +82,7 @@ export const EditProfileModal = ({
     setAvatarUrl(publicUrl + "?r=" + timestamp);
 
     setUploading(false);
-    toast({ title: "Foto subida correctamente. ¡No olvides guardar!" });
+    toast({ title: m.updated });
   };
 
   // Siempre manda todos los campos editables
@@ -92,8 +94,8 @@ export const EditProfileModal = ({
     };
     onSave(updatedUser);
     toast({
-      title: "✅ Perfil actualizado",
-      description: "Tus cambios han sido guardados correctamente.",
+      title: "✅" + m.updated,
+      description: m.updateDescription,
     });
     onClose();
   };
@@ -114,10 +116,10 @@ export const EditProfileModal = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <User className="h-5 w-5" />
-            Editar Perfil
+            {m.editProfile}
           </DialogTitle>
           <DialogDescription>
-            Actualiza tu información personal y foto de perfil
+            {m.description}
           </DialogDescription>
         </DialogHeader>
 
@@ -137,7 +139,7 @@ export const EditProfileModal = ({
             </Avatar>
             <Button variant="outline" size="sm" onClick={handlePhotoUpload} disabled={uploading}>
               <Upload className="h-4 w-4 mr-2" />
-              {uploading ? "Subiendo..." : "Cambiar Foto"}
+              {uploading ? "Subiendo..." : m.changePhoto}
             </Button>
             {/* input oculto */}
             <input
@@ -153,7 +155,7 @@ export const EditProfileModal = ({
           {/* Campos del formulario */}
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="username">Nombre de usuario</Label>
+              <Label htmlFor="username">{m.userName}</Label>
               <Input
                 id="username"
                 value={formData.username}
@@ -163,7 +165,7 @@ export const EditProfileModal = ({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Correo Electrónico</Label>
+              <Label htmlFor="email">{t.auth.email}</Label>
               <Input
                 id="email"
                 type="email"
@@ -173,7 +175,7 @@ export const EditProfileModal = ({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="phone">Teléfono</Label>
+              <Label htmlFor="phone">{t.fines.phone}</Label>
               <Input
                 id="phone"
                 value={formData.phone}
@@ -186,10 +188,10 @@ export const EditProfileModal = ({
 
         <DialogFooter className="pt-6">
           <Button variant="outline" onClick={handleCancel}>
-            Cancelar
+            {t.createGroupModal.cancel}
           </Button>
           <Button onClick={handleSave} className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
-            Guardar Cambios
+            {t.profile.save}
           </Button>
         </DialogFooter>
       </DialogContent>
