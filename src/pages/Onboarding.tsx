@@ -24,6 +24,12 @@ export default function Onboarding() {
       desc: t.onboard.createGroupsDescription,
     },
     {
+      lottie: "https://lottie.host/248333ca-3a1f-4e44-8526-e9a8f0ed9422/yfrDgNo0AV.json",
+      /* lottie: "https://lottie.host/e664fb8b-cf1d-40e0-8a75-5d26aa962552/AO1K1nKt07.json", */
+      title: t.onboard.challengeTitle,
+      desc: t.onboard.challengeDefinition,
+    },
+    {
       lottie: "https://lottie.host/68a2a483-296d-499a-ba74-7e2e160b773a/zoQM2W5Vmj.json",
       title: t.onboard.payAndLevelUp,
       desc: t.onboard.payAndLevelUpDescription,

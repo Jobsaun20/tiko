@@ -24,6 +24,7 @@ import MyQR from '@/pages/MyQR';
 import Notifications from '@/pages/Notifications';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
+import ChallengesPage from "@/pages/Challenges";
 
 // Páginas legales
 import AGBPage from '@/pages/legal/agb';
@@ -39,6 +40,8 @@ import Onboarding from '@/pages/Onboarding';
 import { supabase } from "@/supabaseClient";
 import ContactsModalPage from "./pages/NewFineModalPage";
 import InstallAppIOS from "./pages/InstallAppIOS";
+
+
 
 // FUNCION: Decodifica clave VAPID (para PushManager)
 function urlBase64ToUint8Array(base64String: string) {
@@ -165,6 +168,16 @@ function AppRoutes() {
           </NavBarLayout>
         </ProtectedRoute>
       } />
+      <Route
+   path="/challenges"
+   element={
+     <ProtectedRoute>
+       <NavBarLayout>
+         <ChallengesPage />
+       </NavBarLayout>
+     </ProtectedRoute>
+   }
+ />
       <Route path="/fine-modal" element={<ContactsModalPage />} />
       <Route path="/install-ios" element={<InstallAppIOS />} />
 

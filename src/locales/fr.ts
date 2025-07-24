@@ -6,8 +6,139 @@ export const fr = {
     name: "DESWG",
     subtitle: "Entre amis",
     installApp: "Installer l'app",
+    other: "Autres",
     installIosGuide: "Installer sur iOS",
   },
+notifications: {
+  // Modèles de notification
+  fine_received: {
+    title: "Amende reçue",
+    icon: "💸",
+    message: '{{sender_name}} vous a envoyé une amende de {{amount}} CHF pour "{{reason}}"',
+  },
+  challenge_created: {
+    title: "Défi créé",
+    icon: "🏆",
+    message: "Vous avez créé un défi : {{challenge_title}}",
+  },
+  challenge_invited: {
+    title: "Invitation à un défi",
+    icon: "🎯",
+    message: "Vous avez été invité au défi : {{challenge_title}}",
+  },
+  payment_received: {
+    title: "Paiement reçu",
+    icon: "💰",
+    message: "Vous avez reçu un paiement de {{amount}} CHF",
+  },
+  group_invite: {
+    title: "Invitation à un groupe",
+    icon: "👥",
+    message: "Vous avez été invité dans un groupe",
+  },
+  group_rule_proposed: {
+    title: "Nouvelle règle proposée",
+    icon: "⏳",
+    message: "{{rule_description}}",
+  },
+
+  // En-tête et actions
+  title: "Notifications",
+  description: "Vos notifications récentes",
+  markAllRead: "Tout marquer comme lu",
+  markReadMobile: "Marquer comme lu",
+  deleteAll: "Tout supprimer",
+  confirmDeleteAll: "Êtes-vous sûr de vouloir supprimer toutes les notifications ?",
+  notificationsMarked: "Notifications marquées",
+  notificationsMarkedDescription: "Toutes les notifications ont été marquées comme lues",
+  notificationsDeleted: "Notifications supprimées",
+  notificationsDeletedDescription: "Toutes les notifications ont été supprimées",
+phoneUpdated: "Téléphone mis à jour",
+phoneUpdatedDescription: "Vous pouvez maintenant recevoir vos gains avec Twint",
+
+  // États vides
+  noNotifications: "Vous n'avez pas encore de notifications",
+  emptyMessage: "Lorsque vous aurez des notifications, elles apparaîtront ici.",
+  loading: "Chargement des notifications...",
+
+  // Dates relatives
+  lessThanOneHour: "Il y a moins d'une heure",
+  hoursAgo: "Il y a {{hours}} heures",
+  daysAgo: "Il y a {{days}} jours",
+},
+
+
+challengeCard: {
+  you: "Toi",
+  user: "Utilisateur",
+  sureDelete: "Es-tu sûr de vouloir supprimer ce défi ?",
+  errorDeleting: "Erreur lors de la suppression du défi :",
+  pending: "En attente",
+  active: "Actif",
+  finished: "Terminé",
+  canceled: "Annulé",
+  createdBy: "Créé par :",
+  penalty: "Pénalité",
+  members: "Membres",
+  rejected: "(Refusé)",
+  completed: "Terminé",
+  notCompleted: "Non terminé",
+  accept: "Accepter",
+  reject: "Refuser",
+  deleteChallenge: "Supprimer le défi",
+  challengeNotCompleted: "Tu n'as pas terminé le défi :",
+newFineRecived: "Nouvelle amende reçue",
+fineReceivedBody: "Vous avez reçu une amende de {sender} pour {amount} CHF. Motif : {reason}"
+
+},
+
+challenges: {
+  challenges: "Défis",
+  status_all: "Tous",
+  status_accepted: "Acceptés",
+  status_rejected: "Refusés",
+  status_achieved: "Réussis",
+  status_failed: "Non réussis",
+  back: "Retour",
+  createChallenge: "Créer un défi",
+  filterChallenges: "Filtrer les défis",
+  searchChallengePlaceholder: "Rechercher des défis par titre ou description...",
+  notLoggedIn: "Connecte-toi pour voir tes défis.",
+  titleChallengePage: "Défis",
+  subtitle: "Compète avec tes amis en relevant des défis, dépasse tes limites et gagne des récompenses.",
+  loadingChallenges: "Chargement des défis...",
+  noChallenges: "Tu n'as pas encore de défis.",
+  noResults: "Aucun défi ne correspond à ta recherche.",
+  acceptedCounter: "Acceptés",
+  rejectedCounter: "Refusés",
+  achievedCounter: "Réussis",
+  failedCounter: "Non réussis",
+
+  inviteContacts: "Invite tes contacts et lance-leur un défi à réaliser ensemble.",
+  title: "Titre",
+  titlePlaceholder: "Ex : Pas de café pendant une semaine",
+  description: "Description",
+  descriptionPlaceholder: "Décris le défi (optionnel)",
+  amount: "Pénalité",
+  amountPlaceholder: "Ex : 5",
+  currency: "CHF",
+  addParticipants: "Ajouter des participants",
+  searchPlaceholder: "Rechercher par nom ou email...",
+  loadingContacts: "Chargement des contacts...",
+  noContactsFound: "Aucun contact correspondant trouvé.",
+  remove: "Supprimer",
+  cancel: "Annuler",
+  creating: "Création...",
+  create: "Créer le défi",
+  newChallengeProposed: "Nouveau défi proposé !",
+  youHaveNewChallengeToAccept: "Tu as un défi en attente d'acceptation.",
+  challengeFinished: "Défi terminé",
+  whoRejected: "a refusé le défi",
+  challengeActivated: "Défi activé !",
+  everyoneAccepted: "Tout le monde a accepté ! Le défi est maintenant actif.",
+  challengeFinishCheckResult: "Le défi est terminé. Vérifie le résultat !",
+},
+
 
   groupRulesModal: {
   title: "Règles du groupe",
@@ -113,16 +244,19 @@ showInstallBanner: "Pour installer sur iOS : Appuie sur « Partager » 📤 puis
 },
 
 onboard: {
-  whatIsDeswg: "Qu’est-ce que DESWG ?",
-  whatIsDeswgDescription: "DESWG transforme la cohabitation en un jeu où gagne celui qui respecte et fait respecter les règles. Chaque groupe définit ses propres règles : nettoyer la cuisine, respecter les horaires ou ne pas laisser les messages en vu.",
+  whatIsDeswg: "Qu'est-ce que DESWG ?",
+  whatIsDeswgDescription: "DESWG est l'application qui transforme la vie en communauté en un jeu où gagne celui qui respecte et fait respecter les règles.",
   createGroups: "Crée des groupes et des règles",
-  createGroupsDescription: "Si quelqu’un ne respecte pas les règles… tu peux le sanctionner et gagner des points ! Et si c’est toi qui es sanctionné, ce n’est pas la fin : paie, nettoie ton karma et continue à progresser.",
-  payAndLevelUp: "Paie et monte de niveau",
-  payAndLevelUpDescription: "Faire ses tâches + Bon comportement + Règles acceptées = Coexistence parfaite. Chez DESWG, il ne s’agit pas de punir, mais de jouer en équipe, améliorer ses habitudes et s’amuser tout en devenant LE COLOC PARFAIT.",
+  createGroupsDescription: "Crée un groupe avec ton partenaire, tes amis, colocataires ou collègues et définissez vos propres règles (Pas de cheveux dans la douche, Ne pas interrompre les réunions...) et si quelqu'un ne les respecte pas, il paie !",
+  challengeTitle: "Lance un défi à tes contacts",
+  challengeDefinition: "Crée des défis et améliore tes habitudes de façon ludique (une semaine sans sucre, réussir le prochain examen ou s'inscrire à la salle de sport). Si quelqu'un échoue, il paie. Vis ensemble, améliore tes habitudes, gagne des XP.",
+  payAndLevelUp: "Vis et gagne",
+  payAndLevelUpDescription: "L'objectif de DESWG est d'améliorer la cohabitation, de jouer en équipe, d'améliorer les habitudes et de s'amuser tout en devenant LE COLOCATAIRE PARFAIT.",
   back: "Retour",
   next: "Suivant",
   createAccount: "Créer un compte",
 },
+
 
   // Index Page
   index: {
@@ -146,6 +280,8 @@ onboard: {
     recentInsignias: "Badges récents",
     recentHitos: "Tes réalisations récentes",
     seeAllInsignias: "Voir tous les badges",
+    pendingFinesTitle:"Multas pendientes",
+    seeAllPendingFines:"Ver todas las multas pendientes",
   },
 
   // Contacts Page
@@ -157,6 +293,8 @@ onboard: {
     loading: "Chargement...",
     addedContactConfirmed: "Contact ajouté avec succès",
     titleFineModalPage: "Créer une nouvelle amende",
+    challenge:"Défi",
+    statusActive:"Active",
   },
 
   // Groups Page

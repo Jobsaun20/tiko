@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Users, UserPlus, ArrowLeft, Mail, Phone, Trash2, X } from "lucide-react";
 import { Header } from "@/components/Header";
 import { CreateFineModal } from "@/components/CreateFineModal";
+import { CreateChallengeModal } from "@/components/CreateChallengeModal";
 import { AddContactModal } from "@/components/AddContactModal";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { supabase } from "@/supabaseClient";
@@ -41,15 +42,23 @@ export default function Contacts() {
   const { createFine } = useFines();
   const { showBadges } = useBadgeModal();
 
+  // Estados para fines y retos
   const [isCreateFineModalOpen, setIsCreateFineModalOpen] = useState(false);
-  const [isAddContactModalOpen, setIsAddContactModalOpen] = useState(false);
+  const [isCreateChallengeModalOpen, setIsCreateChallengeModalOpen] = useState(false);
   const [selectedContact, setSelectedContact] = useState<any>(null);
+  const [preselectedParticipant, setPreselectedParticipant] = useState<any>(null);
+
+  // Contactos
+  const [isAddContactModalOpen, setIsAddContactModalOpen] = useState(false);
   const [editingContact, setEditingContact] = useState<any>(null);
 
-  // Barra de búsqueda de contactos
+  // Barra de búsqueda
   const [search, setSearch] = useState("");
 
-  // FILTRADO de contactos en tiempo real
+  // --- AVATARS ---
+  const [avatarsMap, setAvatarsMap] = useState<{ [userId: string]: { avatar_url: string; name: string } }>({});
+
+  // FILTRADO de contactos
   const filteredContacts = contacts.filter(contact => {
     const term = search.toLowerCase().trim();
     const name = (contact.name || "").toLowerCase();
@@ -57,12 +66,47 @@ export default function Contacts() {
     return name.includes(term) || email.includes(term);
   });
 
-  // Abrir modal para multar a contacto
+  // Cargar avatares de todos los contactos filtrados
+  useEffect(() => {
+    if (!filteredContacts.length) {
+      setAvatarsMap({});
+      return;
+    }
+    const userIds = filteredContacts
+      .filter(c => c.user_supabase_id)
+      .map(c => c.user_supabase_id);
+    if (!userIds.length) {
+      setAvatarsMap({});
+      return;
+    }
+    (async () => {
+      const { data, error } = await supabase
+        .from("users")
+        .select("id, name, avatar_url")
+        .in("id", userIds);
+      if (!error && data) {
+        const map: { [userId: string]: { avatar_url: string; name: string } } = {};
+        data.forEach(u => {
+          map[u.id] = { avatar_url: u.avatar_url || "", name: u.name || "" };
+        });
+        setAvatarsMap(map);
+      }
+    })();
+  }, [filteredContacts.map(c => c.user_supabase_id).join(",")]);
+
+  // Modal multar
   const handleFineContact = (contact: any) => {
     setSelectedContact(contact);
     setIsCreateFineModalOpen(true);
   };
 
+  // Modal retar
+  const handleChallengeContact = (contact: any) => {
+    setPreselectedParticipant({ user_supabase_id: contact.user_supabase_id, ...contact });
+    setIsCreateChallengeModalOpen(true);
+  };
+
+  // Crear multa
   const handleCreateFine = async (fineData: any) => {
     try {
       const recipient = contacts.find(c => c.id === (fineData.recipient_id || fineData.recipient_Id));
@@ -70,7 +114,7 @@ export default function Contacts() {
       const recipientId = await getUserIdByEmail(recipient.email);
       if (!recipientId) {
         toast({
-           title: t.contacts.error,
+          title: t.contacts.error,
           description: t.contacts.errorDescription,
           variant: "destructive",
         });
@@ -99,12 +143,13 @@ export default function Contacts() {
     setSelectedContact(null);
   };
 
+  // Agregar contacto
   const handleAddContact = () => {
     setEditingContact(null);
     setIsAddContactModalOpen(true);
   };
 
-  // Elimina el contacto seleccionado
+  // Eliminar contacto
   const handleDeleteContact = async (contactId: string) => {
     try {
       await deleteContact(contactId);
@@ -117,7 +162,7 @@ export default function Contacts() {
     }
   };
 
-  // Limpia el campo de búsqueda
+  // Limpiar búsqueda
   const clearSearch = () => setSearch("");
 
   return (
@@ -159,7 +204,7 @@ export default function Contacts() {
             <input
               type="text"
               className="border rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
-              placeholder= {t.contacts.contactSearchPlaceholder}
+              placeholder={t.contacts.contactSearchPlaceholder}
               value={search}
               onChange={e => setSearch(e.target.value)}
             />
@@ -181,60 +226,82 @@ export default function Contacts() {
           {loading ? (
             <div className="text-center text-gray-400 py-8">{t.contacts.loading}</div>
           ) : filteredContacts.length > 0 ? (
-            filteredContacts.map((contact) => (
-              <Card key={contact.id} className="hover:shadow-md transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div className="flex items-center gap-4 flex-1">
-                      <Avatar className="h-12 w-12">
-                        <AvatarImage
-                          src={contact.avatar}
-                          alt={contact.name}
-                        />
-                        <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
-                          {contact.name?.charAt(0)?.toUpperCase() || "U"}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-lg">{contact.name}</h3>
-                        <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600 mt-1">
-                          <div className="flex items-center gap-1">
-                            <Mail className="h-4 w-4" />
-                            <span>{contact.email}</span>
-                          </div>
-                          {contact.phone && (
+            filteredContacts.map((contact) => {
+const avatarData = avatarsMap[contact.user_supabase_id] as { avatar_url?: string; name?: string } || {};
+              const avatar_url = avatarData.avatar_url || "/placeholder.svg";
+              const name = avatarData.name || contact.name || "";
+              return (
+                <Card key={contact.id} className="hover:shadow-md transition-shadow">
+                  <CardContent className="p-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div className="flex items-center gap-4 flex-1">
+                        <Avatar className="h-12 w-12">
+                          <AvatarImage
+                            src={avatar_url}
+                            alt={name}
+                          />
+                          <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
+                            {name?.charAt(0)?.toUpperCase() || "U"}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-lg">{name}</h3>
+                          <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600 mt-1">
                             <div className="flex items-center gap-1">
-                              <Phone className="h-4 w-4" />
-                              <span>{contact.phone}</span>
+                              <Mail className="h-4 w-4" />
+                              <span>{contact.email}</span>
                             </div>
-                          )}
+                            {contact.phone && (
+                              <div className="flex items-center gap-1">
+                                <Phone className="h-4 w-4" />
+                                <span>{contact.phone}</span>
+                              </div>
+                            )}
+                          </div>
+                          <Badge variant="secondary" className="mt-2 bg-green-100 text-green-800">
+                            {t.contacts.statusActive}
+                          </Badge>
                         </div>
-                        <Badge variant="secondary" className="mt-2 bg-green-100 text-green-800">
-                          Activo
-                        </Badge>
+                      </div>
+                      {/* Acciones: borrar a la izquierda, multa y retar a la derecha */}
+                      <div className="flex flex-row justify-between items-stretch w-full sm:w-auto sm:ml-4">
+                        {/* Botón borrar alineado a la izquierda */}
+                        <div className="flex items-center">
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => handleDeleteContact(contact.id)}
+                            title={t.pages.contacts.deleteContact}
+                            className="w-8 h-8"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        {/* Espacio entre borrar y acciones */}
+                        <div className="flex-1"></div>
+                        {/* Botones Multa y Retar a la derecha, uno encima de otro */}
+                        <div className="flex flex-col gap-2 items-end justify-end w-full max-w-[160px]">
+                          <Button
+                            size="sm"
+                            className="w-full bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600"
+                            onClick={() => handleFineContact(contact)}
+                          >
+                            {t.pages.contacts.fine}
+                          </Button>
+                          <Button
+                            size="sm"
+                            className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+                            onClick={() => handleChallengeContact(contact)}
+                          >
+                            {t.contacts.challenge}
+                          </Button>
+                        </div>
                       </div>
                     </div>
-                    {/* Acciones: multar derecha, borrar izquierda en móvil */}
-                    <div className="flex flex-row justify-between w-full px-4 gap-2 mt-3">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDeleteContact(contact.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        className="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600"
-                        onClick={() => handleFineContact(contact)}
-                      >
-                        {t.pages.contacts.fine}
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))
+                  </CardContent>
+                </Card>
+              );
+            })
           ) : (
             <Card className="text-center py-12">
               <CardContent>
@@ -254,8 +321,7 @@ export default function Contacts() {
           )}
         </div>
       </div>
-
-      {/* Modales */}
+      {/* Modales igual que antes... */}
       <CreateFineModal
         isOpen={isCreateFineModalOpen}
         onClose={() => {
@@ -268,6 +334,15 @@ export default function Contacts() {
         currentUser={currentUser}
         currentUserUsername={currentUser?.username ?? ""}
       />
+      <CreateChallengeModal
+        isOpen={isCreateChallengeModalOpen}
+        onClose={() => {
+          setIsCreateChallengeModalOpen(false);
+          setPreselectedParticipant(null);
+        }}
+        currentUserId={user.id}
+        preselectedParticipant={preselectedParticipant}
+      />
       <AddContactModal
         isOpen={isAddContactModalOpen}
         onClose={() => {
@@ -277,7 +352,7 @@ export default function Contacts() {
         onSubmit={async contactData => {
           try {
             // Añade el contacto
-            const nuevoContacto = await addContact({ ...contactData, status: "active", avatar: "" });
+            const nuevoContacto = await addContact({ ...contactData, status: "active" });
             toast({
               title: t.pages.contacts.contactAdded,
               description: t.contacts.addedContactConfirmed,
@@ -293,7 +368,7 @@ export default function Contacts() {
                 },
                 body: JSON.stringify({
                   user_id: user.id,
-                  action: "add_contact", // o el "key" de tu badge
+                  action: "add_contact",
                   action_data: {
                     contact_id: nuevoContacto.id,
                     lang: language || "es",

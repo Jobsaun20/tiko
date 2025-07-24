@@ -6,8 +6,141 @@ export const en = {
     name: "DESWG",
     subtitle: "Among friends",
     installApp: "Install app",
+    other: "Other", 
     installIosGuide: "Install on iOS",
   },
+
+  notifications: {
+  // Notification templates
+  fine_received: {
+    title: "Fine received",
+    icon: "💸",
+    message: '{{sender_name}} sent you a fine of {{amount}} CHF for "{{reason}}"',
+  },
+  challenge_created: {
+    title: "Challenge created",
+    icon: "🏆",
+    message: "You created a challenge: {{challenge_title}}",
+  },
+  challenge_invited: {
+    title: "Challenge invitation",
+    icon: "🎯",
+    message: "You have been invited to the challenge: {{challenge_title}}",
+  },
+  payment_received: {
+    title: "Payment received",
+    icon: "💰",
+    message: "You have received a payment of {{amount}} CHF",
+  },
+  group_invite: {
+    title: "Group invitation",
+    icon: "👥",
+    message: "You have been invited to a group",
+  },
+  group_rule_proposed: {
+    title: "New rule proposed",
+    icon: "⏳",
+    message: "{{rule_description}}",
+  },
+
+  // Header and actions
+  title: "Notifications",
+  description: "Your recent notifications",
+  markAllRead: "Mark all as read",
+  markReadMobile: "Mark as read",
+  deleteAll: "Delete all",
+  confirmDeleteAll: "Are you sure you want to delete all notifications?",
+  notificationsMarked: "Notifications marked",
+  notificationsMarkedDescription: "All notifications have been marked as read",
+  notificationsDeleted: "Notifications deleted",
+  notificationsDeletedDescription: "All notifications have been deleted",
+  phoneUpdated: "Phone updated",
+  phoneUpdatedDescription: "You can now receive your earnings with Twint",
+
+
+  // Empty states
+  noNotifications: "You don't have any notifications yet",
+  emptyMessage: "When you have notifications, they will appear here.",
+  loading: "Loading notifications...",
+
+  // Relative dates
+  lessThanOneHour: "Less than 1 hour ago",
+  hoursAgo: "{{hours}} hours ago",
+  daysAgo: "{{days}} days ago",
+},
+
+
+challengeCard: {
+  you: "You",
+  user: "User",
+  sureDelete: "Are you sure you want to delete this challenge?",
+  errorDeleting: "Error deleting the challenge:",
+  pending: "Pending",
+  active: "Active",
+  finished: "Finished",
+  canceled: "Canceled",
+  createdBy: "Created by:",
+  penalty: "Penalty",
+  members: "Members",
+  rejected: "(Rejected)",
+  completed: "Completed",
+  notCompleted: "Not completed",
+  accept: "Accept",
+  reject: "Reject",
+  deleteChallenge: "Delete challenge",
+  challengeNotCompleted: "You did not complete the challenge:",
+newFineRecived: "New fine received",
+fineReceivedBody: "You have received a fine from {sender} for {amount} CHF. Reason: {reason}"
+
+},
+
+challenges: {
+  challenges: "Challenges",
+  status_all: "All",
+  status_accepted: "Accepted",
+  status_rejected: "Rejected",
+  status_achieved: "Achieved",
+  status_failed: "Failed",
+  back: "Back",
+  createChallenge: "Create Challenge",
+  filterChallenges: "Filter challenges",
+  searchChallengePlaceholder: "Search challenges by title or description...",
+  notLoggedIn: "Log in to see your challenges.",
+  titleChallengePage: "Challenges",
+  subtitle: "Compete with your friends by completing challenges, push your limits and earn rewards.",
+  loadingChallenges: "Loading challenges...",
+  noChallenges: "You don't have any challenges yet.",
+  noResults: "No challenge matches your search.",
+  acceptedCounter: "Accepted",
+  rejectedCounter: "Rejected",
+  achievedCounter: "Achieved",
+  failedCounter: "Failed",
+
+  inviteContacts: "Invite your contacts and challenge them to achieve a goal together.",
+  title: "Title",
+  titlePlaceholder: "E.g.: No coffee for a week",
+  description: "Description",
+  descriptionPlaceholder: "Describe the challenge (optional)",
+  amount: "Penalty",
+  amountPlaceholder: "E.g.: 5",
+  currency: "CHF",
+  addParticipants: "Add participants",
+  searchPlaceholder: "Search by name or email...",
+  loadingContacts: "Loading contacts...",
+  noContactsFound: "No matching contacts found.",
+  remove: "Remove",
+  cancel: "Cancel",
+  creating: "Creating...",
+  create: "Create challenge",
+  newChallengeProposed: "New challenge proposed!",
+  youHaveNewChallengeToAccept: "You have a challenge pending to accept.",
+  challengeFinished: "Challenge finished",
+  whoRejected: "has rejected the challenge",
+  challengeActivated: "Challenge activated!",
+  everyoneAccepted: "Everyone has accepted! The challenge is now active.",
+  challengeFinishCheckResult: "The challenge has ended. Check the result!",
+},
+
 
   groupRulesModal: {
   title: "Group Rules",
@@ -115,15 +248,18 @@ showInstallBanner: "To install on iOS: Tap “Share” 📤 and select “Add to
 
 onboard: {
   whatIsDeswg: "What is DESWG?",
-  whatIsDeswgDescription: "DESWG turns co-living into a game where the one who follows and enforces the rules wins. Each group sets its own rules: from cleaning the kitchen, being on time, or not leaving messages on read.",
+  whatIsDeswgDescription: "DESWG is the app that turns living together into a game where those who follow and enforce the rules win.",
   createGroups: "Create groups and rules",
-  createGroupsDescription: "If someone breaks the rules… you can fine them and earn points! And if you get fined, it’s not the end: pay, clean your karma and keep gaining experience.",
-  payAndLevelUp: "Pay and level up",
-  payAndLevelUpDescription: "Doing your tasks + Good behavior + Following accepted rules = Perfect Coexistence. At DESWG, it's not about punishing, but about playing as a team, building better habits, and having fun while becoming THE PERFECT ROOMMATE",
+  createGroupsDescription: "Create a group with your partner, friends, roommates, or coworkers and set your own rules (No hair in the shower, No interrupting in meetings...) and if someone breaks them, they pay!",
+  challengeTitle: "Challenge your contacts",
+  challengeDefinition: "Create challenges and improve habits in a fun way (a week without sugar, passing the next exam, or joining the gym). If someone fails, they pay. Live together, improve habits, earn XP.",
+  payAndLevelUp: "Live and win",
+  payAndLevelUpDescription: "The goal of DESWG is to improve coexistence, play as a team, develop better habits, and have fun while becoming THE PERFECT ROOMMATE.",
   back: "Back",
   next: "Next",
   createAccount: "Create account",
 },
+
 
 
   // Index Page
@@ -148,6 +284,8 @@ onboard: {
     recentInsignias: "Recent badges",
     recentHitos: "Your most recent achievements",
     seeAllInsignias: "See all badges",
+    pendingFinesTitle:"Multas pendientes",
+    seeAllPendingFines:"Ver todas las multas pendientes",
   },
 
   // Contacts Page
@@ -159,6 +297,8 @@ onboard: {
     loading: "Loading...",
     addedContactConfirmed: "Contact added successfully",
     titleFineModalPage: "Create new fine",
+    challenge:"Challenge",
+    statusActive:"Active",
   },
 
   // Groups Page

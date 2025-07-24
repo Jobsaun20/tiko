@@ -4,29 +4,29 @@ import { useAuthContext } from "@/contexts/AuthContext";
 import { useBadgeModal } from "@/contexts/BadgeModalContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-export interface FineUser {
-  id: string;
-  name: string;
-  avatar_url: string | null;
-}
-
 export interface Fine {
   id: string;
   reason: string;
   amount: number;
   sender_id: string;
+  sender_name: string;
+  sender_email: string;
+  sender_phone?: string;
   recipient_id: string;
+  recipient_name: string;
+  recipient_email: string;
   status: "pending" | "paid";
   date: string;
-  type: string; // "sent", "received", etc
-  // ahora tenemos estos objetos anidados
-  sender: FineUser;
-  recipient: FineUser;
+  type: string;
+  // De la view:
+  sender_avatar_url?: string | null;
+  sender_username?: string | null;
+  recipient_avatar_url?: string | null;
+  recipient_username?: string | null;
 }
 
 // URL del Edge Function de badges
 const CHECK_BADGES_URL = "https://pyecpkccpfeuittnccat.supabase.co/functions/v1/check_badges";
-
 // ENDPOINT push notification
 const PUSH_ENDPOINT = import.meta.env.VITE_PUSH_SERVER_URL;
 
@@ -39,7 +39,7 @@ export function useFines() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // --- Recargar multas desde backend ---
+  // --- Recargar multas desde la VIEW ---
   async function refetchFines() {
     if (!user) {
       setFines([]);
@@ -49,20 +49,8 @@ export function useFines() {
     setLoading(true);
 
     const { data, error: fetchError } = await supabase
-      .from("fines")
-      .select(`
-        *,
-        sender:users!sender_id (
-          id,
-          name,
-          avatar_url
-        ),
-        recipient:users!recipient_id (
-          id,
-          name,
-          avatar_url
-        )
-      `)
+      .from("fines_with_users")
+      .select("*")
       .or(`sender_id.eq.${user.id},recipient_id.eq.${user.id}`)
       .order("date", { ascending: false });
 

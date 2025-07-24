@@ -1,4 +1,3 @@
-// src/pages/index.tsx
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -31,6 +30,9 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import { useChallenges } from "@/hooks/useChallenges";
 
 
 
@@ -77,6 +79,7 @@ function ShareAppModal({ isOpen, onClose, appUrl }: { isOpen: boolean; onClose: 
     setTimeout(() => setCopied(false), 1200);
     inputRef.current?.select();
   };
+  
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -137,12 +140,119 @@ export default function Index() {
   const [showPhoneModal, setShowPhoneModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
 
-    // ---- NUEVO: Estados para insignias reales ----
   const [earnedBadges, setEarnedBadges] = useState([]);
   const [badgesLoading, setBadgesLoading] = useState(true);
+  
+
+  // Colores para cada segmento
+const COLORS_FINES = ["#FF718B", "#52AEB9"];
+const COLORS_CHALLENGES = ["#a882f6", "#00b36b"];
 
 
-  // Si no hay perfil, inicializa datos vacíos para nuevo usuario
+function MultasRetosSection({
+  sentFines,
+  receivedFines,
+  challengesAccepted,
+  challengesFailed,
+  challengesCompleted,
+  t,
+  navigate
+}) {
+  const finesPieData = [
+    { name: t.pages.history.sent, value: sentFines.length },
+    { name: t.pages.history.received, value: receivedFines.length },
+  ];
+  const challengesPieData = [
+    { name: t.challenges.accepted || "No completados", value: challengesFailed  },
+    { name: t.challenges.completed || "Completados", value: challengesCompleted },
+  ];
+
+  return (
+    <div className="w-full grid grid-cols-2 gap-1 mb-2">
+  {/* MULTAS */}
+  <div
+    onClick={() => navigate("/history")}
+    className="bg-white rounded-2xl border shadow hover:shadow-xl cursor-pointer transition flex flex-col items-center py-2 group"
+  >
+    <div className="font-bold text-xl mb-1 text-red-500 group-hover:text-red-700 transition">{t.nav.fines || "Multas"}</div>
+    <div className="w-24 h-24 flex items-center justify-center mx-auto relative">
+      <ResponsiveContainer width="100%" height="100%">
+        <PieChart>
+          <Pie
+            data={finesPieData}
+            cx="50%"
+            cy="50%"
+            innerRadius={32}
+            outerRadius={46}
+            dataKey="value"
+            labelLine={false}
+          >
+            {finesPieData.map((entry, index) => (
+              <Cell key={`cell-fines-${index}`} fill={COLORS_FINES[index % COLORS_FINES.length]} />
+            ))}
+          </Pie>
+        </PieChart>
+      </ResponsiveContainer>
+      <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 flex flex-col items-center pointer-events-none">
+        <span className="text-lg font-bold text-red-500">{sentFines.length}</span>
+        <span className="text-lg font-bold text-teal-700">{receivedFines.length}</span>
+      </div>
+    </div>
+    <div className="flex flex-col items-center justify-center gap-1 mt-2 text-xs font-semibold w-full text-center">
+      <span className="flex items-center gap-1 text-red-500">
+        <span className="inline-block rounded-full w-3 h-3 mr-1" style={{ background: COLORS_FINES[0] }} />
+        {t.pages.history.sent}
+      </span>
+      <span className="flex items-center gap-1 text-teal-700">
+        <span className="inline-block rounded-full w-3 h-3 mr-1" style={{ background: COLORS_FINES[1] }} />
+        {t.pages.history.received}
+      </span>
+    </div>
+  </div>
+  {/* RETOS */}
+  <div
+    onClick={() => navigate("/challenges")}
+    className="bg-white rounded-2xl border shadow hover:shadow-xl cursor-pointer transition flex flex-col items-center py-2 group"
+  >
+    <div className="font-bold text-xl mb-1 text-blue-600 group-hover:text-purple-700 transition">{t.challenges.challenges || "Aceptados"}</div>
+    <div className="w-24 h-24 flex items-center justify-center mx-auto relative">
+      <ResponsiveContainer width="100%" height="100%">
+        <PieChart>
+          <Pie
+            data={challengesPieData}
+            cx="50%"
+            cy="50%"
+            innerRadius={32}
+            outerRadius={46}
+            dataKey="value"
+            labelLine={false}
+          >
+            {challengesPieData.map((entry, index) => (
+              <Cell key={`cell-challenge-${index}`} fill={COLORS_CHALLENGES[index % COLORS_CHALLENGES.length]} />
+            ))}
+          </Pie>
+        </PieChart>
+      </ResponsiveContainer>
+      <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 flex flex-col items-center pointer-events-none">
+        <span className="text-lg font-bold text-purple-700">{challengesFailed}</span>
+        <span className="text-lg font-bold text-green-700">{challengesCompleted}</span>
+      </div>
+    </div>
+    <div className="flex flex-col items-center justify-center gap-1 mt-2 text-xs font-semibold w-full text-center">
+      <span className="flex items-center gap-1 text-purple-700">
+        <span className="inline-block rounded-full w-3 h-3 mr-1" style={{ background: COLORS_CHALLENGES[0] }} />
+        {t.challenges.status_failed || "No conseguidos"}
+      </span>
+      <span className="flex items-center gap-1 text-green-700">
+        <span className="inline-block rounded-full w-3 h-3 mr-1" style={{ background: COLORS_CHALLENGES[1] }} />
+        {t.challenges.status_achieved || "Completados"}
+      </span>
+    </div>
+  </div>
+</div>
+ );
+}
+
   const userData = profile || {
     id: "",
     username: "",
@@ -162,11 +272,40 @@ export default function Index() {
 
   const userId = userData.id;
   const finesList = Array.isArray(fines) ? fines : [];
+const { challenges } = useChallenges();
+
+
+// Calcula los retos aceptados y completados:
+const challengesAccepted = Array.isArray(challenges)
+  ? challenges.filter((challenge: any) => {
+      const part = challenge.challenge_participants?.find((p: any) => p.user_id === userId);
+      return part && part.accepted === true && (part.completed === null || part.completed === undefined);
+    }).length
+  : 0;
+
+const challengesCompleted = Array.isArray(challenges)
+  ? challenges.filter((challenge: any) => {
+      const part = challenge.challenge_participants?.find((p: any) => p.user_id === userId);
+      return part && part.accepted === true && part.completed === true;
+    }).length
+  : 0;
+// Retos NO completados: aceptados pero completed === false
+const challengesFailed = Array.isArray(challenges)
+  ? challenges.filter((challenge: any) => {
+      const part = challenge.challenge_participants?.find((p: any) => p.user_id === userId);
+      return part && part.accepted === true && part.completed === false;
+    }).length
+  : 0;
+
+const pendingFinesToPay = finesList.filter(
+  (f: any) => f.status === "pending" && f.recipient_id === userId
+);
 
   const pendingFines = finesList.filter(
     (f: any) =>
       f.status === "pending" &&
       (f.recipient_id === userId || f.sender_id === userId)
+      
   );
   const sentFines = finesList.filter((f: any) => f.sender_id === userId);
   const receivedFines = finesList.filter((f: any) => f.recipient_id === userId);
@@ -179,177 +318,162 @@ export default function Index() {
 
   const contacts = Array.isArray(userData.contacts) ? userData.contacts : [];
 
-  // Gamificación
   const currentLevel = calculateLevel(userData.xp);
   const xpProgress = getXPProgress(userData.xp);
   const userBadges = BADGES.filter(badge => (userData.badges || []).includes(badge.id));
-
-  // Validación de teléfono
   const needsPhone = !userData.phone || !isValidSwissPhone(userData.phone);
 
-  // GUARDAR TELÉFONO
   const handleSavePhone = async (phone: string) => {
     if (!isValidSwissPhone(phone)) return;
     await supabase.from("users").update({ phone: normalizeSwissPhone(phone) }).eq("id", profile?.id);
     if (typeof updateProfile === "function") await updateProfile({ phone: normalizeSwissPhone(phone) });
     setShowPhoneModal(false);
-    toast({ title: "Teléfono actualizado", description: "Ahora puedes enviar y recibir multas con Twint" });
+    toast({ title: t.notifications.phoneUpdated, description: t.notifications.phoneUpdatedDescription });
   };
-useEffect(() => {
-  const fetchUserBadges = async () => {
-    if (!profile?.id) {
-      setEarnedBadges([]);
+  useEffect(() => {
+    const fetchUserBadges = async () => {
+      if (!profile?.id) {
+        setEarnedBadges([]);
+        setBadgesLoading(false);
+        return;
+      }
+      setBadgesLoading(true);
+
+      const { data: userBadges, error } = await supabase
+        .from("user_badges")
+        .select("badge_id, achieved_at")
+        .eq("user_id", profile.id);
+
+      if (error) {
+        setBadgesLoading(false);
+        setEarnedBadges([]);
+        return;
+      }
+      if (!userBadges || userBadges.length === 0) {
+        setEarnedBadges([]);
+        setBadgesLoading(false);
+        return;
+      }
+
+      const badgeIds = userBadges.map((b) => b.badge_id);
+      const { data: badgesData } = await supabase
+        .from("badges")
+        .select("*")
+        .in("id", badgeIds);
+
+      const joined = userBadges
+        .map((ub) => {
+          const badge = badgesData.find((b) => b.id === ub.badge_id) || {};
+          let name = badge.name;
+          let description = badge.description;
+          try {
+            if (typeof name === "string") name = JSON.parse(name);
+            if (typeof description === "string") description = JSON.parse(description);
+          } catch {}
+          return {
+            ...badge,
+            name,
+            description,
+            achieved_at: ub.achieved_at,
+          };
+        })
+        .filter((b) => b.id);
+
+      joined.sort((a, b) => {
+        const dateA = a.achieved_at ? new Date(a.achieved_at).getTime() : 0;
+        const dateB = b.achieved_at ? new Date(b.achieved_at).getTime() : 0;
+        return dateB - dateA;
+      });
+      setEarnedBadges(joined);
       setBadgesLoading(false);
-      return;
-    }
-    setBadgesLoading(true);
+    };
 
-    // 1. Obtener user_badges del usuario
-    const { data: userBadges, error } = await supabase
-      .from("user_badges")
-      .select("badge_id, achieved_at")
-      .eq("user_id", profile.id);
+    fetchUserBadges();
+  }, [profile?.id]);
 
-    if (error) {
-      setBadgesLoading(false);
-      setEarnedBadges([]);
-      return;
-    }
-    if (!userBadges || userBadges.length === 0) {
-      setEarnedBadges([]);
-      setBadgesLoading(false);
-      return;
-    }
-
-    // 2. Obtener datos de badges
-    const badgeIds = userBadges.map((b) => b.badge_id);
-    const { data: badgesData } = await supabase
-      .from("badges")
-      .select("*")
-      .in("id", badgeIds);
-
-    // 3. Juntar info y asegurar que name/description es JSON
-    const joined = userBadges
-      .map((ub) => {
-        const badge = badgesData.find((b) => b.id === ub.badge_id) || {};
-        // Asegúrate de que name y description son objetos
-        let name = badge.name;
-        let description = badge.description;
-        try {
-          if (typeof name === "string") name = JSON.parse(name);
-          if (typeof description === "string") description = JSON.parse(description);
-        } catch {}
-        return {
-          ...badge,
-          name,
-          description,
-          achieved_at: ub.achieved_at,
-        };
-      })
-      .filter((b) => b.id);
-
-    // Ordenar por fecha: el más reciente primero
-    joined.sort((a, b) => {
-  const dateA = a.achieved_at ? new Date(a.achieved_at).getTime() : 0;
-  const dateB = b.achieved_at ? new Date(b.achieved_at).getTime() : 0;
-  return dateB - dateA;
-});
-    setEarnedBadges(joined);
-    setBadgesLoading(false);
-  };
-
-  fetchUserBadges();
-}, [profile?.id]);
-
-  // ACCIONES
   const handleCreateFine = async (newFine: any) => {
     setIsCreateFineModalOpen(false);
     toast({ title: "Multa creada", description: "La multa ha sido enviada" });
   };
 
-  // ABRIR MODAL DE PAGO
   const handlePayFine = (fine: any) => {
     setSelectedFine(fine);
     setPaymentModalOpen(true);
   };
 
-  // --------- FUNCIÓN DE PAGO CON XP Y BADGES ---------
   const handlePayment = async () => {
-  if (selectedFine) {
-    try {
-      await payFine(selectedFine.id);
-      toast({
-        title: t.fines.finePaid,
-        description: `Multa de ${selectedFine.amount} CHF pagada correctamente`,
-      });
-
-      // --- SUMA XP BASE ---
-      const BASE_XP = 2;
-      let gainedXp = BASE_XP;
-
-      // --- CHEQUEAR Y OTORGAR BADGES (EDGE FUNCTION) ---
-      if (user && session?.access_token) {
-        const response = await fetch(CHECK_BADGES_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + session.access_token,
-          },
-          body: JSON.stringify({
-            user_id: user.id,
-            action: "pay_fine", // asegúrate de que la acción coincida con tu lógica de badges
-            action_data: {
-              amount: selectedFine.amount,
-              fine_id: selectedFine.id,
-              lang: language || "es", // si tienes un campo language
-            },
-          }),
+    if (selectedFine) {
+      try {
+        await payFine(selectedFine.id);
+        toast({
+          title: t.fines.finePaid,
+          description: `Multa de ${selectedFine.amount} CHF pagada correctamente`,
         });
-        const result = await response.json();
-        if (result?.newlyEarned?.length > 0) {
-          showBadges(result.newlyEarned, language || "es");
-          result.newlyEarned.forEach((badge: any) => {
-            gainedXp += badge.xp_reward || badge.xpReward || 0;
-          });
-        }
-      }
 
-      // --- ACTUALIZAR XP SIEMPRE, TENGA BADGE O NO ---
-      if (gainedXp > 0 && profile) {
-        const nuevoXP = (profile.xp || 0) + gainedXp;
-        const result = await updateProfile({ xp: nuevoXP });
+        const BASE_XP = 2;
+        let gainedXp = BASE_XP;
 
-        if (result.error) {
-          toast({
-            title: "Error XP",
-            description: "No se pudo actualizar la experiencia: " + result.error,
-            variant: "destructive",
+        if (user && session?.access_token) {
+          const response = await fetch(CHECK_BADGES_URL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + session.access_token,
+            },
+            body: JSON.stringify({
+              user_id: user.id,
+              action: "pay_fine",
+              action_data: {
+                amount: selectedFine.amount,
+                fine_id: selectedFine.id,
+                lang: language || "es",
+              },
+            }),
           });
-          alert("No se pudo actualizar la experiencia: " + result.error);
-        } else {
-          toast({
-            title: t.achievements.title || "¡Has ganado experiencia!",
-            description: t.achievements.xpGained
-              ? t.achievements.xpGained.replace("{xp}", String(gainedXp))
-              : `Has ganado ${gainedXp} XP por tu acción.`,
-            variant: "default",
-          });
-          if (typeof fetchProfile === "function") fetchProfile();
+          const result = await response.json();
+          if (result?.newlyEarned?.length > 0) {
+            showBadges(result.newlyEarned, language || "es");
+            result.newlyEarned.forEach((badge: any) => {
+              gainedXp += badge.xp_reward || badge.xpReward || 0;
+            });
+          }
         }
+
+        if (gainedXp > 0 && profile) {
+          const nuevoXP = (profile.xp || 0) + gainedXp;
+          const result = await updateProfile({ xp: nuevoXP });
+
+          if (result.error) {
+            toast({
+              title: "Error XP",
+              description: "No se pudo actualizar la experiencia: " + result.error,
+              variant: "destructive",
+            });
+            alert("No se pudo actualizar la experiencia: " + result.error);
+          } else {
+            toast({
+              title: t.achievements.title || "¡Has ganado experiencia!",
+              description: t.achievements.xpGained
+                ? t.achievements.xpGained.replace("{xp}", String(gainedXp))
+                : `Has ganado ${gainedXp} XP por tu acción.`,
+              variant: "default",
+            });
+            if (typeof fetchProfile === "function") fetchProfile();
+          }
+        }
+      } catch (err: any) {
+        toast({
+          title: "Error",
+          description: err?.message || "Error desconocido",
+          variant: "destructive",
+        });
       }
-    } catch (err: any) {
-      toast({
-        title: "Error",
-        description: err?.message || "Error desconocido",
-        variant: "destructive",
-      });
     }
-  }
-  setPaymentModalOpen(false);
-  setSelectedFine(null);
-};
+    setPaymentModalOpen(false);
+    setSelectedFine(null);
+  };
 
-const getRarityColor = (rarity) => {
+  const getRarityColor = (rarity) => {
     switch (rarity) {
       case "common": return "bg-gray-100 text-gray-800";
       case "rare": return "bg-blue-100 text-blue-800";
@@ -359,48 +483,9 @@ const getRarityColor = (rarity) => {
     }
   };
 
-
   const handleStatsCardClick = (filter: string) => {
     navigate(`/history?filter=${filter}`);
   };
-
-  const quickActions = [
-    {
-      title: t.quickActions.newFine,
-      description: t.createFine.title,
-      icon: Plus,
-      color: "from-red-500 to-pink-500",
-      onClick: () => navigate("/contacts"),
-    },
-    {
-      title: t.quickActions.contacts,
-      description: t.createFine.seeAndManageContacts,
-      icon: Users,
-      color: "from-blue-500 to-purple-500",
-      onClick: () => navigate("/contacts"),
-    },
-    {
-      title: t.quickActions.history,
-      description: t.createFine.seeHistoryComplete,
-      icon: History,
-      color: "from-orange-500 to-yellow-500",
-      onClick: () => navigate("/history"),
-    },
-    {
-      title: t.createFine.groups,
-      description: t.createFine.manageGroups,
-      icon: Users,
-      color: "from-green-500 to-emerald-500",
-      onClick: () => navigate("/groups"),
-    },
-    {
-      title: t.share.title || "Compartir app",
-      description: t.share.description || "Comparte DESWG con tus amigos",
-      icon: Share2,
-      color: "from-blue-500 to-green-500",
-      onClick: () => setShowShareModal(true),
-    },
-  ];
 
   if (loading) {
     return <div className="text-center py-16">{t.contacts.loading}</div>;
@@ -451,13 +536,9 @@ const getRarityColor = (rarity) => {
     );
   }
 
-
-
-  
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-50 to-pink-50">
       <Header />
-
       {/* Banner y modal teléfono */}
       {needsPhone && (
         <PhoneWarningBanner onAddPhone={() => setShowPhoneModal(true)} />
@@ -491,19 +572,14 @@ const getRarityColor = (rarity) => {
             >
               {t.index.hola}, {userData.username || "usuario"}! 👋
             </h1>
-
             <div className="flex items-center justify-center gap-4 mb-4">
               <Badge variant="secondary" className="bg-purple-100 text-purple-800">
-                Nivel {currentLevel}
+                {t.index.level} {currentLevel}
               </Badge>
-              {/* <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-                {userData.xp} XP
-              </Badge> */}
             </div>
             <div className="w-full mb-4">
               <div className="flex justify-center text-sm text-gray-600 mb-1">
                 <span>{xpProgress.current} XP</span>
-                {/* <span>{t.index.level} {currentLevel + 1}</span> */}
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div
@@ -511,10 +587,8 @@ const getRarityColor = (rarity) => {
                   style={{ width: `${xpProgress.percentage}%` }}
                 ></div>
               </div>
-            </div>            
-
-            {/* Insignias */}
-           <div className="w-full flex flex-col items-center mb-2">
+            </div>
+            <div className="w-full flex flex-col items-center mb-2">
               {badgesLoading ? (
                 <div className="text-gray-400 text-xs">{t.profile.loadingBadges || "Cargando insignias..."}</div>
               ) : earnedBadges.length === 0 ? (
@@ -539,77 +613,76 @@ const getRarityColor = (rarity) => {
           </div>
 
           {/* Última multa recibida o mensaje */}
-          {latestReceivedFine ? (
-            <Card className="border-orange-200 bg-gradient-to-r from-orange-50 to-yellow-50">
-              <CardHeader>
-                <CardTitle className="text-lg text-orange-800">{t.index.lastFineRecived}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-row items-stretch gap-2">
-                  {/* Info multa */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-3 mb-2">
-                      {latestReceivedFine.sender.avatar_url ? (
-                        <img
-                          src={latestReceivedFine.sender.avatar_url}
-                          alt={latestReceivedFine.sender.name || "Avatar"}
-                          className="rounded-full h-10 w-10 object-cover border-2 border-purple-300 shadow"
-                        />
-                      ) : (
-                        <div className="rounded-full bg-gradient-to-br from-purple-400 to-pink-500 h-10 w-10 flex items-center justify-center text-white font-bold text-xl">
-                          {latestReceivedFine.sender.name?.charAt(0)?.toUpperCase() || "U"}
-                        </div>
-                      )}
-                      <div>
-                        <div className="font-semibold">{t.index.de} {latestReceivedFine.sender.name}</div>
-                        {latestReceivedFine.status === "pending" ? (
-                          <span className="inline-block bg-orange-100 text-orange-700 text-xs px-2 py-0.5 rounded font-semibold">
-                            {t.index.pendent}
-                          </span>
-                        ) : (
-                          <span className="inline-block bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded font-semibold">
-                            {t.index.payed}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <div className="text-gray-600 text-sm mb-1">{latestReceivedFine.reason}</div>
-                    <div className="text-gray-400 text-xs mb-2">
-                      {latestReceivedFine.date ? new Date(latestReceivedFine.date).toLocaleDateString() : ""}
-                    </div>
-                  </div>
-                  {/* Precio y botón alineados a la derecha */}
-                  <div className="flex flex-col items-end justify-between">
-                    <div className="text-2xl font-bold text-purple-700 mb-2">{latestReceivedFine.amount} CHF</div>
-                    {latestReceivedFine.status === "pending" && (
-                      <Button
-                        className="bg-green-500 hover:bg-green-600 text-white font-bold px-5"
-                        onClick={() => handlePayFine(latestReceivedFine)}
-                      >
-                        {t.fines.pay}
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ) : (
-            <Card className="border-green-200 bg-gradient-to-r from-green-50 to-emerald-50">
-              <CardContent className="px-3 py-4 sm:p-6 text-center flex flex-col items-center">
-                <CheckCircle className="h-10 w-10 sm:h-16 sm:w-16 mx-auto text-green-600 mb-2 sm:mb-4" />
-                <h3 className="text-lg sm:text-2xl font-bold text-green-800 mb-1 flex items-center justify-center gap-2">
-                  {t.index.congrats} <span className="text-base sm:text-2xl">🎉</span>
-                </h3>
-                <p className="text-green-700 text-base sm:text-lg mb-0.5">{t.index.noPendentFines}</p>
-                <p className="text-green-600 text-xs sm:text-base mt-1">
-                  {t.index.continueLikeThis}
-                </p>
-              </CardContent>
-            </Card>
-          )}
+          {pendingFinesToPay.length > 0 ? (
+  // Solo se muestra la multa pendiente más reciente (por fecha)
+  <Card className="border-orange-200 bg-gradient-to-r from-orange-50 to-yellow-50">
+    <CardHeader>
+      <CardTitle className="text-lg text-orange-800">{t.index.lastFineRecived}</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <div className="flex flex-row items-stretch gap-2">
+        {/* Info multa */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-3 mb-2">
+            <Avatar className="h-10 w-10">
+              <AvatarImage
+                src={pendingFinesToPay[0].sender_avatar_url || undefined}
+                alt={pendingFinesToPay[0].sender_name || "Avatar"}
+              />
+              <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold text-xl">
+                {pendingFinesToPay[0]?.sender_name?.charAt(0)?.toUpperCase() || "U"}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <div className="font-semibold">{t.index.de} {pendingFinesToPay[0].sender_name}</div>
+              <span className="inline-block bg-orange-100 text-orange-700 text-xs px-2 py-0.5 rounded font-semibold">
+                {t.index.pendent}
+              </span>
+            </div>
+          </div>
+          <div className="text-gray-600 text-sm mb-1">{pendingFinesToPay[0].reason}</div>
+          <div className="text-gray-400 text-xs mb-2">
+            {pendingFinesToPay[0].date ? new Date(pendingFinesToPay[0].date).toLocaleDateString() : ""}
+          </div>
+        </div>
+        {/* Precio y botón alineados a la derecha */}
+        <div className="flex flex-col items-end justify-between">
+          <div className="text-2xl font-bold text-purple-700 mb-2">{pendingFinesToPay[0].amount} CHF</div>
+          <Button
+            className="bg-green-500 hover:bg-green-600 text-white font-bold px-5"
+            onClick={() => handlePayFine(pendingFinesToPay[0])}
+          >
+            {t.fines.pay}
+          </Button>
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+) : (
+  // Card verde "Congratulations" si no hay multas pendientes de pago
+  <Card className="border-green-200 bg-gradient-to-r from-green-50 to-emerald-50">
+    <CardContent className="px-2 py-1 text-center flex flex-col items-center">
+      <CheckCircle className="h-6 w-6 mx-auto text-green-600 mb-1" />
+      <h3 className="text-base font-bold text-green-800 mb-0 flex items-center justify-center gap-2">
+        {t.index.congrats} <span className="text-xs">🎉</span>
+      </h3>
+      <p className="text-green-700 text-xs mb-0">{t.index.noPendentFines}</p>
+    </CardContent>
+  </Card>
+)}   
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-3 gap-2 mb-4">
+          <MultasRetosSection
+            sentFines={sentFines}
+            receivedFines={receivedFines}
+            challengesAccepted={challengesAccepted}
+            challengesFailed={challengesFailed} 
+            challengesCompleted={challengesCompleted}
+            t={t}
+            navigate={navigate}
+          />
+
+          {/* <div className="grid grid-cols-3 gap-2 mb-4">
             <Card
               className="bg-gradient-to-r from-red-50 to-pink-50 border-red-200 cursor-pointer hover:shadow-md transition-shadow h-full flex flex-col justify-center items-center"
               onClick={() => handleStatsCardClick("pending")}
@@ -652,37 +725,13 @@ const getRarityColor = (rarity) => {
                 </Badge>
               </CardContent>
             </Card>
-          </div>
-
-          {/* Acciones rápidas */}
-          {/* <Card>
-            <CardHeader>
-              <CardTitle>{t.index.quickActions}</CardTitle>
-              <CardDescription>{t.index.quickQuickActionsDescription}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-                {quickActions.map((action, index) => (
-                  <Button
-                    key={index}
-                    variant="outline"
-                    className={`h-auto p-3 sm:p-4 flex flex-col items-center space-y-2 hover:shadow-md transition-all bg-gradient-to-br ${action.color} text-white border-0 hover:scale-105`}
-                    onClick={action.onClick}
-                  >
-                    <action.icon className="h-5 w-5 sm:h-6 sm:w-6" />
-                    <span className="text-xs sm:text-sm font-medium text-center leading-tight">
-                      {action.title}
-                    </span>
-                  </Button>
-                ))}
-              </div>
-            </CardContent>
-          </Card> */}
+          </div> */}
 
           {/* Actividad reciente */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-6"> */}
+
             {/* Recibidas */}
-            <Card>
+            {/* <Card>
               <CardHeader>
                 <CardTitle className="text-lg">{t.index.recivedFines}</CardTitle>
                 <CardDescription>{t.index.recentRecivedFines}</CardDescription>
@@ -693,25 +742,23 @@ const getRarityColor = (rarity) => {
                     <div
                       key={fine.id}
                       className="flex flex-row items-stretch gap-2 rounded-lg bg-white/80 shadow-sm px-4 py-3 border"
-                    >
-                      {/* Info multa */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-3 mb-2">
-                          {latestReceivedFine.sender.avatar_url ? (
-                            <img
-                              src={latestReceivedFine.sender.avatar_url}
-                              alt={latestReceivedFine.sender.name || "Avatar"}
-                              className="rounded-full h-10 w-10 object-cover border-2 border-purple-300 shadow"
-                            />
-                          ) : (
-                            <div className="rounded-full bg-gradient-to-br from-purple-400 to-pink-500 h-10 w-10 flex items-center justify-center text-white font-bold text-xl">
-                              {latestReceivedFine.sender.name?.charAt(0)?.toUpperCase() || "U"}
-                            </div>
-                          )}
+                    > */}
 
+                      {/* Info multa */}
+                      {/* <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-3 mb-2">
+                          <Avatar className="h-10 w-10">
+                            <AvatarImage
+                              src={fine.sender_avatar_url || undefined}
+                              alt={fine.sender_name || "Avatar"}
+                            />
+                            <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold text-xl">
+                              {fine.sender_name?.charAt(0)?.toUpperCase() || "U"}
+                            </AvatarFallback>
+                          </Avatar>
                           <div>
                             <div className="font-semibold">
-                              {t.index.de} {fine.sender.name}
+                              {t.index.de} {fine.sender_name}
                             </div>
                             {fine.status === "pending" ? (
                               <span className="inline-block bg-orange-100 text-orange-700 text-xs px-2 py-0.5 rounded font-semibold">
@@ -728,9 +775,10 @@ const getRarityColor = (rarity) => {
                         <div className="text-gray-400 text-xs mb-2">
                           {fine.date ? new Date(fine.date).toLocaleDateString() : ""}
                         </div>
-                      </div>
+                      </div> */}
+                      
                       {/* Precio y botón alineados a la derecha */}
-                      <div className="flex flex-col items-end justify-between">
+                      {/* <div className="flex flex-col items-end justify-between">
                         <div className="text-xl sm:text-2xl font-bold text-purple-700 mb-2">
                           {fine.amount} CHF
                         </div>
@@ -751,7 +799,6 @@ const getRarityColor = (rarity) => {
                     {t.index.noRecivedFines}
                   </p>
                 )}
-
                 {receivedFines.length > 3 && (
                   <Button
                     variant="outline"
@@ -763,39 +810,7 @@ const getRarityColor = (rarity) => {
                 )}
               </CardContent>
             </Card>
-
-            {/* Insignias recientes */}
-            {/* <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Award className="h-5 w-5" />
-                  {t.index.recentInsignias}
-                </CardTitle>
-                <CardDescription>{t.index.recentHitos}</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex flex-wrap gap-2">
-                  {userBadges.slice(0, 3).map((badge) => (
-                    <Badge
-                      key={badge.id}
-                      variant="secondary"
-                      className="bg-yellow-100 text-yellow-800"
-                    >
-                      {badge.icon} {badge.name.es || badge.name.en || badge.name.de}
-                    </Badge>
-                  ))}
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => navigate("/profile")}
-                  className="w-full"
-                >
-                  {t.index.seeAllInsignias}
-                </Button>
-              </CardContent>
-            </Card> */}
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -828,13 +843,11 @@ const getRarityColor = (rarity) => {
         achievements={achievements}
         onComplete={() => setAchievements([])}
       />
-
       <ShareAppModal
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}
         appUrl="https://deswg.vercel.app/welcome"
       />
-
       {/* Footer siempre al final */}
       <Footer />
     </div>

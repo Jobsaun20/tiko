@@ -8,9 +8,141 @@ export const es = {
   name: "DESWG",
   subtitle: "Entre amigos",
   installApp: "Instalar app",
-  
+  other:"Otros",
   installIosGuide: "Instalar IOS",
 },
+
+notifications: {
+  // Plantillas de notificación
+  fine_received: {
+    title: "Multa recibida",
+    icon: "💸",
+    message: '{{sender_name}} te ha enviado una multa de {{amount}} CHF por "{{reason}}"',
+  },
+  challenge_created: {
+    title: "Reto creado",
+    icon: "🏆",
+    message: "Has creado un reto: {{challenge_title}}",
+  },
+  challenge_invited: {
+    title: "Invitación a reto",
+    icon: "🎯",
+    message: "Te han invitado al reto: {{challenge_title}}",
+  },
+  payment_received: {
+    title: "Pago recibido",
+    icon: "💰",
+    message: "Has recibido un pago por {{amount}} CHF",
+  },
+  group_invite: {
+    title: "Invitación a grupo",
+    icon: "👥",
+    message: "Te han invitado a un grupo",
+  },
+  group_rule_proposed: {
+    title: "Nueva regla propuesta",
+    icon: "⏳",
+    message: "{{rule_description}}",
+  },
+
+  // Cabecera y acciones
+  title: "Notificaciones",
+  description: "Tus notificaciones recientes",
+  markAllRead: "Marcar todas como leídas",
+  markReadMobile: "Marcar como leídas",
+  deleteAll: "Borrar todas",
+  confirmDeleteAll: "¿Seguro que quieres borrar todas las notificaciones?",
+  notificationsMarked: "Notificaciones marcadas",
+  notificationsMarkedDescription: "Todas las notificaciones han sido marcadas como leídas",
+  notificationsDeleted: "Notificaciones borradas",
+  notificationsDeletedDescription: "Todas las notificaciones han sido eliminadas",
+  phoneUpdated:"Teléfono actualizado",
+  phoneUpdatedDescription:"Ahora puedes recibir tus ganancias con Twint",
+
+  // Estados y vacíos
+  noNotifications: "No tienes notificaciones aún",
+  emptyMessage: "Cuando tengas notificaciones, aparecerán aquí.",
+  loading: "Cargando notificaciones...",
+
+  // Fechas relativas
+  lessThanOneHour: "Hace menos de 1 hora",
+  hoursAgo: "Hace {{hours}} horas",
+  daysAgo: "Hace {{days}} días",
+},
+
+challengeCard: {
+  you: "Tú",
+  user: "Usuario",
+  sureDelete: "¿Seguro que quieres borrar este reto?",
+  errorDeleting: "Error borrando el reto:",
+  pending: "Pendiente",
+  active: "Activo",
+  finished: "Finalizado",
+  canceled: "Cancelado",
+  createdBy: "Creado por:",
+  penalty: "Penalización",
+  members: "Miembros",
+  rejected: "(Rechazó)",
+  completed: "Completado",
+  notCompleted: "No completado",
+  accept: "Aceptar",
+  reject: "Rechazar",
+  deleteChallenge: "Borrar reto",
+  challengeNotCompleted:"No completaste el reto:",
+  newFineRecived:"Nueva multa recibida",
+  fineReceivedBody: "Has recibido una multa de {sender} por {amount} CHF. Motivo: {reason}"
+
+},
+
+
+
+challenges:{  
+  challenges:"Retos",
+   status_all: "Todos",
+  status_accepted: "Aceptados",
+  status_rejected: "Rechazados",
+  status_achieved: "Conseguidos",
+  status_failed: "No conseguidos",
+  back: "Atrás",
+  createChallenge: "Crear Challenge",
+  filterChallenges: "Filtrar retos",
+  searchChallengePlaceholder: "Buscar retos por título o descripción...",  
+  notLoggedIn: "Inicia sesión para ver tus retos.",
+  titleChallengePage: "Retos",
+  subtitle: "Compite con tus amigos completando retos, supera tus límites y gana recompensas.",
+  loadingChallenges: "Cargando retos...",
+  noChallenges: "No tienes retos aún.",
+  noResults: "Ningún reto coincide con tu búsqueda.",  
+  acceptedCounter: "Aceptados",
+  rejectedCounter: "Rechazados",
+  achievedCounter: "Conseguidos",
+  failedCounter: "No conseguidos",
+  
+  inviteContacts: "Invita a tus contactos y reta a cumplir un objetivo juntos.",
+  title: "Título",
+  titlePlaceholder: "Ej: No café una semana",
+  description: "Descripción",
+  descriptionPlaceholder: "Describe el reto (opcional)",
+  amount: "Penalización",
+  amountPlaceholder: "Ej: 5",
+  currency: "CHF",
+  addParticipants: "Añade participantes",
+  searchPlaceholder: "Busca por nombre o email...",
+  loadingContacts: "Cargando contactos...",
+  noContactsFound: "No hay contactos que coincidan.",
+  remove: "Quitar",
+  cancel: "Cancelar",
+  creating: "Creando...",
+  create: "Crear reto",
+newChallengeProposed: "¡Nuevo reto propuesto!",
+youHaveNewChallengeToAccept: "Tienes un reto pendiente de aceptar.",
+challengeFinished: "Reto finalizado",
+whoRejected:"ha rechazado el reto",
+challengeActivated:"¡Reto activado!",
+everyoneAccepted:"¡Todos han aceptado! El reto ya está activo.",
+challengeFinishCheckResult:"El reto ha finalizado. ¡Revisa el resultado!",
+},
+
 
 groupRulesModal: {
   title: "Reglas del grupo",
@@ -122,11 +254,13 @@ description: "¿Hiciste tus tareas? ¿Y los demás? Si alguien se olvidó… o '
 
 onboard: {
   whatIsDeswg: "¿Qué es DESWG?",
-  whatIsDeswgDescription: "DESWG transforma la convivencia en un juego donde gana quien cumple y hace cumplir las reglas. Cada grupo define sus propias reglas: desde recoger la cocina, respetar horarios o no dejar a nadie en visto.",
+  whatIsDeswgDescription: "DESWG es la app que transforma la convivencia en un juego donde gana quien cumple y hace cumplir las reglas.",
   createGroups: "Crea grupos y reglas",
-  createGroupsDescription: "Si alguien no cumple las reglas… ¡puedes multarlo y ganar puntos! Y si te multan, no todo está perdido: pagas, limpias tu karma y sigues sumando experiencia.",
-  payAndLevelUp: "Paga y sube de nivel",
-  payAndLevelUpDescription: "Cumplir tus tareas + Buen comportamiento + Cumplir las reglas aceptadas = Convivencia Perfecta. En DESWG, no se trata de castigar, sino de jugar en equipo, mejorar hábitos y reírse en el proceso mientras te conviertes en EL COMPAÑERO PERFECTO",
+  createGroupsDescription: "Crea un grupo con tu pareja, amigos, compañeros de piso o de trabajo y definid vuestras propias reglas (No dejar pelos en la ducha, No interrumpir en reuniones...) y si alguien no las cumple, Paga!",
+  challengeTitle:"Reta a tus contactos",
+  challengeDefinition:"Crea retos y mejora habitos de forma divertida (una semana sin azucar, aprobar el proximo examen o apuntarse al gimnasio). Si alguien no lo cumple paga. Convive, mejora habitos, gana XP",
+  payAndLevelUp: "Convive y gana",
+  payAndLevelUpDescription: "El objetivo de DESWG es mejorar la convivencia, jugar en equipo, mejorar hábitos y divertirse en el proceso mientras te conviertes en EL COMPAÑERO PERFECTO",
   back: "Atrás",
   next: "Siguiente",
   createAccount: "Crear cuenta",
@@ -155,6 +289,8 @@ onboard: {
     recentInsignias: "Insignias recientes",
     recentHitos: "Tus logros más recientes",
     seeAllInsignias: "Ver todas las insignias",
+    pendingFinesTitle:"Multas pendientes",
+    seeAllPendingFines:"Ver todas las multas pendientes",
   },
 
   // Contacts Page
@@ -166,6 +302,8 @@ onboard: {
     loading: "Cargando...",
     addedContactConfirmed: "Contacto añadido correctamente",
     titleFineModalPage: "Crear nueva multa",
+    challenge:"Reto",
+    statusActive:"Activo",
   },
 
  // Groups Page

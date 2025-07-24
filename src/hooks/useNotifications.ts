@@ -90,6 +90,18 @@ export function useNotifications() {
     fetchNotifications();
   };
 
+  // BORRAR TODAS las notificaciones del usuario
+  const deleteAll = async () => {
+    if (!user) return;
+    await supabase
+      .from("notifications")
+      .delete()
+      .eq("user_id", user.id);
+    setNotifications([]);
+    setUnreadCount(0);
+    setLoading(false);
+  };
+
   return {
     unreadCount,
     notifications,
@@ -98,5 +110,6 @@ export function useNotifications() {
     markAsRead,
     fetchNotifications,
     setNotifications,
+    deleteAll,
   };
 }

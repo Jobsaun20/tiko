@@ -119,17 +119,11 @@ export const Header = () => {
                     <User className="mr-2 h-4 w-4" />
                     <span>{t.nav.profile}</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate("/notifications")} className="text-sm">
+                  {/* <DropdownMenuItem onClick={() => navigate("/notifications")} className="text-sm">
                     <Bell className="mr-2 h-4 w-4" />
                     <span>{t.nav.notifications}</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => navigate("/install-ios")}
-                    className="text-sm  hover:bg-blue-50 flex items-center gap-2"
-                  >
-                    <span role="img" aria-label="iOS">📲</span>
-                    <span>{t.app.installApp}</span>
-                  </DropdownMenuItem>
+                  </DropdownMenuItem> */}
+                  
                   {/* Compartir la app */}
                   <DropdownMenuItem
                     onClick={() => setInviteOpen(true)}
@@ -137,6 +131,13 @@ export const Header = () => {
                   >
                     <Share2 className="mr-2 h-4 w-4" />
                     <span>{t.share?.title || "Compartir app"}</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => navigate("/install-ios")}
+                    className="text-sm  hover:bg-blue-50 flex items-center gap-2"
+                  >
+                    <span role="img" aria-label="iOS">📲</span>
+                    <span>{t.app.installApp}</span>
                   </DropdownMenuItem>
                   {/* --- Botón Instalar App SOLO si es instalable --- */}
                   {canInstall && (
