@@ -41,10 +41,8 @@ export function CreateChallengeModal({
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // --- AVATARS ---
   const [avatarsMap, setAvatarsMap] = useState<{ [userId: string]: { avatar_url: string; name: string } }>({});
 
-  // IDs a buscar
   const filteredContacts = useMemo(
     () =>
       contacts.filter(
@@ -56,7 +54,7 @@ export function CreateChallengeModal({
       ),
     [contacts, currentUserId, search]
   );
-  // Unimos todos los IDs necesarios para cargar los avatares
+
   const userIdsToFetch = useMemo(() => {
     const set = new Set<string>();
     filteredContacts.forEach(c => set.add(c.user_supabase_id!));
@@ -65,7 +63,6 @@ export function CreateChallengeModal({
   }, [filteredContacts, selectedContacts]);
 
   useEffect(() => {
-    // Sólo busca si hay ids
     if (!userIdsToFetch.length) return;
     (async () => {
       const { data, error } = await supabase
@@ -90,13 +87,9 @@ export function CreateChallengeModal({
     }
   }, [isOpen, preselectedParticipant]);
 
-  // Cierra el dropdown al hacer click fuera
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setDropdownOpen(false);
       }
     }
@@ -108,13 +101,11 @@ export function CreateChallengeModal({
     };
   }, [isDropdownOpen]);
 
-  // Abre el dropdown al escribir
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
     setDropdownOpen(e.target.value.trim().length > 0);
   };
 
-  // Cierra el dropdown al seleccionar contacto
   const handleContactToggle = (userSupabaseId: string) => {
     setSelectedContacts((prev) =>
       prev.includes(userSupabaseId)
@@ -122,7 +113,7 @@ export function CreateChallengeModal({
         : [...prev, userSupabaseId]
     );
     setDropdownOpen(false);
-    setSearch(""); // Borra búsqueda tras seleccionar
+    setSearch("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -159,12 +150,9 @@ export function CreateChallengeModal({
             <span className="text-pink-500 text-xl">⚡</span>
             {t.challenges.createChallenge}
           </DialogTitle>
-          <span className="text-gray-500 text-sm">
-            {t.challenges.inviteContacts}
-          </span>
+          <span className="text-gray-500 text-sm">{t.challenges.inviteContacts}</span>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* ...Título, descripción, amount igual... */}
           <div>
             <label className="block text-sm font-medium mb-1">{t.challenges.title}</label>
             <Input
@@ -201,7 +189,6 @@ export function CreateChallengeModal({
               <span className="ml-2 text-gray-500">CHF</span>
             </div>
           </div>
-          {/* PARTICIPANTES */}
           <div className="relative">
             <label className="block text-sm font-medium mb-1">{t.challenges.addParticipants}</label>
             <Input
@@ -225,15 +212,13 @@ export function CreateChallengeModal({
                 )}
                 {!loadingContacts &&
                   filteredContacts.map(contact => {
-                    const avatar_url = avatarsMap[contact.user_supabase_id!]?.avatar_url || "";
-                    const name = avatarsMap[contact.user_supabase_id!]?.name || contact.name || "";
+                    const avatar_url = avatarsMap[contact.user_supabase_id!]?.avatar_url || undefined;
+                    const name = avatarsMap[contact.user_supabase_id!]?.name?.trim() || contact.name?.trim() || "Anon";
                     return (
                       <div
                         key={contact.id}
                         className={`flex items-center gap-2 px-2 py-1 cursor-pointer rounded hover:bg-pink-50 ${
-                          selectedContacts.includes(contact.user_supabase_id!)
-                            ? "bg-pink-50"
-                            : ""
+                          selectedContacts.includes(contact.user_supabase_id!) ? "bg-pink-50" : ""
                         }`}
                         onClick={() => handleContactToggle(contact.user_supabase_id!)}
                       >
@@ -247,12 +232,9 @@ export function CreateChallengeModal({
                           }
                         />
                         <Avatar className="w-7 h-7">
-                          <AvatarImage
-                            src={avatar_url || "/placeholder.svg"}
-                            alt={name}
-                          />
-                          <AvatarFallback className="bg-gray-300 text-gray-500">
-                            {name?.[0]?.toUpperCase() ?? "?"}
+                          <AvatarImage src={avatar_url} alt={name} />
+                          <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold text-xs flex items-center justify-center">
+                            {name.charAt(0).toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
                         <span className="font-medium text-gray-700">{name}</span>
@@ -267,17 +249,17 @@ export function CreateChallengeModal({
                   .filter(id => id !== currentUserId)
                   .map(userId => {
                     const contact = contacts.find(c => c.user_supabase_id === userId);
-                    const avatar_url = avatarsMap[userId]?.avatar_url || "";
-                    const name = avatarsMap[userId]?.name || contact?.name || "";
+                    const avatar_url = avatarsMap[userId]?.avatar_url || undefined;
+                    const name = avatarsMap[userId]?.name?.trim() || contact?.name?.trim() || "Anon";
                     return (
                       <div
                         key={userId}
                         className="flex items-center gap-2 bg-gray-50 border border-gray-200 px-3 py-1 rounded-lg text-xs"
                       >
                         <Avatar className="w-6 h-6">
-                          <AvatarImage src={avatar_url || "/placeholder.svg"} alt={name} />
-                          <AvatarFallback className="bg-gray-300 text-gray-500">
-                            {name?.[0]?.toUpperCase() ?? "?"}
+                          <AvatarImage src={avatar_url} alt={name} />
+                          <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold text-xs flex items-center justify-center">
+                            {name.charAt(0).toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
                         <span className="text-gray-700">{name}</span>
