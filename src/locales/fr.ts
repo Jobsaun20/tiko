@@ -554,7 +554,7 @@ onboard: {
       joinGroup: "Rejoindre un groupe",
       noGroups: "Tu n’as pas encore de groupes",
       groupName: "Nom du groupe",
-      description: "Description",
+      description: "Crée un groupe avec tes amis, ta famille, tes colocataires ou ton partenaire pour commencer à établir des règles ensemble.",
       members: "Membres",
       admin: "Admin",
       member: "Membre",
