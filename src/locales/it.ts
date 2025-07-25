@@ -142,7 +142,7 @@ challenges: {
   newChallengeProposed: "Nuova sfida proposta!",
   youHaveNewChallengeToAccept: "Hai una sfida in attesa di accettazione: {{title}}",
   challengeFinished: "Sfida terminata",
-  whoRejected: "ha rifiutato la sfida",
+  whoRejected: "{{name}} ha rifiutato la sfida '{{title}}'",
   challengeActivated: "Sfida attivata!",
   everyoneAccepted: "Tutti hanno accettato! La sfida è ora attiva.",
   challengeFinishCheckResult: "La sfida è terminata. Controlla il risultato!",

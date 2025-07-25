@@ -363,7 +363,7 @@ export function useChallenges() {
           userObj?.name?.trim() ||
           userObj?.username?.trim() ||
           userObj?.email?.trim() ||
-          "Un usuario";
+          "User";
 
         await supabase
           .from("challenges")

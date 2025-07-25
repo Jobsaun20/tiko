@@ -144,7 +144,7 @@ challenges: {
   newChallengeProposed: "New challenge proposed!",
   youHaveNewChallengeToAccept: "You have a challenge pending to accept: {{title}}",
   challengeFinished: "Challenge finished",
-  whoRejected: "has rejected the challenge",
+  whoRejected: "{{name}} has rejected the challenge '{{title}}'",
   challengeActivated: "Challenge activated!",
   everyoneAccepted: "Everyone has accepted! The challenge is now active.",
   challengeFinishCheckResult: "The challenge has ended. Check the result!",

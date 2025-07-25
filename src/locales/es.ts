@@ -32,7 +32,7 @@ notifications: {
   payment_received: {
     title: "Pago recibido",
     icon: "💰",
-    message: "Has recibido un pago por {{amount}} CHF de {{sender_name}}",
+    message: "Has recibido un pago por {{amount}} CHF de {{sender}}",
   },
   group_invite: {
     title: "Invitación a grupo",
@@ -147,7 +147,7 @@ challenges:{
 newChallengeProposed: "¡Nuevo reto propuesto!",
 youHaveNewChallengeToAccept: "Tienes un reto pendiente de aceptar: {{title}}",
 challengeFinished: "Reto finalizado",
-whoRejected:"ha rechazado el reto",
+whoRejected:"{{name}} ha rechazado el reto '{{title}}'",
 challengeActivated:"¡Reto activado!",
 everyoneAccepted:"¡Todos han aceptado! El reto ya está activo.",
 challengeFinishCheckResult:"El reto ha finalizado. ¡Revisa el resultado!",
