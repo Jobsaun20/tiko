@@ -115,7 +115,7 @@ challenges: {
   searchChallengePlaceholder: "Challenges nach Titel oder Beschreibung suchen...",
   notLoggedIn: "Melde dich an, um deine Challenges zu sehen.",
   titleChallengePage: "Challenges",
-subtitle: "Fordere deine Freunde, Familie, deinen Partner usw. heraus. Schließe die Herausforderung ab und erhalte Belohnungen.",
+subtitle: "Fordere deine Freunde, Familie, deinen Partner usw. heraus. Schliesse die Herausforderung ab und erhalte Belohnungen.",
   loadingChallenges: "Challenges werden geladen...",
   noChallenges: "Du hast noch keine Challenges.",
   noResults: "Keine Challenge entspricht deiner Suche.",
