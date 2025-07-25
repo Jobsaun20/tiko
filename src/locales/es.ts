@@ -119,7 +119,7 @@ challenges:{
   searchChallengePlaceholder: "Buscar retos por título o descripción...",  
   notLoggedIn: "Inicia sesión para ver tus retos.",
   titleChallengePage: "Retos",
-  subtitle: "Compite con tus amigos completando retos, supera tus límites y gana recompensas.",
+  subtitle: "Reta a tus amigos, familiares, pareja, etc. Supera el reto y gana recompensas.",
   loadingChallenges: "Cargando retos...",
   noChallenges: "No tienes retos aún.",
   noResults: "Ningún reto coincide con tu búsqueda.",  
