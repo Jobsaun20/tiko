@@ -228,7 +228,7 @@ export default function Contacts() {
           ) : filteredContacts.length > 0 ? (
             filteredContacts.map((contact) => {
 const avatarData = avatarsMap[contact.user_supabase_id] as { avatar_url?: string; name?: string } || {};
-              const avatar_url = avatarData.avatar_url || "/placeholder.svg";
+              const avatar_url = avatarData.avatar_url || undefined;
               const name = avatarData.name || contact.name || "";
               return (
                 <Card key={contact.id} className="hover:shadow-md transition-shadow">

@@ -14,7 +14,7 @@ notifications: {
   fine_received: {
     title: "Erhaltene Strafe",
     icon: "💸",
-    message: '{{sender_name}} hat dir eine Strafe von {{amount}} CHF für "{{reason}}" geschickt',
+    message: '{{sender}} hat dir eine Strafe von {{amount}} CHF für "{{reason}}" geschickt',
   },
   challenge_created: {
     title: "Challenge erstellt",
@@ -24,7 +24,7 @@ notifications: {
   challenge_invited: {
     title: "Challenge-Einladung",
     icon: "🎯",
-    message: "Du wurdest zur Challenge eingeladen: {{challenge_title}}",
+    message: "{{sender}} hat dich zur Herausforderung eingeladen: {{challenge_title}}",
   },
   payment_received: {
     title: "Zahlung erhalten",
@@ -41,6 +41,15 @@ notifications: {
     icon: "⏳",
     message: "{{rule_description}}",
   },
+  group_rule_deletion_proposed: {
+  title: "Regel zur Löschung vorgeschlagen",
+  message: "Die Regel '{{rule}}' der Gruppe '{{group}}' wurde zur Löschung vorgeschlagen.",
+},
+group_rule_deleted: {
+  title: "Regel gelöscht",
+  message: "Die Regel '{{rule}}' wurde aus der Gruppe '{{group}}' gelöscht.",
+},
+
 
   // Kopfzeile und Aktionen
   title: "Benachrichtigungen",
@@ -87,9 +96,9 @@ challengeCard: {
   accept: "Akzeptieren",
   reject: "Ablehnen",
   deleteChallenge: "Challenge löschen",
-  challengeNotCompleted: "Du hast die Herausforderung nicht abgeschlossen:",
+  challengeNotCompleted: "Du hast die Herausforderung nicht abgeschlossen: ",
 newFineRecived: "Neue Strafe erhalten",
-fineReceivedBody: "Du hast eine Strafe von {sender} über {amount} CHF erhalten. Grund: {reason}"
+fineReceivedBody: "Du hast eine Strafe von {{sender}} über {{amount}} CHF erhalten. Grund: {{reason}}"
 
 },
 
@@ -159,6 +168,17 @@ challenges: {
   toastProposedTitle: "Neue Regel vorgeschlagen",
   toastDeletedTitle: "Regel gelöscht",
   toastDeletedDesc: "Die Regel wurde erfolgreich gelöscht.",
+  proposeDelete: "Löschung vorschlagen",
+pendingDeletion: "Löschung ausstehend",
+toastDeleteProposedTitle: "Löschung vorgeschlagen",
+toastDeleteProposedDesc: "Alle Mitglieder müssen der Löschung dieser Regel zustimmen",
+deleteRuleNotificationTitle: "Löschung einer Regel vorgeschlagen",
+deleteRuleNotificationBody: "{username} hat vorgeschlagen, die Regel zu löschen: \"{rule}\"",
+confirmDelete: "Löschen",
+keepRule: "Behalten",
+deletedRulePushTitle: "Regel gelöscht",
+deletedRulePushBody: "Die Regel \"{rule}\" der Gruppe \"{group}\" wurde gelöscht.",
+
 },
 
  badgeUnlocked: {
@@ -689,4 +709,4 @@ onboard: {
     saveChanges: "Änderungen speichern",
   }
 };
-
+export default de;

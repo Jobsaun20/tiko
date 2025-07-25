@@ -52,6 +52,17 @@ export default function Notifications() {
       icon: "⏳",
       message: t.notifications.group_rule_proposed.message,
     },
+    group_rule_deletion_proposed: {
+  title: t.notifications.group_rule_deletion_proposed.title,
+  icon: "❓",
+  message: t.notifications.group_rule_deletion_proposed.message,
+},
+group_rule_deleted: {
+  title: t.notifications.group_rule_deleted.title,
+  icon: "🗑️",
+  message: t.notifications.group_rule_deleted.message,
+},
+
   };
 
   // Elimina el badge visual de notificaciones al montar

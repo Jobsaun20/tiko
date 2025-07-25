@@ -279,25 +279,25 @@ export default function Groups() {
 
   // FUNCION PARA RENDERIZAR AVATAR DE GRUPO (Base64 o URL o fallback)
   const renderGroupAvatar = (group: any) => {
-    const avatar = group.avatar || ""; // Campo de la tabla groups
-    return (
-      <Avatar className="h-10 w-10 sm:h-12 sm:w-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+  const avatar = group.avatar || "";
+  const hasImage =
+    avatar.startsWith("http") || avatar.startsWith("data:image");
+
+  return (
+    <Avatar className="h-10 w-10 sm:h-12 sm:w-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+      {hasImage && (
         <AvatarImage
-          src={
-            avatar.startsWith("http")
-              ? avatar // URL storage
-              : avatar.startsWith("data:image")
-              ? avatar // Base64
-              : DEFAULT_GROUP_AVATAR
-          }
+          src={avatar}
           alt={group.name}
         />
-        <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs font-bold">
-          {group.name?.charAt(0)?.toUpperCase() || "G"}
-        </AvatarFallback>
-      </Avatar>
-    );
-  };
+      )}
+      <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs font-bold">
+        {group.name?.charAt(0)?.toUpperCase() || "G"}
+      </AvatarFallback>
+    </Avatar>
+  );
+};
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">

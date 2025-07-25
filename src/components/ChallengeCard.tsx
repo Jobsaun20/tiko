@@ -8,6 +8,7 @@ import { useChallenges } from "@/hooks/useChallenges";
 import { useContacts } from "@/hooks/useContacts";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/supabaseClient";
+import locales from "@/locales"; // <--- IMPORTANTE
 
 interface ChallengeCardProps {
   challenge: any;
@@ -18,7 +19,6 @@ interface ChallengeCardProps {
 const PUSH_ENDPOINT = import.meta.env.VITE_PUSH_SERVER_URL;
 
 // ---------------------------------------
-// NUEVO: Cargar avatares de users (1 sola vez)
 function useUsersAvatars(userIds: string[]) {
   const [avatars, setAvatars] = useState<Record<string, string>>({});
   useEffect(() => {
@@ -76,9 +76,7 @@ export function ChallengeCard({
 
   // Devuelve el display info de un participante
   const getParticipantDisplay = (participant: any) => {
-    // Si es el usuario logueado
     if (participant.user_id === currentUserId) {
-      // Opcionalmente puedes obtener el nombre real del user desde users también
       return {
         name: "Tú",
         avatar: avatars[currentUserId] || null,
@@ -131,7 +129,7 @@ export function ChallengeCard({
     setDeleting(false);
   };
 
-  // --------- MULTAS Y PUSH ---------
+  // --------- MULTAS Y PUSH EN IDIOMA DEL RECEPTOR ---------
   const sendFinesToFailedParticipants = async () => {
     const { data: finesCandidates, error } = await supabase
       .from("challenge_fines_candidates")
@@ -183,8 +181,32 @@ export function ChallengeCard({
       } else {
         console.log("✅ Multas enviadas desde view:", finesToInsert);
 
-        // ---- PUSH NOTIFICATION (1 por cada multa y subs) ----
+        // ---- PUSH NOTIFICATION por multa, en el idioma del receptor ----
         for (const fine of finesToInsert) {
+          // 1. Buscar idioma del destinatario
+          const { data: recipientData } = await supabase
+            .from("users")
+            .select("language")
+            .eq("id", fine.recipient_id)
+            .maybeSingle();
+          const lang = recipientData?.language || "es";
+          const locale = locales[lang] || locales["es"];
+
+          // 2. Montar payload con traducción y datos dinámicos
+          function templateReplace(str: string, vars: Record<string, string | number>) {
+return str.replace(/{{(.*?)}}/g, (_, key) => String(vars[key.trim()] ?? ""));
+          }
+          const notifPayload = {
+            title: locale.challengeCard.newFineRecived,
+            body: templateReplace(locale.challengeCard.fineReceivedBody, {
+              sender: fine.sender_name,
+              amount: fine.amount,
+              reason: fine.reason,
+            }),
+            url: "/history",
+          };
+
+          // 3. Buscar subscripciones y enviar
           const { data: pushSubs, error: subError } = await supabase
             .from("push_subscriptions")
             .select("subscription")
@@ -208,12 +230,6 @@ export function ChallengeCard({
             .filter(
               (s: any) => s && s.endpoint && s.keys?.auth && s.keys?.p256dh
             );
-
-          const notifPayload = {
-            title: t.challengeCard.newFineRecived,
-            body: t.challengeCard.fineReceivedBody,
-            url: "/history",
-          };
 
           for (const subscription of subs) {
             try {

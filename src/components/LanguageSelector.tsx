@@ -6,6 +6,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useLanguage, Language } from "@/contexts/LanguageContext";
+import { useAuthContext } from "@/contexts/AuthContext";
+import { supabase } from "@/supabaseClient";
 
 const languages = [
   { code: 'es' as Language, name: 'Español', flag: '🇪🇸' },
@@ -17,7 +19,19 @@ const languages = [
 
 export const LanguageSelector = () => {
   const { language, setLanguage } = useLanguage();
+  const { user } = useAuthContext(); // <-- Obtiene el usuario logueado
   const currentLanguage = languages.find(lang => lang.code === language);
+
+  const handleChangeLanguage = async (lang: Language) => {
+    setLanguage(lang);
+    if (user?.id) {
+      // Actualiza el idioma en la base de datos del usuario
+      await supabase
+        .from("users")
+        .update({ language: lang })
+        .eq("id", user.id);
+    }
+  };
 
   return (
     <DropdownMenu>
@@ -30,7 +44,7 @@ export const LanguageSelector = () => {
         {languages.map((lang) => (
           <DropdownMenuItem
             key={lang.code}
-            onClick={() => setLanguage(lang.code)}
+            onClick={() => handleChangeLanguage(lang.code)}
             className={`flex items-center gap-2 ${language === lang.code ? 'bg-purple-50' : ''}`}
           >
             <span>{lang.flag}</span>

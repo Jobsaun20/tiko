@@ -14,7 +14,7 @@ notifications: {
   fine_received: {
     title: "Multa ricevuta",
     icon: "💸",
-    message: '{{sender_name}} ti ha inviato una multa di {{amount}} CHF per "{{reason}}"',
+    message: '{{sender}} ti ha inviato una multa di {{amount}} CHF per "{{reason}}"',
   },
   challenge_created: {
     title: "Sfida creata",
@@ -24,7 +24,7 @@ notifications: {
   challenge_invited: {
     title: "Invito a una sfida",
     icon: "🎯",
-    message: "Sei stato invitato alla sfida: {{challenge_title}}",
+    message: "{{sender}} ti ha invitato alla sfida: {{challenge_title}}",
   },
   payment_received: {
     title: "Pagamento ricevuto",
@@ -41,6 +41,15 @@ notifications: {
     icon: "⏳",
     message: "{{rule_description}}",
   },
+  group_rule_deletion_proposed: {
+  title: "Proposta di eliminazione di una regola",
+  message: "È stata proposta l'eliminazione della regola '{{rule}}' dal gruppo '{{group}}'.",
+},
+group_rule_deleted: {
+  title: "Regola eliminata",
+  message: "La regola '{{rule}}' è stata eliminata dal gruppo '{{group}}'.",
+},
+
 
   // Intestazione e azioni
   title: "Notifiche",
@@ -86,9 +95,9 @@ challengeCard: {
   accept: "Accetta",
   reject: "Rifiuta",
   deleteChallenge: "Elimina sfida",
-  challengeNotCompleted: "Non hai completato la sfida:",
+  challengeNotCompleted: "Non hai completato la sfida: ",
 newFineRecived: "Nuova multa ricevuta",
-fineReceivedBody: "Hai ricevuto una multa da {sender} di {amount} CHF. Motivo: {reason}"
+fineReceivedBody: "Hai ricevuto una multa da {{sender}} di {{amount}} CHF. Motivo: {{reason}}"
 
 },
 
@@ -157,6 +166,16 @@ groupRulesModal: {
   toastProposedTitle: "Nuova regola proposta",
   toastDeletedTitle: "Regola eliminata",
   toastDeletedDesc: "La regola è stata eliminata con successo.",
+  proposeDelete: "Proponi eliminazione",
+pendingDeletion: "Eliminazione in sospeso",
+toastDeleteProposedTitle: "Eliminazione proposta",
+toastDeleteProposedDesc: "Tutti i membri devono accettare per eliminare questa regola",
+deleteRuleNotificationTitle: "Proposta di eliminazione di una regola",
+deleteRuleNotificationBody: "{username} ha proposto di eliminare la regola: \"{rule}\"",
+confirmDelete: "Elimina",
+keepRule: "Mantieni",
+deletedRulePushTitle: "Regola eliminata",
+deletedRulePushBody: "La regola \"{rule}\" del gruppo \"{group}\" è stata eliminata.",
 },
 
 
@@ -691,3 +710,4 @@ onboard: {
     saveChanges: "Salva modifiche",
   }
 };
+export default it;

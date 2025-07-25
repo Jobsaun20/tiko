@@ -205,7 +205,7 @@ export default function ContactsModalPage() {
           ) : filteredContacts.length > 0 ? (
             filteredContacts.map((contact) => {
               // Datos avatar desde avatarsMap
-              const avatar_url = avatarsMap?.[contact.user_supabase_id]?.avatar_url || "/placeholder.svg";
+              const avatar_url = avatarsMap?.[contact.user_supabase_id]?.avatar_url || undefined;
               const name = avatarsMap?.[contact.user_supabase_id]?.name || contact.name || "";
 
               return (

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/supabaseClient";
 import { useAuthContext } from "@/contexts/AuthContext";
 
-// Tipado de notificación (puedes expandir según tus tipos)
+// Tipado de notificación
 export interface Notification {
   id: string;
   user_id: string;
@@ -10,7 +10,11 @@ export interface Notification {
   title?: string | null;
   message?: string | null;
   link?: string | null;
-  data?: any;
+  data?: {
+    rule?: string;
+    group?: string;
+    [key: string]: any;
+  };
   read: boolean;
   created_at: string;
 }
@@ -30,7 +34,6 @@ export function useNotifications() {
       return;
     }
     setLoading(true);
-    // Cargar todas las notificaciones ordenadas (más nuevas primero)
     const { data, error } = await supabase
       .from("notifications")
       .select("*")
@@ -48,7 +51,7 @@ export function useNotifications() {
     fetchNotifications();
     if (!user) return;
 
-    // Realtime: Recarga si hay cambios en la tabla
+    // Realtime: escucha los cambios para este usuario
     const channel = supabase
       .channel("notifications-changes")
       .on(
@@ -90,7 +93,7 @@ export function useNotifications() {
     fetchNotifications();
   };
 
-  // BORRAR TODAS las notificaciones del usuario
+  // Borrar todas las notificaciones del usuario
   const deleteAll = async () => {
     if (!user) return;
     await supabase

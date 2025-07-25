@@ -15,7 +15,7 @@ export const en = {
   fine_received: {
     title: "Fine received",
     icon: "💸",
-    message: '{{sender_name}} sent you a fine of {{amount}} CHF for "{{reason}}"',
+    message: '{{sender}} sent you a fine of {{amount}} CHF for "{{reason}}"',
   },
   challenge_created: {
     title: "Challenge created",
@@ -25,7 +25,7 @@ export const en = {
   challenge_invited: {
     title: "Challenge invitation",
     icon: "🎯",
-    message: "You have been invited to the challenge: {{challenge_title}}",
+    message:  "{{sender}} has invited you to the challenge: {{challenge_title}}",
   },
   payment_received: {
     title: "Payment received",
@@ -42,6 +42,15 @@ export const en = {
     icon: "⏳",
     message: "{{rule_description}}",
   },
+  group_rule_deletion_proposed: {
+  title: "Rule deletion proposed",
+  message: "The rule '{{rule}}' from group '{{group}}' has been proposed for deletion.",
+},
+group_rule_deleted: {
+  title: "Rule deleted",
+  message: "The rule '{{rule}}' has been deleted from the group '{{group}}'.",
+},
+
 
   // Header and actions
   title: "Notifications",
@@ -90,7 +99,7 @@ challengeCard: {
   deleteChallenge: "Delete challenge",
   challengeNotCompleted: "You did not complete the challenge:",
 newFineRecived: "New fine received",
-fineReceivedBody: "You have received a fine from {sender} for {amount} CHF. Reason: {reason}"
+fineReceivedBody: "You have received a fine from {{sender}} for {{amount}} CHF. Reason: {{reason}}"
 
 },
 
@@ -159,6 +168,18 @@ challenges: {
   toastProposedTitle: "New rule proposed",
   toastDeletedTitle: "Rule deleted",
   toastDeletedDesc: "The rule has been deleted successfully.",
+  proposeDelete: "Propose deletion",
+pendingDeletion: "Pending deletion",
+toastDeleteProposedTitle: "Deletion proposed",
+toastDeleteProposedDesc: "All members must agree to delete this rule",
+deleteRuleNotificationTitle: "Rule deletion proposed",
+deleteRuleNotificationBody: "{username} proposed to delete the rule: \"{rule}\"",
+confirmDelete: "Delete",
+keepRule: "Keep",
+deletedRulePushTitle: "Rule deleted",
+deletedRulePushBody: "The rule \"{rule}\" from group \"{group}\" was deleted.",
+
+
 },
 
  badgeUnlocked: {
@@ -692,3 +713,4 @@ onboard: {
     saveChanges: "Save changes",
   }
 };
+export default en;

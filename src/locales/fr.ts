@@ -14,7 +14,7 @@ notifications: {
   fine_received: {
     title: "Amende reçue",
     icon: "💸",
-    message: '{{sender_name}} vous a envoyé une amende de {{amount}} CHF pour "{{reason}}"',
+    message: '{{sender}} vous a envoyé une amende de {{amount}} CHF pour "{{reason}}"',
   },
   challenge_created: {
     title: "Défi créé",
@@ -24,7 +24,7 @@ notifications: {
   challenge_invited: {
     title: "Invitation à un défi",
     icon: "🎯",
-    message: "Vous avez été invité au défi : {{challenge_title}}",
+    message: "{{sender}} vous a invité au défi : {{challenge_title}}",
   },
   payment_received: {
     title: "Paiement reçu",
@@ -41,6 +41,15 @@ notifications: {
     icon: "⏳",
     message: "{{rule_description}}",
   },
+  group_rule_deletion_proposed: {
+  title: "Proposition de suppression de règle",
+  message: "La règle '{{rule}}' du groupe '{{group}}' a été proposée pour suppression.",
+},
+group_rule_deleted: {
+  title: "Règle supprimée",
+  message: "La règle '{{rule}}' a été supprimée du groupe '{{group}}'.",
+},
+
 
   // En-tête et actions
   title: "Notifications",
@@ -86,9 +95,9 @@ challengeCard: {
   accept: "Accepter",
   reject: "Refuser",
   deleteChallenge: "Supprimer le défi",
-  challengeNotCompleted: "Tu n'as pas terminé le défi :",
+  challengeNotCompleted: "Tu n'as pas terminé le défi : ",
 newFineRecived: "Nouvelle amende reçue",
-fineReceivedBody: "Vous avez reçu une amende de {sender} pour {amount} CHF. Motif : {reason}"
+fineReceivedBody: "Vous avez reçu une amende de {{sender}} pour {{amount}} CHF. Motif : {{reason}}"
 
 },
 
@@ -157,6 +166,18 @@ challenges: {
   toastProposedTitle: "Nouvelle règle proposée",
   toastDeletedTitle: "Règle supprimée",
   toastDeletedDesc: "La règle a été supprimée avec succès.",
+  proposeDelete: "Proposer la suppression",
+pendingDeletion: "Suppression en attente",
+toastDeleteProposedTitle: "Suppression proposée",
+toastDeleteProposedDesc: "Tous les membres doivent accepter de supprimer cette règle",
+deleteRuleNotificationTitle: "Proposition de suppression d'une règle",
+deleteRuleNotificationBody: "{username} a proposé de supprimer la règle : \"{rule}\"",
+confirmDelete: "Supprimer",
+keepRule: "Conserver",
+deletedRulePushTitle: "Règle supprimée",
+deletedRulePushBody: "La règle « {rule} » du groupe « {group} » a été supprimée.",
+
+
 },
 
 badgeUnlocked: {
@@ -688,3 +709,4 @@ onboard: {
     saveChanges: "Enregistrer les modifications",
   }
 };
+export default fr;

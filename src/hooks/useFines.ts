@@ -3,6 +3,7 @@ import { supabase } from "@/supabaseClient";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useBadgeModal } from "@/contexts/BadgeModalContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import locales from "@/locales"; // <--- Importa tus archivos de idioma
 
 export interface Fine {
   id: string;
@@ -33,7 +34,7 @@ const PUSH_ENDPOINT = import.meta.env.VITE_PUSH_SERVER_URL;
 export function useFines() {
   const { user, session } = useAuthContext();
   const { showBadges } = useBadgeModal();
-  const { language } = useLanguage();
+  const { t, language } = useLanguage();
 
   const [fines, setFines] = useState<Fine[]>([]);
   const [loading, setLoading] = useState(true);
@@ -136,15 +137,37 @@ export function useFines() {
 
     if (insertError) throw new Error(insertError.message);
 
-    // 2. Crea notificación interna
+    // 2. Obtén el idioma del destinatario desde la base de datos
+    const { data: recipientProfile } = await supabase
+      .from("users")
+      .select("language")
+      .eq("id", newFine.recipient_id)
+      .maybeSingle();
+    const recipientLang = recipientProfile?.language || "es";
+
+    // 3. Importa el diccionario de ese idioma
+    const locale = locales[recipientLang];
+
+    // 4. Crea notificación interna en el idioma correcto
+    const notifTitle = locale.challengeCard.newFineRecived;
+    // Utilidad para reemplazo tipo handlebars: {{sender}}
+    function templateReplace(str: string, vars: Record<string, any>) {
+      return str.replace(/{{(.*?)}}/g, (_, key) => vars[key.trim()] ?? '');
+    }
+    const notifBody = templateReplace(locale.challengeCard.fineReceivedBody, {
+      sender: fineToInsert.sender_name,
+      amount: fineToInsert.amount,
+      reason: fineToInsert.reason
+    });
+
     const { data: notifData } = await supabase
       .from("notifications")
       .insert([
         {
           user_id: newFine.recipient_id,
           type: "fine_received",
-          title: "Nueva multa recibida",
-          message: `Has recibido una multa de ${fineToInsert.sender_name} por ${fineToInsert.amount} CHF.`,
+          title: notifTitle,
+          message: notifBody,
           link: "/history",
           read: false,
           created_at: new Date().toISOString(),
@@ -153,7 +176,7 @@ export function useFines() {
       .select()
       .maybeSingle();
 
-    // 3. Push notification
+    // 5. Push notification (también en idioma correcto)
     if (notifData?.id) {
       try {
         const { data: pushSubs } = await supabase
@@ -180,9 +203,8 @@ export function useFines() {
           );
 
         const notifPayload = {
-          title: "New fine received",
-          body: `You have received a fine from ${fineToInsert.sender_name} for ${fineToInsert.amount} CHF.`,
-          url: "/history",
+          title: notifTitle,
+          body: notifBody,
         };
 
         for (const subscription of subs) {
@@ -204,7 +226,7 @@ export function useFines() {
       }
     }
 
-    // 4. Chequeo de badges
+    // 6. Chequeo de badges
     if (user && session?.access_token && data) {
       try {
         const resp = await fetch(CHECK_BADGES_URL, {
@@ -232,7 +254,7 @@ export function useFines() {
       }
     }
 
-    // 5. Refrescar lista
+    // 7. Refrescar lista
     await refetchFines();
 
     return data;
