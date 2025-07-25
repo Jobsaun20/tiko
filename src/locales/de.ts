@@ -194,7 +194,7 @@ createGroupModal: {
     createGroupDescription: "Richte deine Gruppe ein, um soziale Geldstrafen unter Mitgliedern zu verwalten",
     groupName: "Gruppenname",
     groupNamePlaceholder: "z. B.: Mitbewohner",
-groupDescription: "Erstelle eine Gruppe mit deinen Freunden, deiner Familie, Mitbewohnern oder deinem Partner, um gemeinsam Regeln aufzustellen.",
+groupDescription: "Beschreibung",
     groupDescriptionPlaceholder: "Beschreibe kurz den Zweck der Gruppe",
     uploadAvatar: "Avatar hochladen",
     cancel: "Abbrechen",

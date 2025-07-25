@@ -193,7 +193,7 @@ createGroupModal: {
     createGroupDescription: "Configurez votre groupe pour gérer les amendes sociales entre membres",
     groupName: "Nom du groupe",
     groupNamePlaceholder: "Ex. : colocataires",
-groupDescription: "Crée un groupe avec tes amis, ta famille, tes colocataires ou ton partenaire pour commencer à établir des règles ensemble.",
+groupDescription: "Description",
     groupDescriptionPlaceholder: "Décrivez brièvement l'objectif du groupe",
     uploadAvatar: "Téléverser l’avatar",
     cancel: "Annuler",

@@ -193,7 +193,7 @@ deletedRulePushBody: "La regola \"{rule}\" del gruppo \"{group}\" è stata elimi
     createGroupDescription: "Configura il tuo gruppo per gestire multe sociali tra i membri",
     groupName: "Nome del gruppo",
     groupNamePlaceholder: "Es.: Coinquilini",
-groupDescription: "Crea un gruppo con i tuoi amici, familiari, coinquilini o partner per iniziare a stabilire delle regole insieme.",
+groupDescription: "Descrizione",
     groupDescriptionPlaceholder: "Descrivi brevemente lo scopo del gruppo",
     uploadAvatar: "Carica avatar",
     cancel: "Annulla",
