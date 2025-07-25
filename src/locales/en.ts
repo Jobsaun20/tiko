@@ -142,7 +142,7 @@ challenges: {
   creating: "Creating...",
   create: "Create challenge",
   newChallengeProposed: "New challenge proposed!",
-  youHaveNewChallengeToAccept: "You have a challenge pending to accept.",
+  youHaveNewChallengeToAccept: "You have a challenge pending to accept: {{title}}",
   challengeFinished: "Challenge finished",
   whoRejected: "has rejected the challenge",
   challengeActivated: "Challenge activated!",

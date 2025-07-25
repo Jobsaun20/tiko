@@ -145,7 +145,7 @@ challenges:{
   creating: "Creando...",
   create: "Crear reto",
 newChallengeProposed: "¡Nuevo reto propuesto!",
-youHaveNewChallengeToAccept: "Tienes un reto pendiente de aceptar.",
+youHaveNewChallengeToAccept: "Tienes un reto pendiente de aceptar: {{title}}",
 challengeFinished: "Reto finalizado",
 whoRejected:"ha rechazado el reto",
 challengeActivated:"¡Reto activado!",

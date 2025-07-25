@@ -140,7 +140,7 @@ challenges: {
   creating: "Création...",
   create: "Créer le défi",
   newChallengeProposed: "Nouveau défi proposé !",
-  youHaveNewChallengeToAccept: "Tu as un défi en attente d'acceptation.",
+  youHaveNewChallengeToAccept: "Tu as un défi en attente d'acceptation: {{title}}",
   challengeFinished: "Défi terminé",
   whoRejected: "a refusé le défi",
   challengeActivated: "Défi activé !",

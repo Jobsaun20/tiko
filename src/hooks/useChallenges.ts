@@ -3,6 +3,7 @@ import { supabase } from "@/supabaseClient";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useBadgeModal } from "@/contexts/BadgeModalContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import locales from "@/locales";
 
 // ENDPOINT push notification
 const PUSH_ENDPOINT = import.meta.env.VITE_PUSH_SERVER_URL;
@@ -19,6 +20,65 @@ async function addNotification(user_id: string, type: string, data: any, link?: 
     link: link || null,
     read: false
   }]);
+}
+
+// Utilidad para template handlebars: {{var}}
+function templateReplace(str: string, vars: Record<string, any>) {
+  if (!str || typeof str !== "string") return "";
+  return str.replace(/{{(.*?)}}/g, (_, key) => vars[key.trim()] ?? "");
+}
+
+// PUSH individual localizado por idioma del receptor
+async function sendLocalizedPush(
+  userId: string,
+  titleKey: string,
+  bodyKey: string,
+  vars: Record<string, any>
+) {
+  try {
+    const { data: userProfile } = await supabase
+      .from("users")
+      .select("language")
+      .eq("id", userId)
+      .maybeSingle();
+
+    const lang = userProfile?.language || "es";
+    // challengeCard o challenge, según donde guardes los textos
+const dict = locales[lang]?.challenges || locales["es"].challenges;
+
+    // FallBack: si envías directamente el texto (desde t.challenges...)
+    const title =
+      dict?.[titleKey] || titleKey || "Nuevo reto propuesto";
+    const body =
+      templateReplace(dict?.[bodyKey], vars) ||
+      templateReplace(bodyKey, vars) ||
+      bodyKey;
+
+    const { data: pushSubs } = await supabase
+      .from("push_subscriptions")
+      .select("subscription")
+      .eq("user_id", userId);
+
+    const subs = (pushSubs || []).map((s: any) => {
+      try {
+        return typeof s.subscription === "string"
+          ? JSON.parse(s.subscription)
+          : s.subscription;
+      } catch {
+        return null;
+      }
+    }).filter((s: any) => s && s.endpoint && s.keys?.auth && s.keys?.p256dh);
+
+    for (const subscription of subs) {
+      await fetch(PUSH_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ subs: subscription, notif: { title, body, url: "/challenges" } }),
+      });
+    }
+  } catch (err) {
+    console.error("Error en sendLocalizedPush:", err);
+  }
 }
 
 export interface Challenge {
@@ -140,47 +200,6 @@ export function useChallenges() {
     // eslint-disable-next-line
   }, [user]);
 
-  // ---- FUNCION AUXILIAR PARA PUSH ----
-  async function sendPushToUsers(userIds: string[], notifPayload: any) {
-    const { data: pushSubs } = await supabase
-      .from("push_subscriptions")
-      .select("user_id, subscription")
-      .in("user_id", userIds);
-
-    const subs = (pushSubs || [])
-      .map((s: any) => {
-        try {
-          return typeof s.subscription === "string"
-            ? JSON.parse(s.subscription)
-            : s.subscription;
-        } catch {
-          return null;
-        }
-      })
-      .filter(
-        (s: any) =>
-          s &&
-          s.endpoint &&
-          s.keys?.auth &&
-          s.keys?.p256dh
-      );
-
-    for (const subscription of subs) {
-      try {
-        await fetch(PUSH_ENDPOINT, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            subs: subscription,
-            notif: notifPayload,
-          }),
-        });
-      } catch (err) {
-        console.error("Error enviando push:", err);
-      }
-    }
-  }
-
   // === FUNCIÓN PARA CHEQUEAR Y MOSTRAR BADGES ===
   async function checkBadges(userId: string, action: string, challengeId?: string) {
     try {
@@ -249,11 +268,15 @@ export function useChallenges() {
         .filter((p: any) => p.user_id !== creator_id)
         .map((p: any) => p.user_id);
 
-      await sendPushToUsers(participantIds, {
-        title: t.challenges.newChallengeProposed,
-        body: `${title} - ${t.challenges.youHaveNewChallengeToAccept}`,
-        url: "/challenges"
-      });
+      for (const user_id of participantIds) {
+        // NOTA: aquí pasas las keys, no el texto traducido.
+        await sendLocalizedPush(
+          user_id,
+          "newChallengeProposed",         // clave del título
+          "youHaveNewChallengeToAccept",  // clave del body
+          { title }                       // variables de reemplazo, ejemplo: {{title}}
+        );
+      }
 
       // --- NOTIFICACIONES: crea notificación para cada invitado (NO el creador) ---
       for (const user_id of participantIds) {
@@ -348,11 +371,17 @@ export function useChallenges() {
           .eq("id", challenge_id);
 
         const allIds = participants.map((p: any) => p.user_id);
-        await sendPushToUsers(allIds, {
-          title: t.challenges.challengeFinished,
-          body: `${displayName} ${t.challenges.whoRejected} (${challenge?.title ?? "Challenge"}).`,
-          url: "/challenges"
-        });
+        for (const user_id of allIds) {
+          await sendLocalizedPush(
+            user_id,
+            "challengeFinished",
+            "whoRejected",
+            {
+              name: displayName,
+              title: challenge?.title ?? "Challenge",
+            }
+          );
+        }
 
         // --- NOTIFICACION a todos de que alguien ha rechazado ---
         for (const p of participants) {
@@ -373,11 +402,14 @@ export function useChallenges() {
 
         // PUSH: Notifica a todos que el reto ya está activo
         const allIds = participants.map((p: any) => p.user_id);
-        await sendPushToUsers(allIds, {
-          title: t.challenges.challengeActivated,
-          body: t.challenges.everyoneAccepted,
-          url: "/challenges"
-        });
+        for (const user_id of allIds) {
+          await sendLocalizedPush(
+            user_id,
+            "challengeActivated",
+            "everyoneAccepted",
+            {}
+          );
+        }
 
         // --- NOTIFICACION a todos de que el reto está activo ---
         for (const p of participants) {
@@ -471,11 +503,14 @@ export function useChallenges() {
 
       // PUSH: Notifica a todos que el reto ha terminado
       const allIds = participants.map((p: any) => p.user_id);
-      await sendPushToUsers(allIds, {
-        title: t.challenges.challengeFinished,
-        body: t.challenges.challengeFinishCheckResult,
-        url: "/challenges"
-      });
+      for (const user_id of allIds) {
+        await sendLocalizedPush(
+          user_id,
+          "challengeFinished",
+          "challengeFinishCheckResult",
+          {}
+        );
+      }
 
       // --- NOTIFICACION a todos: reto finalizado
       for (const p of participants) {

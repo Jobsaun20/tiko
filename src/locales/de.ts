@@ -141,7 +141,7 @@ challenges: {
   creating: "Wird erstellt...",
   create: "Challenge erstellen",
   newChallengeProposed: "Neue Challenge vorgeschlagen!",
-  youHaveNewChallengeToAccept: "Du hast eine Challenge zum Annehmen.",
+  youHaveNewChallengeToAccept: "Du hast eine Challenge zum Annehmen: {{title}}",
   challengeFinished: "Challenge beendet",
   whoRejected: "hat die Challenge abgelehnt",
   challengeActivated: "Challenge aktiviert!",
