@@ -95,7 +95,7 @@ challengeCard: {
   accept: "Accetta",
   reject: "Rifiuta",
   deleteChallenge: "Elimina sfida",
-  challengeNotCompleted: "Non hai completato la sfida: ",
+  challengeNotCompleted: "Non hai completato la sfida: {title}",
 newFineRecived: "Nuova multa ricevuta",
 fineReceivedBody: "Hai ricevuto una multa da {{sender}} di {{amount}} CHF. Motivo: {{reason}}"
 

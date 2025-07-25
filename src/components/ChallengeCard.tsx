@@ -149,7 +149,22 @@ export function ChallengeCard({
     const finesToInsert = [];
 
     for (const fine of finesCandidates) {
-      const reason = `${t.challengeCard.challengeNotCompleted} ${fine.reason}`;
+      // 1. Buscar idioma del destinatario
+      const { data: recipientData } = await supabase
+        .from("users")
+        .select("language")
+        .eq("id", fine.recipient_id)
+        .maybeSingle();
+      const lang = recipientData?.language || "es";
+      const locale = locales[lang] || locales["es"];
+
+      
+      // 2. Construir el motivo con el idioma del receptor
+      const reason = locale.challengeCard.challengeNotCompleted.replace(
+        "{title}",
+        challenge.title
+      );
+
       const { data: exists } = await supabase
         .from("fines")
         .select("id")
@@ -183,7 +198,6 @@ export function ChallengeCard({
 
         // ---- PUSH NOTIFICATION por multa, en el idioma del receptor ----
         for (const fine of finesToInsert) {
-          // 1. Buscar idioma del destinatario
           const { data: recipientData } = await supabase
             .from("users")
             .select("language")
@@ -192,9 +206,8 @@ export function ChallengeCard({
           const lang = recipientData?.language || "es";
           const locale = locales[lang] || locales["es"];
 
-          // 2. Montar payload con traducción y datos dinámicos
           function templateReplace(str: string, vars: Record<string, string | number>) {
-return str.replace(/{{(.*?)}}/g, (_, key) => String(vars[key.trim()] ?? ""));
+            return str.replace(/{{(.*?)}}/g, (_, key) => String(vars[key.trim()] ?? ""));
           }
           const notifPayload = {
             title: locale.challengeCard.newFineRecived,
@@ -206,7 +219,6 @@ return str.replace(/{{(.*?)}}/g, (_, key) => String(vars[key.trim()] ?? ""));
             url: "/history",
           };
 
-          // 3. Buscar subscripciones y enviar
           const { data: pushSubs, error: subError } = await supabase
             .from("push_subscriptions")
             .select("subscription")

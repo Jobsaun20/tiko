@@ -98,7 +98,7 @@ challengeCard: {
   accept: "Aceptar",
   reject: "Rechazar",
   deleteChallenge: "Borrar reto",
-  challengeNotCompleted:"No completaste el reto:",
+  challengeNotCompleted:"No completaste el reto: {title}",
   newFineRecived:"Nueva multa recibida",
   fineReceivedBody: "Has recibido una multa de  por {{amount}} CHF. Motivo: {{reason}}",
 for:"por",

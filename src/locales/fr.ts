@@ -95,7 +95,7 @@ challengeCard: {
   accept: "Accepter",
   reject: "Refuser",
   deleteChallenge: "Supprimer le défi",
-  challengeNotCompleted: "Tu n'as pas terminé le défi : ",
+  challengeNotCompleted: "Tu n'as pas terminé le défi : {title}",
 newFineRecived: "Nouvelle amende reçue",
 fineReceivedBody: "Vous avez reçu une amende de {{sender}} pour {{amount}} CHF. Motif : {{reason}}"
 
