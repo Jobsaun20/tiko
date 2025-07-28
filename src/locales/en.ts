@@ -50,6 +50,23 @@ group_rule_deleted: {
   title: "Rule deleted",
   message: "The rule '{{rule}}' has been deleted from the group '{{group}}'.",
 },
+contact_request_sent: {
+  title: "Request sent",
+  message: "You have sent a contact request to {{name}}.",
+},
+contact_request_received: {
+  title: "Request received",
+  message: "{{name}} has sent you a contact request.",
+},
+contact_request_accepted: {
+  title: "Request accepted",
+  message: "{{name}} has accepted your contact request.",
+},
+contact_request_was_accepted: {
+  title: "Request accepted",
+  message: "You have accepted the contact request from {{name}}.",
+},
+
 
 
   // Header and actions

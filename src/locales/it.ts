@@ -49,6 +49,23 @@ group_rule_deleted: {
   title: "Regola eliminata",
   message: "La regola '{{rule}}' è stata eliminata dal gruppo '{{group}}'.",
 },
+contact_request_sent: {
+  title: "Richiesta inviata",
+  message: "Hai inviato una richiesta di contatto a {{name}}.",
+},
+contact_request_received: {
+  title: "Richiesta ricevuta",
+  message: "{{name}} ti ha inviato una richiesta di contatto.",
+},
+contact_request_accepted: {
+  title: "Richiesta accettata",
+  message: "{{name}} ha accettato la tua richiesta di contatto.",
+},
+contact_request_was_accepted: {
+  title: "Richiesta accettata",
+  message: "Hai accettato la richiesta di contatto di {{name}}.",
+},
+
 
 
   // Intestazione e azioni

@@ -49,6 +49,23 @@ group_rule_deleted: {
   title: "Règle supprimée",
   message: "La règle '{{rule}}' a été supprimée du groupe '{{group}}'.",
 },
+contact_request_sent: {
+  title: "Demande envoyée",
+  message: "Vous avez envoyé une demande de contact à {{name}}.",
+},
+contact_request_received: {
+  title: "Demande reçue",
+  message: "{{name}} vous a envoyé une demande de contact.",
+},
+contact_request_accepted: {
+  title: "Demande acceptée",
+  message: "{{name}} a accepté votre demande de contact.",
+},
+contact_request_was_accepted: {
+  title: "Demande acceptée",
+  message: "Vous avez accepté la demande de contact de {{name}}.",
+},
+
 
 
   // En-tête et actions

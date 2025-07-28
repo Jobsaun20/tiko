@@ -52,6 +52,23 @@ group_rule_deleted: {
   title: "Regla eliminada",
   message: "Se ha eliminado la regla '{{rule}}' del grupo '{{group}}'.",
 },
+contact_request_sent: {
+  title: "Solicitud enviada",
+  message: "Has enviado una solicitud de contacto a {{name}}.",
+},
+contact_request_received: {
+  title: "Solicitud recibida",
+  message: "{{name}} te ha enviado una solicitud de contacto.",
+},
+contact_request_accepted: {
+  title: "Solicitud aceptada",
+  message: "{{name}} ha aceptado tu solicitud de contacto.",
+},
+contact_request_was_accepted: {
+  title: "Solicitud aceptada",
+  message: "Has aceptado la solicitud de contacto de {{name}}.",
+},
+
 deletedRulePushTitle: "Regla eliminada",
 deletedRulePushBody: "La regla \"{rule}\" del grupo \"{group}\" fue eliminada.",
 
@@ -73,6 +90,7 @@ deletedRulePushBody: "La regla \"{rule}\" del grupo \"{group}\" fue eliminada.",
   noNotifications: "No tienes notificaciones aún",
   emptyMessage: "Cuando tengas notificaciones, aparecerán aquí.",
   loading: "Cargando notificaciones...",
+  
 
   // Fechas relativas
   lessThanOneHour: "Hace menos de 1 hora",

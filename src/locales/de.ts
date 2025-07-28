@@ -49,6 +49,23 @@ group_rule_deleted: {
   title: "Regel gelöscht",
   message: "Die Regel '{{rule}}' wurde aus der Gruppe '{{group}}' gelöscht.",
 },
+contact_request_sent: {
+  title: "Anfrage gesendet",
+  message: "Du hast {{name}} eine Kontaktanfrage gesendet.",
+},
+contact_request_received: {
+  title: "Anfrage erhalten",
+  message: "{{name}} hat dir eine Kontaktanfrage gesendet.",
+},
+contact_request_accepted: {
+  title: "Anfrage akzeptiert",
+  message: "{{name}} hat deine Kontaktanfrage akzeptiert.",
+},
+contact_request_was_accepted: {
+  title: "Anfrage akzeptiert",
+  message: "Du hast die Kontaktanfrage von {{name}} akzeptiert.",
+},
+
 
 
   // Kopfzeile und Aktionen

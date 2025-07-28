@@ -53,16 +53,37 @@ export default function Notifications() {
       message: t.notifications.group_rule_proposed.message,
     },
     group_rule_deletion_proposed: {
-  title: t.notifications.group_rule_deletion_proposed.title,
-  icon: "❓",
-  message: t.notifications.group_rule_deletion_proposed.message,
-},
-group_rule_deleted: {
-  title: t.notifications.group_rule_deleted.title,
-  icon: "🗑️",
-  message: t.notifications.group_rule_deleted.message,
-},
+      title: t.notifications.group_rule_deletion_proposed.title,
+      icon: "❓",
+      message: t.notifications.group_rule_deletion_proposed.message,
+    },
+    group_rule_deleted: {
+      title: t.notifications.group_rule_deleted.title,
+      icon: "🗑️",
+      message: t.notifications.group_rule_deleted.message,
+    },
 
+    // NUEVAS: Solicitudes y aceptación de contactos
+    contact_request_sent: {
+      title: t.notifications.contact_request_sent?.title || "Solicitud enviada",
+      icon: "🤝",
+      message: t.notifications.contact_request_sent?.message || "Has enviado una solicitud de contacto a {{name}}.",
+    },
+    contact_request_received: {
+      title: t.notifications.contact_request_received?.title || "Solicitud recibida",
+      icon: "🤝",
+      message: t.notifications.contact_request_received?.message || "{{name}} te ha enviado una solicitud de contacto.",
+    },
+    contact_request_accepted: {
+      title: t.notifications.contact_request_accepted?.title || "Solicitud aceptada",
+      icon: "✅",
+      message: t.notifications.contact_request_accepted?.message || "{{name}} ha aceptado tu solicitud de contacto.",
+    },
+    contact_request_was_accepted: {
+      title: t.notifications.contact_request_was_accepted?.title || "Solicitud aceptada",
+      icon: "✅",
+      message: t.notifications.contact_request_was_accepted?.message || "Has aceptado la solicitud de contacto de {{name}}.",
+    },
   };
 
   // Elimina el badge visual de notificaciones al montar
@@ -70,7 +91,7 @@ group_rule_deleted: {
     if ("clearAppBadge" in navigator) navigator.clearAppBadge();
   }, []);
 
-  // Formatea la fecha relativa (puedes adaptar para multilenguaje si quieres)
+  // Formatea la fecha relativa
   const formatTime = (ts: string) => {
     const date = new Date(ts),
       diffMs = Date.now() - date.getTime(),

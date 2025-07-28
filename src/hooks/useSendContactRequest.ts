@@ -89,6 +89,7 @@ export function useSendContactRequest() {
   const sendContactRequest = async (recipient_id: string) => {
     if (!user) return { success: false, error: "Usuario no autenticado" };
 
+    // Chequea si ya existe una solicitud
     const { data: existing } = await supabase
       .from("contact_requests")
       .select("id")
@@ -101,6 +102,7 @@ export function useSendContactRequest() {
       return { success: false, error: "Ya existe una solicitud pendiente o aceptada" };
     }
 
+    // Crea la solicitud
     const { error } = await supabase.from("contact_requests").insert({
       sender_id: user.id,
       recipient_id,
@@ -109,13 +111,29 @@ export function useSendContactRequest() {
 
     if (error) return { success: false, error: error.message };
 
+    // Obtén los nombres de usuario (si los necesitas mostrar)
     const senderName =
       profile?.name?.trim() ||
       profile?.username?.trim() ||
       user.email?.split("@")[0] ||
       "Usuario";
 
-    // --- Notificación PUSH ---
+    // --- OBTÉN NOMBRE DEL DESTINATARIO para mostrarlo en tu notificación (opcional) ---
+    let recipientName = "Usuario";
+    try {
+      const { data: recipientProfile } = await supabase
+        .from("users")
+        .select("name, username, email")
+        .eq("id", recipient_id)
+        .maybeSingle();
+      recipientName =
+        recipientProfile?.name?.trim() ||
+        recipientProfile?.username?.trim() ||
+        recipientProfile?.email?.split("@")[0] ||
+        "Usuario";
+    } catch {}
+
+    // --- PUSH para el destinatario ---
     await sendLocalizedPush(
       recipient_id,
       "newContactRequestTitle", // claves definidas en locales.contacts
@@ -123,11 +141,19 @@ export function useSendContactRequest() {
       { name: senderName }
     );
 
-    // --- Notificación en sistema ---
+    // --- Notificación en sistema para el destinatario ---
     await addNotification(
       recipient_id,
-      "contact_request",
-      { sender_id: user.id, sender_name: senderName },
+      "contact_request_received", // Notificación de recibido
+      { name: senderName },
+      "/contacts"
+    );
+
+    // --- Notificación en sistema para el REMITENTE (quien la envía) ---
+    await addNotification(
+      user.id,
+      "contact_request_sent", // Notificación de enviado
+      { name: recipientName },
       "/contacts"
     );
 
