@@ -281,7 +281,7 @@ banner: {
   install: "Instalar",
   close: "Cerrar",
   showInstallBanner: "Para instalar en IOS: Pulsa “Compartir“ 📤 y selecciona “Añadir a pantalla de inicio“",
-  phoneWarning: "Añade tu teléfono para recibir pagos con TWINT. SOLO LO VERÁ QUIEN RECIBA TU MULTA.",
+  phoneWarning: "Añade tu teléfono para recibir pagos con TWINT. ¡NO TE PREOCUPES! Solo quien reciba tu multa podrá verlo.",
   phoneWarningButton: "Añadir número",
 },
 

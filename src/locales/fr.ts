@@ -269,7 +269,7 @@ scanQR: "Numéro TWINT",
     install: "Installer",
     close: "Fermer",
 showInstallBanner: "Pour installer sur iOS : Appuie sur « Partager » 📤 puis sélectionne « Ajouter à l’écran d’accueil ». ",
-    phoneWarning: "Ajoute ton numéro de téléphone pour recevoir des paiements avec TWINT. SEULE LA PERSONNE QUI REÇOIT TON AMENDE LE VERRA.",
+    phoneWarning: "Ajoute ton numéro de téléphone pour recevoir des paiements avec TWINT. NE T’INQUIÈTE PAS ! Seule la personne qui reçoit ton amende pourra le voir.",
     phoneWarningButton: "Ajouter un numéro",
   },
 

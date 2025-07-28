@@ -270,7 +270,7 @@ scanQR: "Numero TWINT",
     install: "Installa",
     close: "Chiudi",
 showInstallBanner: "Per installare su iOS: Tocca “Condividi” 📤 e seleziona “Aggiungi a Home”.",
-    phoneWarning: "Aggiungi il tuo numero di telefono per ricevere pagamenti con TWINT. SOLO CHI RICEVE LA TUA MULTA LO VEDRÀ.",
+    phoneWarning: "Aggiungi il tuo numero di telefono per ricevere pagamenti con TWINT. NON PREOCCUPARTI! Solo la persona che riceve la tua multa potrà vederlo.",
     phoneWarningButton: "Aggiungi numero",
   },
 

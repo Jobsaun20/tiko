@@ -272,7 +272,7 @@ scanQR: "TWINT number",
     install: "Install",
     close: "Close",
 showInstallBanner: "To install on iOS: Tap “Share” 📤 and select “Add to Home Screen”.",
-    phoneWarning: "Add your phone number to receive payments with TWINT. ONLY THE PERSON WHO RECEIVES YOUR FINE WILL SEE IT.",
+    phoneWarning: "Add your phone number to receive payments with TWINT. DON'T WORRY! Only the person who receives your fine will be able to see it.",
     phoneWarningButton: "Add number",
   },
 
