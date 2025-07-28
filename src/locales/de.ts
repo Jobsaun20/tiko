@@ -277,7 +277,7 @@ showInstallBanner: "Für die Installation auf iOS: Tippe auf „Teilen“ 📤 u
   welcome: {
   title: "Willkommen bei DESWG",
   subtitle1: "Ihre Fehler – dein Gewinn",
-  description: "Hast du deine Aufgaben erledigt? Und die anderen? Wenn jemand es vergessen hat… oder 'es schon wieder getan hat', soll er sein Karma durch ZAHLEN reinigen!",
+  description: "Erstellt eure Gruppe, legt eure Regeln fest, startet Herausforderungen… und keiner entkommt! Wer sich nicht an die Regeln hält, muss zahlen!",
   login: "Einloggen",
   newUser: "Neuer Benutzer",
 },

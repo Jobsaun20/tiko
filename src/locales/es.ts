@@ -288,7 +288,7 @@ banner: {
 welcome: {
   title: "Bienvenido a DESWG",
   subtitle1: "Ellos fallan, tú ganas",
-description: "¿Hiciste tus tareas? ¿Y los demás? Si alguien se olvidó… o 'lo volvió a hacer', ¡que limpie su karma PAGANDO!",
+description: "Cread vuestro grupo, definid vuestras reglas, lanzad retos... ¡y que nadie se escape! Quien no cumpla las reglas, ¡que pague!",
   login: "Iniciar sesión",
   newUser: "Nuevo usuario",
 },
