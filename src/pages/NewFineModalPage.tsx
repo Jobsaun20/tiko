@@ -57,14 +57,21 @@ export default function ContactsModalPage() {
     return name.includes(term) || email.includes(term);
   });
 
+  // ELIMINAR DUPLICADOS (por user_supabase_id)
+  const uniqueFilteredContacts = filteredContacts.filter(
+    (contact, index, self) =>
+      contact.user_supabase_id &&
+      self.findIndex(c => c.user_supabase_id === contact.user_supabase_id) === index
+  );
+
   // Cargar avatars de los contactos visibles al cambiar search o contacts
   useEffect(() => {
     async function fetchAvatars() {
-      if (filteredContacts.length === 0) {
+      if (uniqueFilteredContacts.length === 0) {
         setAvatarsMap({});
         return;
       }
-      const ids = filteredContacts.map(c => c.user_supabase_id).filter(Boolean);
+      const ids = uniqueFilteredContacts.map(c => c.user_supabase_id).filter(Boolean);
       if (!ids.length) return;
       const { data, error } = await supabase
         .from("users")
@@ -80,7 +87,7 @@ export default function ContactsModalPage() {
     }
     fetchAvatars();
   // eslint-disable-next-line
-  }, [JSON.stringify(filteredContacts)]);
+  }, [JSON.stringify(uniqueFilteredContacts)]);
 
   // Abrir modal para multar a contacto
   const handleFineContact = (contact: any) => {
@@ -202,8 +209,8 @@ export default function ContactsModalPage() {
         <div className="px-2 sm:px-6 pb-4 sm:pb-6 max-h-[70vh] overflow-y-auto space-y-3 sm:space-y-4">
           {loading ? (
             <div className="text-center text-gray-400 py-8">{t.contacts.loading}</div>
-          ) : filteredContacts.length > 0 ? (
-            filteredContacts.map((contact) => {
+          ) : uniqueFilteredContacts.length > 0 ? (
+            uniqueFilteredContacts.map((contact) => {
               // Datos avatar desde avatarsMap
               const avatar_url = avatarsMap?.[contact.user_supabase_id]?.avatar_url || undefined;
               const name = avatarsMap?.[contact.user_supabase_id]?.name || contact.name || "";

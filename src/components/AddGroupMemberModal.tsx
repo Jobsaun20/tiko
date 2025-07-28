@@ -48,6 +48,13 @@ export function AddGroupMemberModal({
             c.email?.toLowerCase().includes(search.toLowerCase())
         );
 
+  // Deduplicar por user_supabase_id
+  const uniqueFiltered = filtered.filter(
+    (contact, index, self) =>
+      contact.user_supabase_id &&
+      self.findIndex(c => c.user_supabase_id === contact.user_supabase_id) === index
+  );
+
   const handleConfirm = () => {
     if (selectedId) {
       const contact = contacts.find((c) => c.id === selectedId);
@@ -91,13 +98,13 @@ export function AddGroupMemberModal({
           <div className="text-gray-400 text-sm text-center p-4">
             {t.modal.startWriteToFind}
           </div>
-        ) : filtered.length === 0 ? (
+        ) : uniqueFiltered.length === 0 ? (
           <div className="text-gray-400 text-sm text-center p-4">
             {t.modal.noContactsFound}
           </div>
         ) : (
           <div className="max-h-60 overflow-y-auto divide-y">
-            {filtered.map((contact) => (
+            {uniqueFiltered.map((contact) => (
               <button
                 key={contact.id}
                 className={`flex w-full items-center gap-3 px-2 py-2 hover:bg-purple-50 rounded transition text-left ${

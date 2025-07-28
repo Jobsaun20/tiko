@@ -55,12 +55,19 @@ export function CreateChallengeModal({
     [contacts, currentUserId, search]
   );
 
+  // Deduplicar por user_supabase_id
+  const uniqueFilteredContacts = filteredContacts.filter(
+    (contact, index, self) =>
+      contact.user_supabase_id &&
+      self.findIndex(c => c.user_supabase_id === contact.user_supabase_id) === index
+  );
+
   const userIdsToFetch = useMemo(() => {
     const set = new Set<string>();
-    filteredContacts.forEach(c => set.add(c.user_supabase_id!));
+    uniqueFilteredContacts.forEach(c => set.add(c.user_supabase_id!));
     selectedContacts.forEach(id => set.add(id));
     return Array.from(set);
-  }, [filteredContacts, selectedContacts]);
+  }, [uniqueFilteredContacts, selectedContacts]);
 
   useEffect(() => {
     if (!userIdsToFetch.length) return;
@@ -207,11 +214,11 @@ export function CreateChallengeModal({
                 {loadingContacts && (
                   <div className="p-2 text-sm text-gray-400">{t.challenges.loadingContacts}</div>
                 )}
-                {!loadingContacts && filteredContacts.length === 0 && (
+                {!loadingContacts && uniqueFilteredContacts.length === 0 && (
                   <div className="p-2 text-sm text-gray-400">{t.challenges.noContactsFound}</div>
                 )}
                 {!loadingContacts &&
-                  filteredContacts.map(contact => {
+                  uniqueFilteredContacts.map(contact => {
                     const avatar_url = avatarsMap[contact.user_supabase_id!]?.avatar_url || undefined;
                     const name = avatarsMap[contact.user_supabase_id!]?.name?.trim() || contact.name?.trim() || "Anon";
                     return (
