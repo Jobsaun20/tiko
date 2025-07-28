@@ -281,7 +281,7 @@ banner: {
   install: "Instalar",
   close: "Cerrar",
   showInstallBanner: "Para instalar en IOS: Pulsa “Compartir“ 📤 y selecciona “Añadir a pantalla de inicio“",
-  phoneWarning: "Debes añadir tu número de teléfono para recibir pagos con DESWG.",
+  phoneWarning: "Añade tu teléfono para recibir pagos con TWINT. SOLO LO VERÁ QUIEN RECIBA TU MULTA.",
   phoneWarningButton: "Añadir número",
 },
 

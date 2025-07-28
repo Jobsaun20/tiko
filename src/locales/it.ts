@@ -270,7 +270,7 @@ scanQR: "Numero TWINT",
     install: "Installa",
     close: "Chiudi",
 showInstallBanner: "Per installare su iOS: Tocca “Condividi” 📤 e seleziona “Aggiungi a Home”.",
-    phoneWarning: "Devi aggiungere il tuo numero di telefono per ricevere pagamenti con DESWG.",
+    phoneWarning: "Aggiungi il tuo numero di telefono per ricevere pagamenti con TWINT. SOLO CHI RICEVE LA TUA MULTA LO VEDRÀ.",
     phoneWarningButton: "Aggiungi numero",
   },
 
