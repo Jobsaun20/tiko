@@ -627,7 +627,7 @@ confirmDeleteDescription: "Are you sure you want to delete the group? This actio
       shareQR: "Share QR"
     },
     history: {
-      title: "History",
+      title: "Fines",
       description: "Complete fines history",
       filter: "Filter",
       all: "All",

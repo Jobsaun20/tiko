@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { History as HistoryIcon, ArrowLeft, Filter, Search } from "lucide-react";
+import { ArrowLeft, Filter, Search } from "lucide-react";
 import { Header } from "@/components/Header";
 import { PaymentModal } from "@/components/PaymentModal";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -12,6 +12,8 @@ import { useFines } from "@/hooks/useFines";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useBadgeModal } from "@/contexts/BadgeModalContext";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { ScrollText } from "lucide-react";
+
 
 const CHECK_BADGES_URL = "https://pyecpkccpfeuittnccat.supabase.co/functions/v1/check_badges";
 
@@ -172,9 +174,10 @@ export default function History() {
         </div>
         <div className="mb-6">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 flex items-center gap-3">
-            <HistoryIcon className="h-8 w-8" />
+            <ScrollText className="h-8 w-8 text-black" />
             {t.pages.history.title}
           </h1>
+
           <p className="text-gray-600">{t.pages.history.description}</p>
         </div>
         <Card className="mb-6">

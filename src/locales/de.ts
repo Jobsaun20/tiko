@@ -621,7 +621,7 @@ confirmDeleteDescription: "Bist du sicher, dass du die Gruppe löschen möchtest
       shareQR: "QR teilen"
     },
     history: {
-      title: "Verlauf",
+      title: "Strafen",
       description: "Vollständiger Strafenverlauf",
       filter: "Filtern",
       all: "Alle",

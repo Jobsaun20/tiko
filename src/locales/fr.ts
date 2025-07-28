@@ -622,7 +622,7 @@ confirmDeleteDescription: "Êtes-vous sûr de vouloir supprimer le groupe ? Cet
       shareQR: "Partager le QR"
     },
     history: {
-      title: "Historique",
+      title: "Amendes",
       description: "Historique complet des amendes",
       filter: "Filtrer",
       all: "Toutes",

@@ -634,7 +634,7 @@ requestRejected:"Has rechazado la solicitud de contacto."
       shareQR: "Compartir QR"
     },
     history: {
-      title: "Historial",
+      title: "Multas",
       description: "Historial completo de multas",
       filter: "Filtrar",
       all: "Todas",
