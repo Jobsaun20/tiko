@@ -133,6 +133,7 @@ export function useContacts() {
   // Refetch manual (útil si haces insert desde un layout global)
   const refetch = fetchContacts;
 
+  // <<< AGREGADO: Devuelve fetchContacts además de refetch >>>
   return {
     contacts,
     loading,
@@ -141,5 +142,6 @@ export function useContacts() {
     updateContact,
     deleteContact,
     refetch,
+    fetchContacts,  // <---- Ahora puedes usar fetchContacts directamente en otros componentes
   };
 }

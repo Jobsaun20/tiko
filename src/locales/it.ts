@@ -317,6 +317,15 @@ onboard: {
     titleFineModalPage: "Crea nuova multa",
     challenge:"Sfida",
     statusActive:"Active",
+    contactRequestSentTitle: "Richiesta inviata",
+contactRequestSent: "La richiesta di contatto è stata inviata.",
+contactRequestFailed: "Impossibile inviare la richiesta.",
+confirmDeleteTitle: "Eliminare il contatto?",
+confirmDeleteDescription: "Sei sicuro di voler eliminare questo contatto? Questa azione è irreversibile.",
+newContactRequestTitle: "Nuova richiesta di contatto",
+newContactRequestBody: "{name} ti ha inviato una richiesta di contatto.",
+requestRejected: "Hai rifiutato la richiesta di contatto.",
+
   },
 
   // Groups Page
@@ -342,6 +351,8 @@ onboard: {
     members: "Membri",
     sendFine: "Invia multa",
     createGroupToStart: "Crea un gruppo per iniziare a gestire multe tra amici",
+    confirmDeleteTitle: "Eliminare il gruppo?",
+confirmDeleteDescription: "Sei sicuro di voler eliminare il gruppo? Questa azione non può essere annullata.",
   },
 
   // History Page

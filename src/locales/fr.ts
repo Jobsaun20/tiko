@@ -316,6 +316,16 @@ onboard: {
     titleFineModalPage: "Créer une nouvelle amende",
     challenge:"Défi",
     statusActive:"Active",
+    contactRequestSentTitle: "Demande envoyée",
+contactRequestSent: "La demande de contact a été envoyée.",
+contactRequestFailed: "Impossible d'envoyer la demande.",
+confirmDeleteTitle: "Supprimer le contact ?",
+confirmDeleteDescription: "Êtes-vous sûr de vouloir supprimer ce contact ? Cette action est irréversible.",
+newContactRequestTitle: "Nouvelle demande de contact",
+newContactRequestBody: "{name} vous a envoyé une demande de contact.",
+requestRejected: "Vous avez refusé la demande de contact.",
+
+
   },
 
   // Groups Page
@@ -341,6 +351,8 @@ onboard: {
     members: "Membres",
     sendFine: "Envoyer une amende",
     createGroupToStart: "Crée un groupe pour commencer à gérer des amendes entre amis",
+    confirmDeleteTitle: "Supprimer le groupe ?",
+confirmDeleteDescription: "Êtes-vous sûr de vouloir supprimer le groupe ? Cette action ne peut pas être annulée.",
   },
 
   // History Page

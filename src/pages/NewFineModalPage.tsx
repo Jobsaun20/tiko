@@ -220,7 +220,7 @@ export default function ContactsModalPage() {
                       </Avatar>
                       <div className="flex-1 min-w-0">
                         <h3 className="font-semibold text-base sm:text-lg truncate">{name}</h3>
-                        <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-gray-600 mt-1">
+                        {/* <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-gray-600 mt-1">
                           <div className="flex items-center gap-1">
                             <Mail className="h-4 w-4" />
                             <span className="truncate">{contact.email}</span>
@@ -231,7 +231,7 @@ export default function ContactsModalPage() {
                               <span>{contact.phone}</span>
                             </div>
                           )}
-                        </div>
+                        </div> */}
                         <Badge variant="secondary" className="mt-2 bg-green-100 text-green-800">
                           Activo
                         </Badge>

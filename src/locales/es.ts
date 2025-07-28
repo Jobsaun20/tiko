@@ -101,7 +101,7 @@ challengeCard: {
   challengeNotCompleted:"No completaste el reto: {title}",
   newFineRecived:"Nueva multa recibida",
   fineReceivedBody: "Has recibido una multa de  por {{amount}} CHF. Motivo: {{reason}}",
-for:"por",
+
 },
 
 
@@ -327,6 +327,15 @@ onboard: {
     titleFineModalPage: "Crear nueva multa",
     challenge:"Reto",
     statusActive:"Activo",
+    contactRequestSentTitle:"Solicitud enviada",
+    contactRequestSent:"La solicitud de contacto ha sido enviada.",
+    contactRequestFailed:"No se pudo enviar la solicitud.",
+    confirmDeleteTitle:"¿Eliminar contacto?",
+    confirmDeleteDescription:"¿Seguro que quieres eliminar el contacto? Esta acción es irreversible.",
+newContactRequestTitle: "Nueva solicitud de contacto",
+newContactRequestBody: "{name} te ha enviado una solicitud de contacto.",
+contactRequest:"Solicitudes de contacto",
+requestRejected:"Has rechazado la solicitud de contacto."
   },
 
  // Groups Page
@@ -352,6 +361,8 @@ onboard: {
     members: "Miembros",
     sendFine: "Enviar multa",
     createGroupToStart: "Crea un grupo para empezar a gestionar multas entre amigos",
+    confirmDeleteTitle: "¿Eliminar grupo?",
+    confirmDeleteDescription: "¿Estás seguro de que deseas eliminar el grupo? Esta acción no se puede deshacer.",
   },
 
 // History Page
@@ -556,7 +567,8 @@ onboard: {
       deleteConfirmation: "¿Seguro que deseas eliminar este contacto?",
       contactAdded: "Contacto añadido",
       contactUpdated: "Contacto actualizado",
-      contactDeleted: "Contacto eliminado"
+      contactDeleted: "Contacto eliminado",
+      contactAddedDefinition:"Ahora podéis intercambiar multas y retos",
     },
     groups: {
       title: "Grupos",

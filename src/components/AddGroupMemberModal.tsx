@@ -114,7 +114,7 @@ export function AddGroupMemberModal({
                 </Avatar>
                 <div className="flex flex-col">
                   <span className="font-medium">{contact.name}</span>
-                  <span className="text-xs text-gray-500">{contact.email}</span>
+                  {/* <span className="text-xs text-gray-500">{contact.email}</span> */}
                 </div>
               </button>
             ))}

@@ -316,6 +316,15 @@ onboard: {
     titleFineModalPage: "Neue Strafe erstellen",
     challenge:"Challenge",
     statusActive:"Active",
+    contactRequestSentTitle: "Anfrage gesendet",
+contactRequestSent: "Die Kontaktanfrage wurde gesendet.",
+contactRequestFailed: "Die Anfrage konnte nicht gesendet werden.",
+confirmDeleteTitle: "Kontakt löschen?",
+confirmDeleteDescription: "Bist du sicher, dass du diesen Kontakt löschen möchtest? Diese Aktion ist unwiderruflich.",
+newContactRequestTitle: "Neue Kontaktanfrage",
+newContactRequestBody: "{name} hat dir eine Kontaktanfrage gesendet.",
+requestRejected: "Du hast die Kontaktanfrage abgelehnt.",
+
   },
 
   // Groups Page
@@ -341,6 +350,8 @@ onboard: {
     members: "Mitglieder",
     sendFine: "Strafe senden",
     createGroupToStart: "Erstelle eine Gruppe, um mit Strafen unter Freunden zu beginnen",
+    confirmDeleteTitle: "Gruppe löschen?",
+confirmDeleteDescription: "Bist du sicher, dass du die Gruppe löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden.",
   },
 
   // History Page

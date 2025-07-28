@@ -10,20 +10,16 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/supabaseClient";
+import { useSendContactRequest } from "@/hooks/useSendContactRequest"; // <-- IMPORTANTE
 
 // Sugerencias de usuario para autocompletar
 interface UserSuggestion {
   id: string;
   username: string;
-  email: string;
+  /* email: string; */
 }
 
 interface AddContactModalProps {
@@ -41,6 +37,7 @@ export const AddContactModal: React.FC<AddContactModalProps> = ({
 }) => {
   const { t } = useLanguage();
   const { toast } = useToast();
+  const { sendContactRequest } = useSendContactRequest(); // <-- Hook de invitación
 
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState<UserSuggestion[]>([]);
@@ -54,7 +51,7 @@ export const AddContactModal: React.FC<AddContactModalProps> = ({
       setSelectedUser({
         id: editingContact.user_id || editingContact.id,
         username: editingContact.username,
-        email: editingContact.email,
+       /*  email: editingContact.email, */
       });
     } else {
       setQuery("");
@@ -84,11 +81,12 @@ export const AddContactModal: React.FC<AddContactModalProps> = ({
 
   const handleSelect = (user: UserSuggestion) => {
     setSelectedUser(user);
-    setQuery(`${user.username} (${user.email})`);
+    setQuery(`${user.username}`);
     setSuggestions([]);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Aquí el flujo importante: edición vs nuevo contacto
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedUser) {
       toast({
@@ -98,14 +96,39 @@ export const AddContactModal: React.FC<AddContactModalProps> = ({
       });
       return;
     }
-    onSubmit({
-      user_id: selectedUser.id,
-      name: selectedUser.username,
-      email: selectedUser.email,
-    });
-    setQuery("");
-    setSelectedUser(null);
-    onClose();
+
+    // Si es edición, mantén el flujo anterior
+    if (editingContact) {
+      onSubmit({
+        user_id: selectedUser.id,
+        name: selectedUser.username,
+       /*  email: selectedUser.email, */
+      });
+      setQuery("");
+      setSelectedUser(null);
+      onClose();
+      return;
+    }
+
+    // NUEVO: Envía la solicitud de contacto
+    const result = await sendContactRequest(selectedUser.id);
+
+    if (result.success) {
+      toast({
+        title: t.contacts.contactRequestSentTitle || "Solicitud enviada",
+        description: t.contacts.contactRequestSent || "La solicitud de contacto ha sido enviada.",
+        variant: "default",
+      });
+      setQuery("");
+      setSelectedUser(null);
+      onClose();
+    } else {
+      toast({
+        title: t.common.error,
+        description: result.error || t.contacts.contactRequestFailed || "No se pudo enviar la solicitud.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -146,7 +169,7 @@ export const AddContactModal: React.FC<AddContactModalProps> = ({
                     onClick={() => handleSelect(user)}
                   >
                     <div className="font-medium">{user.username}</div>
-                    <div className="text-xs text-gray-600">{user.email}</div>
+                    <div className="text-xs text-gray-600"></div>
                   </div>
                 ))}
               </div>
@@ -165,4 +188,4 @@ export const AddContactModal: React.FC<AddContactModalProps> = ({
       </DialogContent>
     </Dialog>
   );
-}
+};

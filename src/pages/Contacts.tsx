@@ -17,11 +17,19 @@ import { AddContactModal } from "@/components/AddContactModal";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { supabase } from "@/supabaseClient";
 import { useBadgeModal } from "@/contexts/BadgeModalContext";
+import { PendingContactsSection } from "@/components/PendingContactsSection";
 
-// URL de tu edge function badges
+// MODAL
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter
+} from "@/components/ui/dialog";
+
 const CHECK_BADGES_URL = "https://pyecpkccpfeuittnccat.supabase.co/functions/v1/check_badges";
 
-// Buscar el user_id a partir del email
 async function getUserIdByEmail(email: string): Promise<string | null> {
   const { data, error } = await supabase
     .from("users")
@@ -38,7 +46,7 @@ export default function Contacts() {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { contacts, loading, addContact, updateContact, deleteContact } = useContacts();
+  const { contacts, loading, deleteContact } = useContacts();
   const { createFine } = useFines();
   const { showBadges } = useBadgeModal();
 
@@ -56,17 +64,25 @@ export default function Contacts() {
   const [search, setSearch] = useState("");
 
   // --- AVATARS ---
-  const [avatarsMap, setAvatarsMap] = useState<{ [userId: string]: { avatar_url: string; name: string } }>({});
+  const [avatarsMap, setAvatarsMap] = useState<{ [userId: string]: { avatar_url: string; name: string; username?: string } }>({});
+
+  // MODAL CONFIRMAR ELIMINACIÓN
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [contactToDelete, setContactToDelete] = useState<any>(null);
 
   // FILTRADO de contactos
-  const filteredContacts = contacts.filter(contact => {
+const filteredContacts = contacts
+  .filter(contact => {
     const term = search.toLowerCase().trim();
+    const username = (contact.name || "").toLowerCase();
     const name = (contact.name || "").toLowerCase();
     const email = (contact.email || "").toLowerCase();
-    return name.includes(term) || email.includes(term);
-  });
+    return username.includes(term) || name.includes(term) || email.includes(term);
+  })
+  .filter((contact, idx, arr) => 
+    arr.findIndex(c => c.user_supabase_id === contact.user_supabase_id) === idx
+  );
 
-  // Cargar avatares de todos los contactos filtrados
   useEffect(() => {
     if (!filteredContacts.length) {
       setAvatarsMap({});
@@ -82,12 +98,16 @@ export default function Contacts() {
     (async () => {
       const { data, error } = await supabase
         .from("users")
-        .select("id, name, avatar_url")
+        .select("id, name, username, avatar_url")
         .in("id", userIds);
       if (!error && data) {
-        const map: { [userId: string]: { avatar_url: string; name: string } } = {};
+        const map: { [userId: string]: { avatar_url: string; name: string; username?: string } } = {};
         data.forEach(u => {
-          map[u.id] = { avatar_url: u.avatar_url || "", name: u.name || "" };
+          map[u.id] = { 
+            avatar_url: u.avatar_url || "",
+            name: u.name || "",
+            username: u.username || ""
+          };
         });
         setAvatarsMap(map);
       }
@@ -124,7 +144,7 @@ export default function Contacts() {
         reason: fineData.reason,
         amount: parseFloat(fineData.amount),
         recipient_id: recipientId,
-        recipient_name: recipient.name,
+        recipient_name: recipient.name || recipient.name || recipient.email,
         recipient_email: recipient.email,
         sender_name: currentUser?.username || currentUser?.email,
         sender_phone: currentUser?.phone ?? "",
@@ -134,7 +154,7 @@ export default function Contacts() {
         title: t.createFine.created,
         description: t.createFine.sentTo
           .replace("{amount}", String(fineData.amount))
-          .replace("{recipient}", recipient.name),
+          .replace("{recipient}", recipient.name || recipient.name),
       });
     } catch (err: any) {
       toast({ title: "Error", description: err.message, variant: "destructive" });
@@ -149,10 +169,30 @@ export default function Contacts() {
     setIsAddContactModalOpen(true);
   };
 
-  // Eliminar contacto
-  const handleDeleteContact = async (contactId: string) => {
+  // -------- ELIMINAR contacto con confirmación --------
+  // Botón papelera → abre modal
+  const openDeleteContactModal = (contact: any) => {
+    setContactToDelete(contact);
+    setShowDeleteModal(true);
+  };
+
+  // Si confirma, borra y cierra modal
+  const confirmDeleteContact = async () => {
+    if (!contactToDelete) return;
     try {
-      await deleteContact(contactId);
+      const contacto = contacts.find(c => c.id === contactToDelete.id);
+      if (!contacto) throw new Error("Contacto no encontrado");
+
+      await deleteContact(contactToDelete.id);
+
+      await supabase
+        .from("contact_requests")
+        .delete()
+        .or(
+          `and(sender_id.eq.${user.id},recipient_id.eq.${contacto.user_supabase_id}),and(sender_id.eq.${contacto.user_supabase_id},recipient_id.eq.${user.id})`
+        )
+        .eq("status", "accepted");
+
       toast({
         title: t.pages.contacts.contactDeleted,
         description: t.contacts.deletedContactConfirmed,
@@ -160,9 +200,10 @@ export default function Contacts() {
     } catch (err: any) {
       toast({ title: "Error", description: err.message, variant: "destructive" });
     }
+    setShowDeleteModal(false);
+    setContactToDelete(null);
   };
 
-  // Limpiar búsqueda
   const clearSearch = () => setSearch("");
 
   return (
@@ -221,15 +262,18 @@ export default function Contacts() {
           </div>
         </div>
 
+        {/* NUEVO: Sección de solicitudes pendientes */}
+        <PendingContactsSection />
+
         {/* Lista de contactos filtrada */}
         <div className="space-y-4">
           {loading ? (
             <div className="text-center text-gray-400 py-8">{t.contacts.loading}</div>
           ) : filteredContacts.length > 0 ? (
             filteredContacts.map((contact) => {
-const avatarData = avatarsMap[contact.user_supabase_id] as { avatar_url?: string; name?: string } || {};
+              const avatarData = avatarsMap[contact.user_supabase_id] as { avatar_url?: string; name?: string; username?: string } || {};
               const avatar_url = avatarData.avatar_url || undefined;
-              const name = avatarData.name || contact.name || "";
+              const nameToShow = avatarData.username || contact.name || avatarData.name || contact.email || "";
               return (
                 <Card key={contact.id} className="hover:shadow-md transition-shadow">
                   <CardContent className="p-6">
@@ -238,26 +282,14 @@ const avatarData = avatarsMap[contact.user_supabase_id] as { avatar_url?: string
                         <Avatar className="h-12 w-12">
                           <AvatarImage
                             src={avatar_url}
-                            alt={name}
+                            alt={nameToShow}
                           />
                           <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
-                            {name?.charAt(0)?.toUpperCase() || "U"}
+                            {nameToShow?.charAt(0)?.toUpperCase() || "U"}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1">
-                          <h3 className="font-semibold text-lg">{name}</h3>
-                          <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600 mt-1">
-                            <div className="flex items-center gap-1">
-                              <Mail className="h-4 w-4" />
-                              <span>{contact.email}</span>
-                            </div>
-                            {contact.phone && (
-                              <div className="flex items-center gap-1">
-                                <Phone className="h-4 w-4" />
-                                <span>{contact.phone}</span>
-                              </div>
-                            )}
-                          </div>
+                          <h3 className="font-semibold text-lg">{nameToShow}</h3>
                           <Badge variant="secondary" className="mt-2 bg-green-100 text-green-800">
                             {t.contacts.statusActive}
                           </Badge>
@@ -270,16 +302,14 @@ const avatarData = avatarsMap[contact.user_supabase_id] as { avatar_url?: string
                           <Button
                             variant="outline"
                             size="icon"
-                            onClick={() => handleDeleteContact(contact.id)}
+                            onClick={() => openDeleteContactModal(contact)}
                             title={t.pages.contacts.deleteContact}
                             className="w-8 h-8"
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
-                        {/* Espacio entre borrar y acciones */}
                         <div className="flex-1"></div>
-                        {/* Botones Multa y Retar a la derecha, uno encima de otro */}
                         <div className="flex flex-col gap-2 items-end justify-end w-full max-w-[160px]">
                           <Button
                             size="sm"
@@ -321,6 +351,27 @@ const avatarData = avatarsMap[contact.user_supabase_id] as { avatar_url?: string
           )}
         </div>
       </div>
+      {/* MODAL CONFIRMAR ELIMINACIÓN */}
+      <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t.contacts.confirmDeleteTitle || "¿Eliminar contacto?"}</DialogTitle>
+          </DialogHeader>
+          <div className="py-2 text-gray-700">
+            {t.contacts.confirmDeleteDescription
+              ? t.contacts.confirmDeleteDescription || ""
+              : `¿Seguro que quieres eliminar el contacto? Esta acción es irreversible.`}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowDeleteModal(false)}>
+              {t.common.cancel || "Cancelar"}
+            </Button>
+            <Button variant="destructive" onClick={confirmDeleteContact}>
+              {t.pages.contacts.deleteContact || "Eliminar"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       {/* Modales igual que antes... */}
       <CreateFineModal
         isOpen={isCreateFineModalOpen}
@@ -349,41 +400,7 @@ const avatarData = avatarsMap[contact.user_supabase_id] as { avatar_url?: string
           setIsAddContactModalOpen(false);
           setEditingContact(null);
         }}
-        onSubmit={async contactData => {
-          try {
-            // Añade el contacto
-            const nuevoContacto = await addContact({ ...contactData, status: "active" });
-            toast({
-              title: t.pages.contacts.contactAdded,
-              description: t.contacts.addedContactConfirmed,
-            });
-
-            // --- Chequear insignias Edge Function ---
-            if (user && session?.access_token && nuevoContacto) {
-              const response = await fetch(CHECK_BADGES_URL, {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  "Authorization": "Bearer " + session.access_token,
-                },
-                body: JSON.stringify({
-                  user_id: user.id,
-                  action: "add_contact",
-                  action_data: {
-                    contact_id: nuevoContacto.id,
-                    lang: language || "es",
-                  },
-                }),
-              });
-              const result = await response.json();
-              if (result?.newlyEarned?.length > 0) {
-                showBadges(result.newlyEarned, language);
-              }
-            }
-          } catch (err: any) {
-            toast({ title: "Error", description: err.message, variant: "destructive" });
-          }
-        }}
+        onSubmit={() => {}}
         editingContact={editingContact}
       />
     </div>

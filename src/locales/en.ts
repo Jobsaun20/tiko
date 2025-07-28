@@ -320,7 +320,16 @@ onboard: {
     titleFineModalPage: "Create new fine",
     challenge:"Challenge",
     statusActive:"Active",
-  },
+       contactRequestSentTitle: "Request sent",
+contactRequestSent: "The contact request has been sent.",
+contactRequestFailed: "Could not send the request.",
+confirmDeleteTitle: "Delete contact?",
+confirmDeleteDescription: "Are you sure you want to delete this contact? This action is irreversible.",
+newContactRequestTitle: "New contact request",
+newContactRequestBody: "{name} has sent you a contact request.",
+requestRejected: "You have rejected the contact request.",
+
+},
 
   // Groups Page
   groups: {
@@ -345,6 +354,10 @@ onboard: {
     members: "Members",
     sendFine: "Send fine",
     createGroupToStart: "Create a group to start managing fines among friends",
+ confirmDeleteTitle: "Delete group?",
+confirmDeleteDescription: "Are you sure you want to delete the group? This action cannot be undone.",
+
+
   },
 
   // History Page

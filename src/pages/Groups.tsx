@@ -33,12 +33,23 @@ import { useBadgeModal } from "@/contexts/BadgeModalContext";
 import { checkAndAwardBadge } from "@/utils/checkAndAwardBadge";
 import { useAuthContext } from "@/contexts/AuthContext";
 
+// AlertDialog para la confirmación de eliminación
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
 // Fallback por si no hay avatar (URL o base64)
 const DEFAULT_GROUP_AVATAR = "https://ui-avatars.com/api/?background=6552F5&color=fff&name=GR";
 
 // URL de tu edge function badges (usa la misma que en Contacts)
 const CHECK_BADGES_URL = "https://pyecpkccpfeuittnccat.supabase.co/functions/v1/check_badges";
-
 
 export default function Groups() {
   const { t, language } = useLanguage();
@@ -73,54 +84,57 @@ export default function Groups() {
   const [isCreateFineModalOpen, setIsCreateFineModalOpen] = useState(false);
   const [selectedContact, setSelectedContact] = useState<any>(null);
 
+  // Grupo pendiente de eliminar (para mostrar el AlertDialog)
+  const [groupToDelete, setGroupToDelete] = useState<any>(null);
+
   // Modal handlers
   const handleCreateGroup = () => setIsCreateGroupModalOpen(true);
 
   // BADGE: CREAR GRUPO
   const handleSubmitGroup = async (groupData: any) => {
-  if (!user) {
-    toast({ title: "Error", description: t.groups.notIdentifiedUser, variant: "destructive" });
-    return;
-  }
-  try {
-    // 1. Crear grupo
-    const newGroup = await addGroup({
-      name: groupData.name,
-      description: groupData.description,
-    });
-
-    setIsCreateGroupModalOpen(false);
-    toast({
-      title: t.pages.groups.groupCreated,
-      description: `${t.groups.theGroup} "${groupData.name}" ${t.groups.createdSuccessfully}`,
-    });
-
-    // --- Chequear insignias Edge Function ---
-    if (userAuth && session?.access_token && newGroup) {
-      const response = await fetch(CHECK_BADGES_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + session.access_token,
-        },
-        body: JSON.stringify({
-          user_id: userAuth.id,
-          action: "group_create", // tu key de badge para crear grupo
-          action_data: {
-            group_id: newGroup.id,
-            lang: language || "es",
-          },
-        }),
-      });
-      const result = await response.json();
-      if (result?.newlyEarned?.length > 0) {
-        showBadges(result.newlyEarned, language);
-      }
+    if (!user) {
+      toast({ title: "Error", description: t.groups.notIdentifiedUser, variant: "destructive" });
+      return;
     }
-  } catch (err: any) {
-    toast({ title: "Error", description: err.message, variant: "destructive" });
-  }
-};
+    try {
+      // 1. Crear grupo
+      const newGroup = await addGroup({
+        name: groupData.name,
+        description: groupData.description,
+      });
+
+      setIsCreateGroupModalOpen(false);
+      toast({
+        title: t.pages.groups.groupCreated,
+        description: `${t.groups.theGroup} "${groupData.name}" ${t.groups.createdSuccessfully}`,
+      });
+
+      // --- Chequear insignias Edge Function ---
+      if (userAuth && session?.access_token && newGroup) {
+        const response = await fetch(CHECK_BADGES_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + session.access_token,
+          },
+          body: JSON.stringify({
+            user_id: userAuth.id,
+            action: "group_create", // tu key de badge para crear grupo
+            action_data: {
+              group_id: newGroup.id,
+              lang: language || "es",
+            },
+          }),
+        });
+        const result = await response.json();
+        if (result?.newlyEarned?.length > 0) {
+          showBadges(result.newlyEarned, language);
+        }
+      }
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    }
+  };
   const handleLeaveGroup = async (groupId: string) => {
     try {
       await leaveGroup(groupId);
@@ -133,6 +147,7 @@ export default function Groups() {
     }
   };
 
+  // Solo elimina si se confirma en el AlertDialog
   const handleDeleteGroup = async (groupId: string) => {
     try {
       await deleteGroup(groupId);
@@ -175,44 +190,44 @@ export default function Groups() {
 
   // BADGE: AGREGAR MIEMBRO
   const handleSubmitAddMember = async (selectedUserId: string) => {
-  if (!selectedGroupId) return;
-  try {
-    const result = await addMemberToGroup(selectedGroupId, selectedUserId, "member");
-    toast({
-      title: t.groups.memberAdded,
-      description: t.groups.memberAddedDescription,
-    });
-
-    // Chequear badge por añadir miembro
-    if (userAuth && session?.access_token) {
-      const response = await fetch(CHECK_BADGES_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + session.access_token,
-        },
-        body: JSON.stringify({
-          user_id: userAuth.id,
-          action: "add_group_member", // tu key de badge para añadir miembro
-          action_data: {
-            group_id: selectedGroupId,
-            new_member_id: selectedUserId,
-            lang: language || "es",
-          },
-        }),
+    if (!selectedGroupId) return;
+    try {
+      const result = await addMemberToGroup(selectedGroupId, selectedUserId, "member");
+      toast({
+        title: t.groups.memberAdded,
+        description: t.groups.memberAddedDescription,
       });
-      const resultBadge = await response.json();
-      if (resultBadge?.newlyEarned?.length > 0) {
-        showBadges(resultBadge.newlyEarned, language);
-      }
-    }
 
-  } catch (err: any) {
-    toast({ title: "Error", description: err.message, variant: "destructive" });
-  }
-  setShowAddMemberModal(false);
-  setSelectedGroupId(null);
-};
+      // Chequear badge por añadir miembro
+      if (userAuth && session?.access_token) {
+        const response = await fetch(CHECK_BADGES_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + session.access_token,
+          },
+          body: JSON.stringify({
+            user_id: userAuth.id,
+            action: "add_group_member", // tu key de badge para añadir miembro
+            action_data: {
+              group_id: selectedGroupId,
+              new_member_id: selectedUserId,
+              lang: language || "es",
+            },
+          }),
+        });
+        const resultBadge = await response.json();
+        if (resultBadge?.newlyEarned?.length > 0) {
+          showBadges(resultBadge.newlyEarned, language);
+        }
+      }
+
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    }
+    setShowAddMemberModal(false);
+    setSelectedGroupId(null);
+  };
 
   // Agregar miembro desde edición
   const handleAddMember = (groupId: string) => {
@@ -279,25 +294,24 @@ export default function Groups() {
 
   // FUNCION PARA RENDERIZAR AVATAR DE GRUPO (Base64 o URL o fallback)
   const renderGroupAvatar = (group: any) => {
-  const avatar = group.avatar || "";
-  const hasImage =
-    avatar.startsWith("http") || avatar.startsWith("data:image");
+    const avatar = group.avatar || "";
+    const hasImage =
+      avatar.startsWith("http") || avatar.startsWith("data:image");
 
-  return (
-    <Avatar className="h-10 w-10 sm:h-12 sm:w-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-      {hasImage && (
-        <AvatarImage
-          src={avatar}
-          alt={group.name}
-        />
-      )}
-      <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs font-bold">
-        {group.name?.charAt(0)?.toUpperCase() || "G"}
-      </AvatarFallback>
-    </Avatar>
-  );
-};
-
+    return (
+      <Avatar className="h-10 w-10 sm:h-12 sm:w-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+        {hasImage && (
+          <AvatarImage
+            src={avatar}
+            alt={group.name}
+          />
+        )}
+        <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs font-bold">
+          {group.name?.charAt(0)?.toUpperCase() || "G"}
+        </AvatarFallback>
+      </Avatar>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
@@ -374,7 +388,7 @@ export default function Groups() {
                             <Button
                               variant="destructive"
                               size="sm"
-                              onClick={() => handleDeleteGroup(group.id)}
+                              onClick={() => setGroupToDelete(group)}
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
@@ -483,6 +497,35 @@ export default function Groups() {
           )}
         </div>
       </div>
+
+      {/* ALERT DIALOG para confirmar eliminación */}
+      <AlertDialog open={!!groupToDelete} onOpenChange={open => !open && setGroupToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {t.groups.confirmDeleteTitle || "¿Eliminar grupo?"}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {t.groups.confirmDeleteDescription ||
+                `¿Estás seguro de que deseas eliminar el grupo? Esta acción no se puede deshacer.`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setGroupToDelete(null)}>
+              {t.common.cancel || "Cancelar"}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-white"
+              onClick={async () => {
+                await handleDeleteGroup(groupToDelete.id);
+                setGroupToDelete(null);
+              }}
+            >
+              {t.common.delete || "Eliminar"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Modal de creación de grupo */}
       <CreateGroupModal

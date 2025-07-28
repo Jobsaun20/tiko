@@ -238,7 +238,7 @@ export const CreateFineModal = ({
                         onClick={() => handleSelectContact(contact)}
                       >
                         <div className="font-medium">{contact.name || contact.email}</div>
-                        <div className="text-xs text-gray-500">{contact.email}</div>
+                        {/* <div className="text-xs text-gray-500">{contact.email}</div> */}
                       </div>
                     ))
                   )}
