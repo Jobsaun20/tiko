@@ -370,7 +370,7 @@ requestRejected: "You have rejected the contact request.",
     rules: "Rules",
     members: "Members",
     sendFine: "Send fine",
-    createGroupToStart: "Create a group to start managing fines among friends",
+    createGroupToStart: "Create a group to get started",
  confirmDeleteTitle: "Delete group?",
 confirmDeleteDescription: "Are you sure you want to delete the group? This action cannot be undone.",
 
@@ -562,7 +562,7 @@ confirmDeleteDescription: "Are you sure you want to delete the group? This actio
   pages: {
     contacts: {
       title: "Contacts",
-      description: "Manage your contact list",
+      description: "Add contacts and use them to create groups, challenges, etc.",
       addContact: "Add contact",
       addContactButton: "Add contact",
       noContacts: "You have no contacts yet",
@@ -588,7 +588,7 @@ confirmDeleteDescription: "Are you sure you want to delete the group? This actio
       joinGroup: "Join a group",
       noGroups: "You have no groups yet",
       groupName: "Group name",
-      description: "Create a group with your friends, family, roommates, or partner to start setting rules together.",
+      description: "Create a group, add its members, and define your rules.",
       members: "Members",
       admin: "Admin",
       member: "Member",

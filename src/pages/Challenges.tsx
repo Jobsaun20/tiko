@@ -173,7 +173,7 @@ export default function ChallengesPage() {
             onClick={() => setModalOpen(true)}
           >
             <Trophy className="h-4 w-4 mr-2" />
-            Crear Challenge
+            {t.challenges.createChallenge}
           </Button>
           <div className="relative w-full sm:w-72">
             <input

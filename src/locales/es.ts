@@ -378,7 +378,7 @@ requestRejected:"Has rechazado la solicitud de contacto."
     rules: "Reglas",
     members: "Miembros",
     sendFine: "Enviar multa",
-    createGroupToStart: "Crea un grupo para empezar a gestionar multas entre amigos",
+    createGroupToStart: "Crea un grupo para empezar",
     confirmDeleteTitle: "¿Eliminar grupo?",
     confirmDeleteDescription: "¿Estás seguro de que deseas eliminar el grupo? Esta acción no se puede deshacer.",
   },
@@ -568,7 +568,7 @@ requestRejected:"Has rechazado la solicitud de contacto."
   pages: {
     contacts: {
       title: "Contactos",
-      description: "Gestiona tu lista de contactos",
+      description: "Agrega contactos y usalos para crear grupos, retos, etc",
       addContact: "Agregar contacto",
       addContactButton: "Agregar contacto",
       noContacts: "Aún no tienes contactos",
@@ -595,7 +595,7 @@ requestRejected:"Has rechazado la solicitud de contacto."
       joinGroup: "Unirse a un grupo",
       noGroups: "Aún no tienes grupos",
       groupName: "Nombre del grupo",
-      description: "Crea un grupo con tus amigos, familiares, compañeros de piso o tu pareja para empezar a establecer reglas entre vosotros.",
+      description: "Crea un grupo, agrega a sus miembros y definid vuestras reglas.",
       members: "Miembros",
       admin: "Admin",
       member: "Miembro",
