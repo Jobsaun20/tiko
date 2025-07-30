@@ -195,6 +195,9 @@ confirmDelete: "Delete",
 keepRule: "Keep",
 deletedRulePushTitle: "Rule deleted",
 deletedRulePushBody: "The rule \"{rule}\" from group \"{group}\" was deleted.",
+toastProposedBody: "The rule \"{rule}\" has been proposed in the group \"{group}\".",
+amountLabel: "Fine",
+amountPlaceholder: "Amount (CHF)",
 
 
 },

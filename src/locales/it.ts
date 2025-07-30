@@ -193,6 +193,10 @@ confirmDelete: "Elimina",
 keepRule: "Mantieni",
 deletedRulePushTitle: "Regola eliminata",
 deletedRulePushBody: "La regola \"{rule}\" del gruppo \"{group}\" è stata eliminata.",
+toastProposedBody: "La regola \"{rule}\" è stata proposta nel gruppo \"{group}\".",
+amountLabel: "Multa",
+amountPlaceholder: "Importo (CHF)",
+
 },
 
 

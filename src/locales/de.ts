@@ -195,6 +195,9 @@ confirmDelete: "Löschen",
 keepRule: "Behalten",
 deletedRulePushTitle: "Regel gelöscht",
 deletedRulePushBody: "Die Regel \"{rule}\" der Gruppe \"{group}\" wurde gelöscht.",
+toastProposedBody: "Die Regel \"{rule}\" wurde in der Gruppe \"{group}\" vorgeschlagen.",
+amountLabel: "Strafe",
+amountPlaceholder: "Betrag (CHF)",
 
 },
 

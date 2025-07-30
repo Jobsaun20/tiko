@@ -193,6 +193,9 @@ confirmDelete: "Supprimer",
 keepRule: "Conserver",
 deletedRulePushTitle: "Règle supprimée",
 deletedRulePushBody: "La règle « {rule} » du groupe « {group} » a été supprimée.",
+toastProposedBody: "La règle \"{rule}\" a été proposée dans le groupe \"{group}\".",
+amountLabel: "Amende",
+amountPlaceholder: "Montant (CHF)",
 
 
 },

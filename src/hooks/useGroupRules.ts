@@ -15,10 +15,15 @@ export interface GroupRule {
   validated: boolean;
   rejected: boolean;
   pending_deletion?: boolean;
+  amount?: number; // 👈 Añadido campo cantidad
   acceptances: { user_id: string; accepted: boolean }[];
 }
 
-export function useGroupRules(groupId: string, members: GroupMember[], groupName: string) {
+export function useGroupRules(
+  groupId: string,
+  members: GroupMember[],
+  groupName: string
+) {
   const { user } = useAuthContext();
   const { t } = useLanguage();
   const [rules, setRules] = useState<GroupRule[]>([]);
@@ -47,78 +52,89 @@ export function useGroupRules(groupId: string, members: GroupMember[], groupName
 
   useEffect(() => {
     if (groupId) fetchRules();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [groupId]);
 
-  async function proposeRule(description: string) {
-  if (!user) throw new Error("No autenticado");
+  /**
+   * Proponer nueva regla, ahora con cantidad (amount)
+   */
+  async function proposeRule(
+    description: string,
+    amount: number // 👈 Nuevo parámetro
+  ) {
+    if (!user) throw new Error("No autenticado");
 
-  const { data, error } = await supabase
-    .from("group_rules")
-    .insert({ group_id: groupId, description, created_by: user.id })
-    .select()
-    .single();
+    const { data, error } = await supabase
+      .from("group_rules")
+      .insert({ group_id: groupId, description, created_by: user.id, amount }) // 👈 Añade amount
+      .select()
+      .single();
 
-  if (error) throw new Error(error.message);
+    if (error) throw new Error(error.message);
 
-  const memberIds = members.map(m => m.id).filter(id => id !== user.id);
-  let notifObjects: any[] = [];
+    const memberIds = members.map((m) => m.id).filter((id) => id !== user.id);
+    let notifObjects: any[] = [];
 
-  if (data?.id && memberIds.length > 0) {
-    const notifications = memberIds.map(memberId => ({
-      user_id: memberId,
-      type: "group_rule_proposed",
-      data: {
-        rule: description,
-        group: groupName,
-      },
-      link: `/groups/${groupId}#rules`,
-      read: false,
-      created_at: new Date().toISOString(),
-    }));
+    if (data?.id && memberIds.length > 0) {
+      const notifications = memberIds.map((memberId) => ({
+        user_id: memberId,
+        type: "group_rule_proposed",
+        data: {
+          rule: description,
+          amount: amount, // 👈 Incluye en notificación si lo usas en el frontend
+          group: groupName,
+        },
+        link: `/groups/${groupId}#rules`,
+        read: false,
+        created_at: new Date().toISOString(),
+      }));
 
-    const { data: notifData } = await supabase.from("notifications").insert(notifications).select();
-    notifObjects = notifData || [];
-  }
+      const { data: notifData } = await supabase
+        .from("notifications")
+        .insert(notifications)
+        .select();
+      notifObjects = notifData || [];
+    }
 
-  // 🚀 PUSH EN IDIOMA DEL RECEPTOR
-  if (notifObjects.length > 0) {
-    await Promise.all(
-      notifObjects.map(async notif => {
-        // 1. Consulta idioma del usuario receptor
-        const { data: userData } = await supabase
-          .from("users")
-          .select("language")
-          .eq("id", notif.user_id)
-          .maybeSingle();
-        const lang = userData?.language || "es";
-        const locale = locales[lang] || locales["es"];
+    // 🚀 PUSH EN IDIOMA DEL RECEPTOR
+    if (notifObjects.length > 0) {
+      await Promise.all(
+        notifObjects.map(async (notif) => {
+          // 1. Consulta idioma del usuario receptor
+          const { data: userData } = await supabase
+            .from("users")
+            .select("language")
+            .eq("id", notif.user_id)
+            .maybeSingle();
+          const lang = userData?.language || "es";
+          const locale = locales[lang] || locales["es"];
 
-        // 2. Traduce el texto en el idioma receptor
-        const title = locale.groupRulesModal.toastProposedTitle;
-        // Puedes personalizar el body según tu archivo de idioma (aquí ejemplo con placeholders)
-        const body = locale.groupRulesModal.toastProposedBody
-          ? locale.groupRulesModal.toastProposedBody
-              .replace("{rule}", description)
-              .replace("{group}", groupName)
-          : `${title}: "${description}"`;
+          // 2. Traduce el texto en el idioma receptor
+          const title = locale.groupRulesModal.toastProposedTitle;
+          let body = locale.groupRulesModal.toastProposedBody
+            ? locale.groupRulesModal.toastProposedBody
+                .replace("{rule}", description)
+                .replace("{group}", groupName)
+                .replace("{amount}", String(amount))
+            : `${title}: "${description}"`;
 
-        // 3. Envía la push
-        const { data: subsData } = await supabase
-          .from("push_subscriptions")
-          .select("subscription")
-          .eq("user_id", notif.user_id);
+          // 3. Envía la push
+          const { data: subsData } = await supabase
+            .from("push_subscriptions")
+            .select("subscription")
+            .eq("user_id", notif.user_id);
 
-        const subs = (subsData || []).map((s: any) => s.subscription);
-        if (subs.length > 0) {
-          await fetch(PUSH_ENDPOINT, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              subscriptions: subs,
-              notification: {
-                title,
-                body,
-                url: notif.link,
+          const subs = (subsData || []).map((s: any) => s.subscription);
+          if (subs.length > 0) {
+            await fetch(PUSH_ENDPOINT, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                subscriptions: subs,
+                notification: {
+                  title,
+                  body,
+                  url: notif.link,
                 },
               }),
             });
@@ -151,7 +167,7 @@ export function useGroupRules(groupId: string, members: GroupMember[], groupName
 
     await supabase.from("group_rule_acceptances").delete().eq("rule_id", ruleId);
 
-    const memberIds = members.map(m => m.id).filter(id => id !== user.id);
+    const memberIds = members.map((m) => m.id).filter((id) => id !== user.id);
 
     // 🔥 Obtener nombre del usuario desde la tabla "users"
     const { data: userData } = await supabase
@@ -165,7 +181,7 @@ export function useGroupRules(groupId: string, members: GroupMember[], groupName
     const { data: notifData } = await supabase
       .from("notifications")
       .insert(
-        memberIds.map(id => ({
+        memberIds.map((id) => ({
           user_id: id,
           type: "group_rule_deletion_proposed",
           data: {
@@ -181,7 +197,7 @@ export function useGroupRules(groupId: string, members: GroupMember[], groupName
 
     if (notifData && notifData.length > 0) {
       await Promise.all(
-        notifData.map(async notif => {
+        notifData.map(async (notif) => {
           // --- MODIFICACIÓN CLAVE: Push en idioma de cada usuario ---
           // 1. Consulta idioma del receptor
           const { data: userData } = await supabase
@@ -261,14 +277,15 @@ export function useGroupRules(groupId: string, members: GroupMember[], groupName
 
     if (error) return;
 
-    const rule = rules.find(r => r.id === ruleId);
+    const rule = rules.find((r) => r.id === ruleId);
     if (!rule) return;
 
-    const memberIds = members.map(m => m.id);
-    const acceptances = data?.filter((a: any) => memberIds.includes(a.user_id)) || [];
+    const memberIds = members.map((m) => m.id);
+    const acceptances =
+      data?.filter((a: any) => memberIds.includes(a.user_id)) || [];
 
     if (rule.pending_deletion) {
-      if (acceptances.some(a => a.accepted === false)) {
+      if (acceptances.some((a) => a.accepted === false)) {
         await supabase
           .from("group_rules")
           .update({ pending_deletion: false, validated: true, rejected: false })
@@ -276,29 +293,35 @@ export function useGroupRules(groupId: string, members: GroupMember[], groupName
         return;
       }
 
-      if (acceptances.length === memberIds.length && acceptances.every(a => a.accepted)) {
+      if (
+        acceptances.length === memberIds.length &&
+        acceptances.every((a) => a.accepted)
+      ) {
         await supabase.from("group_rules").delete().eq("id", ruleId);
 
         // Notificación + PUSH para regla eliminada a TODOS (incluido el que la propuso)
-        const allMemberIds = members.map(m => m.id); // ⚡ Incluir todos
-        const { data: notifData } = await supabase.from("notifications").insert(
-          allMemberIds.map(id => ({
-            user_id: id,
-            type: "group_rule_deleted",
-            data: {
-              rule: rule.description,
-              group: groupName,
-            },
-            link: `/groups/${groupId}#rules`,
-            read: false,
-            created_at: new Date().toISOString(),
-          }))
-        ).select();
+        const allMemberIds = members.map((m) => m.id); // ⚡ Incluir todos
+        const { data: notifData } = await supabase
+          .from("notifications")
+          .insert(
+            allMemberIds.map((id) => ({
+              user_id: id,
+              type: "group_rule_deleted",
+              data: {
+                rule: rule.description,
+                group: groupName,
+              },
+              link: `/groups/${groupId}#rules`,
+              read: false,
+              created_at: new Date().toISOString(),
+            }))
+          )
+          .select();
 
         // Push notification a todos en su idioma
         if (notifData && notifData.length > 0) {
           await Promise.all(
-            notifData.map(async notif => {
+            notifData.map(async (notif) => {
               // --- Consulta idioma receptor ---
               const { data: userData } = await supabase
                 .from("users")
@@ -342,7 +365,7 @@ export function useGroupRules(groupId: string, members: GroupMember[], groupName
       return;
     }
 
-    if (acceptances.some(a => a.accepted === false)) {
+    if (acceptances.some((a) => a.accepted === false)) {
       await supabase
         .from("group_rules")
         .update({ validated: false, rejected: true })
@@ -350,7 +373,10 @@ export function useGroupRules(groupId: string, members: GroupMember[], groupName
       return;
     }
 
-    if (acceptances.length === memberIds.length && acceptances.every(a => a.accepted)) {
+    if (
+      acceptances.length === memberIds.length &&
+      acceptances.every((a) => a.accepted)
+    ) {
       await supabase
         .from("group_rules")
         .update({ validated: true, rejected: false })
@@ -372,21 +398,29 @@ export function useGroupRules(groupId: string, members: GroupMember[], groupName
       .eq("id", ruleId)
       .maybeSingle();
     if (fetchError) throw new Error(fetchError.message);
-    if (!ruleData?.rejected) throw new Error("Solo puedes borrar reglas rechazadas");
+    if (!ruleData?.rejected)
+      throw new Error("Solo puedes borrar reglas rechazadas");
 
-    const { error } = await supabase.from("group_rules").delete().eq("id", ruleId);
+    const { error } = await supabase
+      .from("group_rules")
+      .delete()
+      .eq("id", ruleId);
     if (error) throw new Error(error.message);
     await fetchRules();
   }
 
   function hasUserAccepted(rule: GroupRule): boolean {
     if (!user) return false;
-    return rule.acceptances.some(a => a.user_id === user.id && a.accepted === true);
+    return rule.acceptances.some(
+      (a) => a.user_id === user.id && a.accepted === true
+    );
   }
 
   function hasUserRejected(rule: GroupRule): boolean {
     if (!user) return false;
-    return rule.acceptances.some(a => a.user_id === user.id && a.accepted === false);
+    return rule.acceptances.some(
+      (a) => a.user_id === user.id && a.accepted === false
+    );
   }
 
   return {

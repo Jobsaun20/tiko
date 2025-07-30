@@ -199,8 +199,9 @@ confirmDelete: "Eliminar",
 keepRule: "Mantener",
 deletedRulePushTitle: "Regla eliminada",
 deletedRulePushBody: "La regla \"{rule}\" del grupo \"{group}\" fue eliminada.",
-
-toastProposedBody: "Se ha propuesto la regla \"{rule}\" en el grupo \"{group}\"."
+toastProposedBody: "Se ha propuesto la regla \"{rule}\" en el grupo \"{group}\".",
+amountLabel:"Multa",
+amountPlaceholder:"Cantidad (CHF)"
 
 },
 
