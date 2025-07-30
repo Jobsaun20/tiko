@@ -303,27 +303,27 @@ export default function Profile() {
               <div className="flex gap-4 overflow-x-auto pb-2 hide-scrollbar">
               {earnedBadges.map((badge) => (
                 <div
-                  key={badge.id}
-                  className="border rounded-2xl shadow-lg min-w-[220px] max-w-[220px] p-4 flex-shrink-0 hover:shadow-xl transition-shadow bg-white"
-                >
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className="text-2xl">{badge.icon}</span>
-                    <div className="flex-1">
-                      <h3 className="font-semibold truncate">
-                        {badge.name?.[language] || badge.name?.en || "Sin nombre"}
-                      </h3>
-                      <Badge variant="secondary" className={getRarityColor(badge.rarity)}>
-                        {badge.rarity || ""}
-                      </Badge>
-                    </div>
-                  </div>
-                  <p className="text-sm text-gray-600 line-clamp-2">
-                    {badge.description?.[language] || badge.description?.en || "Sin descripción"}
-                  </p>
-                  <div className="text-xs text-gray-400 mt-2">
-                    {badge.achieved_at && `Obtenida: ${new Date(badge.achieved_at).toLocaleDateString()}`}
+                key={badge.id}
+                className="border rounded-2xl shadow-lg min-w-[200px] max-w-[200px] p-4 flex-shrink-0 hover:shadow-xl transition-shadow bg-white"
+              >
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="text-2xl">{badge.icon}</span>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-base leading-tight break-words">
+                      {badge.name?.[language] || badge.name?.en || "Sin nombre"}
+                    </h3>
+                    <Badge variant="secondary" className={getRarityColor(badge.rarity)}>
+                      {badge.rarity || ""}
+                    </Badge>
                   </div>
                 </div>
+                <p className="text-sm text-gray-600 line-clamp-2 break-words">
+                  {badge.description?.[language] || badge.description?.en || "Sin descripción"}
+                </p>
+                <div className="text-xs text-gray-400 mt-2">
+                  {badge.achieved_at && `Obtenida: ${new Date(badge.achieved_at).toLocaleDateString()}`}
+                </div>
+              </div>
               ))}
             </div>
             )}
