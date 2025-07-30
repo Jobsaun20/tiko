@@ -283,7 +283,7 @@ const filteredContacts = contacts
               const avatar_url = avatarData.avatar_url || undefined;
               const nameToShow = avatarData.username || contact.name || avatarData.name || contact.email || "";
               return (
-<Card key={contact.id} className="rounded-2xl border border-gray-100 shadow-sm bg-white p-0 min-h-[88px] max-w-[320px] w-full mx-auto">
+<Card key={contact.id} className="rounded-2xl border border-gray-100 shadow-lg bg-white p-0 min-h-[88px] max-w-[320px] w-full mx-auto">
   <CardContent className="p-6">
     {/* Layout en dos filas */}
     <div className="flex flex-col gap-2">
