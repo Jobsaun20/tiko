@@ -186,7 +186,7 @@ export default function ContactsModalPage() {
           <div className="relative">
             <input
   type="text"
-  className="border rounded-full px-5 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm sm:text-base shadow"
+  className=" max-w-[320px] border rounded-full px-5 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm sm:text-base shadow"
   placeholder={t.contacts.contactSearchPlaceholder}
   value={search}
   onChange={e => setSearch(e.target.value)}
@@ -208,16 +208,16 @@ export default function ContactsModalPage() {
         {/* Lista de contactos filtrada */}
         <div className="space-y-4 px-2 sm:px-6">
           {loading ? (
-            <div className="text-center text-gray-400 py-8">{t.contacts.loading}</div>
-          ) : filteredContacts.length > 0 ? (
-            filteredContacts.map((contact) => {
+  <div className="text-center text-gray-400 py-8">{t.contacts.loading}</div>
+) : uniqueFilteredContacts.length > 0 ? (
+  uniqueFilteredContacts.map((contact) => {
               const avatarData = avatarsMap[contact.user_supabase_id] as { avatar_url?: string; name?: string; username?: string } || {};
               const avatar_url = avatarData.avatar_url || undefined;
               const nameToShow = avatarData.username || contact.name || avatarData.name || contact.email || "";
               return (
                 <Card
         key={contact.id}
-        className="rounded-[24px] border border-gray-100 shadow bg-white px-3 py-2 flex items-center min-h-[64px] max-w-[320px] mx-auto"
+        className="max-w-[320px] rounded-[24px] border border-gray-100 shadow bg-white px-3 py-2 flex items-center min-h-[64px] max-w-[320px] mx-auto"
         style={{ marginBottom: 8 }}
       >
   <div className="flex items-center w-full">
@@ -237,22 +237,23 @@ export default function ContactsModalPage() {
       </div>
     </div>
     {/* Botones de acción pegados a la derecha */}
-    <div className="flex flex-col gap-2 items-end w-full max-w-[150px]">
+    <div className="flex flex-col gap-2 items-end w-full max-w-[110px]">
   <Button
     size="sm"
-    className="rounded-full bg-gradient-to-r from-red-500 to-pink-500 text-white font-semibold shadow w-full"
+    className="rounded-full bg-gradient-to-r from-red-500 to-pink-500 text-white font-semibold shadow px-2 max-w-[92px] min-w-[80px]"
     onClick={() => handleFineContact(contact)}
   >
     {t.pages.contacts.fine}
   </Button>
   <Button
     size="sm"
-    className="rounded-full bg-gradient-to-r from-[#915ec3] to-[#b07cd6] text-white font-semibold shadow w-full"
+    className="rounded-full bg-gradient-to-r from-[#915ec3] to-[#b07cd6] text-white font-semibold shadow px-2 max-w-[92px] min-w-[80px]"
     onClick={() => handleChallengeContact(contact)}
   >
     {t.contacts.challenge}
   </Button>
 </div>
+
 
   </div>
 </Card>

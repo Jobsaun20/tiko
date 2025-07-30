@@ -42,10 +42,10 @@ export const FineCard = ({
   const getStatusBadge = () => {
     if (fine.status === "pending") {
       return (
-        <span className="flex items-center gap-1 bg-orange-50 text-orange-700 border border-orange-100 rounded-lg px-2 py-[2px] text-xs font-medium">
-          <Clock className="w-4 h-4" />
-          {t.fines.pending}
-        </span>
+        <span className="flex items-center gap-1 bg-orange-50 text-orange-700 border border-orange-100 rounded-lg px-2 py-[1px] text-[11px] font-medium">
+  <Clock className="w-3 h-3" />  {/* Más pequeño */}
+  {t.fines.pending}
+</span>
       );
     }
     if (fine.status === "paid") {
@@ -143,9 +143,9 @@ export const FineCard = ({
               {/* Estado (ausstehend/pagada) */}
               {getStatusBadge()}
               {/* Fecha */}
-              <span className="text-[12px] text-gray-400 mt-1">
-                {dateLabel}: {date && new Date(date).toLocaleDateString()}
-              </span>
+              <span className="text-[11px] text-gray-400 mt-0.5">
+  {dateLabel}: {date && new Date(date).toLocaleDateString()}
+</span>
             </div>
             {/* Botón pagar */}
             {showPayButton && fine.status === "pending" && (

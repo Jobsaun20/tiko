@@ -204,11 +204,12 @@ export default function Notifications() {
               )}
               {visibleNotifications.length > 0 && (
                 <Button
-                  variant="destructive"
+                  variant="ghost"
                   size="icon"
                   onClick={handleDeleteAll}
-                  className="w-10 h-10 sm:w-10 sm:h-10 flex items-center justify-center"
+                  className="w-8 h-8 text-red-500 sm:w-10 sm:h-10 flex items-center justify-center"
                   title={t.notifications.deleteAll}
+                  
                 >
                   <Trash2 className="h-5 w-5" />
                 </Button>
@@ -239,16 +240,18 @@ export default function Notifications() {
                 : "";
               return (
                 <Card
-                  key={n.id}
-                  className={`hover:shadow-md transition-shadow cursor-pointer ${
-                    !n.read ? "border-l-4 border-l-purple-500 bg-purple-50" : ""
-                  }`}
-                  onClick={() => handleNotificationClick(n)}
-                >
+  key={n.id}
+  className={`max-w-[320px] w-full mx-auto rounded-2xl shadow-lg hover:shadow-xl transition-shadow cursor-pointer ${
+    !n.read ? "border-l-4 border-l-[#52AEB9] bg-[#E6F6F9]" : ""
+  }`}
+  onClick={() => handleNotificationClick(n)}
+>
                   <CardContent className="p-4">
                     <div className="flex items-start gap-4">
                       <div className="flex-shrink-0">
-                        <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-xl">
+<div className="w-12 h-12 bg-gradient-to-r from-[#52AEB9] to-[#57b8c9] rounded-full flex items-center justify-center text-white text-xl">
+ 
+ 
                           {tpl.icon}
                         </div>
                       </div>
@@ -258,7 +261,7 @@ export default function Notifications() {
                             {tpl.title}
                           </h4>
                           {!n.read && (
-                            <div className="w-2 h-2 bg-purple-500 rounded-full flex-shrink-0"></div>
+                            <div className="w-2 h-2 bg-red-500 rounded-full flex-shrink-0"></div>
                           )}
                         </div>
                         <p className="text-gray-600 text-sm mb-2">{message}</p>

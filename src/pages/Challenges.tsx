@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { CreateChallengeModal } from "@/components/CreateChallengeModal";
 import { ChallengeCard } from "@/components/ChallengeCard";
 import { Header } from "@/components/Header";
-import { X, Trophy, ArrowLeft, Filter } from "lucide-react";
+import { X, Trophy, ArrowLeft, Filter, Zap  } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/supabaseClient"; // ⬅️ IMPORTANTE
@@ -122,7 +122,7 @@ export default function ChallengesPage() {
         {/* Título e icono */}
         <div className="mb-6">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 flex items-center gap-3">
-            <Trophy className="h-8 w-8" />
+            <Zap className="h-8 w-8" />
             {t.challenges.titleChallengePage}
           </h1>
           <p className="text-gray-600">{t.challenges.subtitle}</p>
@@ -170,15 +170,31 @@ export default function ChallengesPage() {
         <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
   {/* Botón morado redondeado */}
   <Button
-    className="bg-[#A259E6] hover:bg-[#8b41cc] text-white font-semibold px-8 py-2 rounded-full shadow-md flex items-center gap-2 text-base transition-all"
-    onClick={() => setModalOpen(true)}
-  >
-    <span className="text-lg font-bold">+</span>
-    {t.challenges.createChallenge}
-  </Button>
+  onClick={() => setModalOpen(true)}
+  className="
+    w-full max-w-[320px] mx-auto
+    flex items-center px-6 py-2
+    rounded-full
+    bg-gradient-to-r from-[#72bfc4] to-[#57b8c9]
+    shadow-md gap-4 
+    font-bold text-white text-base
+    transition-all
+  "
+  style={{ minHeight: 48 }}
+>
+  <span className="flex items-center justify-center w-10 h-10 rounded-full bg-[#7fcad1]/60">
+    <Zap className="w-6 h-6 text-white" />
+  </span>
+  <span className="flex flex-col items-start leading-tight">
+    <span className="font-bold text-white text-base">
+      {t.challenges.createChallenge}
+    </span>
+  </span>
+</Button>
+
   
   {/* Barra de búsqueda redondeada */}
-  <div className="relative w-full sm:w-72">
+  <div className="relative w-full max-w-[320px] mx-auto sm:w-72">
     <input
       type="text"
       className="border border-gray-300 rounded-full px-5 py-2 w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A259E6] text-base"

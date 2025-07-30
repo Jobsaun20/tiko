@@ -63,29 +63,22 @@ export function BottomNavBar() {
         />
         {/* Botón central azul, cuadrado, grande */}
         <button
-          className="
-            flex flex-col items-center justify-center
-            transition-transform
-            mx-1
-            active:scale-95
-            shadow-[0_8px_24px_0_rgba(82,174,185,0.18)]
-            mt-[-12px]  // <-- AJUSTA AQUÍ LA ALTURA
-          "
-          style={{ minWidth: 52 }}
-          onClick={() => navigate("/fine-modal")}
-        >
-          <span
-            className="
-              flex items-center justify-center
-              rounded-xl
-              bg-[#52AEB9]
-              w-[48px] h-[48px]
-              transition
-            "
-          >
-            <Plus className="w-7 h-7 text-white" />
-          </span>
-        </button>
+  className="
+    flex items-center justify-center
+    w-[56px] h-[56px]
+    rounded-2xl
+    bg-[#72bfc4]
+    shadow-lg
+    active:scale-95
+    transition
+    border-0
+    p-0
+  "
+  onClick={() => navigate("/fine-modal")}
+>
+  <Plus className="w-8 h-8 text-white" />
+</button>
+
         <NavButton
           to="/contacts"
           icon={<BookUser className="w-4 h-4" />}

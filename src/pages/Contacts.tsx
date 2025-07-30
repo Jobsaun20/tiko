@@ -236,7 +236,7 @@ const filteredContacts = contacts
         <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <Button
   onClick={handleAddContact}
-  className="w-full max-w-[320px] mx-auto flex items-center px-6 py-2 rounded-full bg-gradient-to-r from-[#72bfc4] to-[#57b8c9] shadow-md gap-4 mb-4"
+  className="w-full max-w-[320px] mx-auto flex items-center px-6 py-2 rounded-full bg-gradient-to-r from-[#72bfc4] to-[#57b8c9] shadow-md gap-4"
   style={{ minHeight: 48 }}
 >
   <span className="flex items-center justify-center w-10 h-10 rounded-full bg-[#7fcad1]/60">
