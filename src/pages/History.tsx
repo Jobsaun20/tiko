@@ -11,9 +11,8 @@ import { useUserProfile } from "@/hooks/useUserProfile";
 import { useFines } from "@/hooks/useFines";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useBadgeModal } from "@/contexts/BadgeModalContext";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { ScrollText } from "lucide-react";
-
+import { FineCard } from "@/components/FineCard"; // <--- Importa tu FineCard
 
 const CHECK_BADGES_URL = "https://pyecpkccpfeuittnccat.supabase.co/functions/v1/check_badges";
 
@@ -158,10 +157,11 @@ export default function History() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
+    <div className="min-h-screen flex flex-col bg-gray-50">
+
       <Header />
       <div className="container mx-auto max-w-4xl px-4 py-6">
-        <div className="md:hidden mb-4">
+        {/* <div className="md:hidden mb-4">
           <Button
             variant="ghost"
             size="sm"
@@ -171,13 +171,12 @@ export default function History() {
             <ArrowLeft className="h-4 w-4" />
             {t.common.back}
           </Button>
-        </div>
+        </div> */}
         <div className="mb-6">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 flex items-center gap-3">
             <ScrollText className="h-8 w-8 text-black" />
             {t.pages.history.title}
           </h1>
-
           <p className="text-gray-600">{t.pages.history.description}</p>
         </div>
         <Card className="mb-6">
@@ -221,70 +220,15 @@ export default function History() {
           {loading ? (
             <div className="text-center text-gray-400 py-8">{t.contacts.loading}</div>
           ) : filteredFines.length > 0 ? (
-            filteredFines.map(fine => {
-              const isSender = fine.sender_id === user?.id;
-              // Decide qué avatar y nombre mostrar
-              const avatarUrl = isSender
-                ? fine.recipient_avatar_url
-                : fine.sender_avatar_url;
-              const name = isSender
-                ? fine.recipient_name
-                : fine.sender_name;
-              return (
-                <div
-                  key={fine.id}
-                  className="flex items-stretch gap-2 rounded-lg bg-white/80 shadow-sm px-4 py-3 border"
-                >
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Avatar className="h-9 w-9">
-                        <AvatarImage
-                          src={avatarUrl || undefined}
-                          alt={name || "Avatar"}
-                        />
-                        <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
-                          {name?.charAt(0)?.toUpperCase() || "U"}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <div className="font-semibold">
-                          {isSender
-                            ? `A ${fine.recipient_name}`
-                            : `De ${fine.sender_name}`}
-                        </div>
-                        <span
-                          className={
-                            fine.status === "paid"
-                              ? "inline-block bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded font-semibold"
-                              : "inline-block bg-orange-100 text-orange-700 text-xs px-2 py-0.5 rounded font-semibold"
-                          }
-                        >
-                          {fine.status === "pending" ? t.pages.history.pending : t.pages.history.paid}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="text-gray-600 text-sm mb-1">{fine.reason}</div>
-                    <div className="text-gray-400 text-xs mb-2">
-                      {fine.date && new Date(fine.date).toLocaleDateString()}
-                    </div>
-                  </div>
-                  <div className="flex flex-col items-end justify-between">
-                    <div className="text-xl sm:text-2xl font-bold text-purple-700 mb-2">
-                      {fine.amount} CHF
-                    </div>
-                    {fine.recipient_id === user?.id && fine.status === "pending" && (
-                      <Button
-                        className="bg-green-500 hover:bg-green-600 text-white font-bold px-4"
-                        size="sm"
-                        onClick={() => handlePayFine(fine)}
-                      >
-                        {t.fines.pay}
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              );
-            })
+            filteredFines.map(fine => (
+              <FineCard
+                key={fine.id}
+                fine={fine}
+                userId={user?.id}
+                showPayButton={fine.recipient_id === user?.id && fine.status === "pending"}
+                onPay={() => handlePayFine(fine)}
+              />
+            ))
           ) : (
             <Card className="text-center py-12">
               <CardContent>

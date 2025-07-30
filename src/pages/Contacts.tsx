@@ -207,12 +207,12 @@ const filteredContacts = contacts
   const clearSearch = () => setSearch("");
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
+<div className="min-h-screen flex flex-col bg-gray-50">
       <Header />
       <div className="container mx-auto max-w-4xl px-4 py-6">
         {/* Botón volver para móviles */}
         <div className="md:hidden mb-4">
-          <Button
+          {/* <Button
             variant="ghost"
             size="sm"
             onClick={() => navigate(-1)}
@@ -220,7 +220,7 @@ const filteredContacts = contacts
           >
             <ArrowLeft className="h-4 w-4" />
             {t.common.back}
-          </Button>
+          </Button> */}
         </div>
 
         {/* Título y descripción */}
@@ -235,20 +235,28 @@ const filteredContacts = contacts
         {/* Barra de búsqueda y botón agregar */}
         <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <Button
-            className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
-            onClick={handleAddContact}
-          >
-            <UserPlus className="h-4 w-4 mr-2" />
-            {t.pages.contacts.addContact}
-          </Button>
+  onClick={handleAddContact}
+  className="w-full max-w-[320px] mx-auto flex items-center px-6 py-2 rounded-full bg-gradient-to-r from-[#72bfc4] to-[#57b8c9] shadow-md gap-4 mb-4"
+  style={{ minHeight: 48 }}
+>
+  <span className="flex items-center justify-center w-10 h-10 rounded-full bg-[#7fcad1]/60">
+    <UserPlus className="w-6 h-6 text-white" />
+  </span>
+  <span className="flex flex-col items-start leading-tight">
+    <span className="font-bold text-white text-base">
+      {t.pages.contacts.addContact}
+    </span>
+    
+  </span>
+</Button>
           <div className="relative w-full sm:w-72">
             <input
-              type="text"
-              className="border rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
-              placeholder={t.contacts.contactSearchPlaceholder}
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-            />
+  type="text"
+  className="border border-gray-200 bg-white rounded-full px-5 py-2 w-full focus:outline-none focus:ring-2 focus:ring-[#72bfc4] shadow-sm text-gray-700 placeholder-gray-400"
+  placeholder={t.contacts.contactSearchPlaceholder}
+  value={search}
+  onChange={e => setSearch(e.target.value)}
+/>
             {search && (
               <button
                 type="button"
@@ -275,61 +283,68 @@ const filteredContacts = contacts
               const avatar_url = avatarData.avatar_url || undefined;
               const nameToShow = avatarData.username || contact.name || avatarData.name || contact.email || "";
               return (
-                <Card key={contact.id} className="hover:shadow-md transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      <div className="flex items-center gap-4 flex-1">
-                        <Avatar className="h-12 w-12">
-                          <AvatarImage
-                            src={avatar_url}
-                            alt={nameToShow}
-                          />
-                          <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
-                            {nameToShow?.charAt(0)?.toUpperCase() || "U"}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-lg">{nameToShow}</h3>
-                          <Badge variant="secondary" className="mt-2 bg-green-100 text-green-800">
-                            {t.contacts.statusActive}
-                          </Badge>
-                        </div>
-                      </div>
-                      {/* Acciones: borrar a la izquierda, multa y retar a la derecha */}
-                      <div className="flex flex-row justify-between items-stretch w-full sm:w-auto sm:ml-4">
-                        {/* Botón borrar alineado a la izquierda */}
-                        <div className="flex items-center">
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            onClick={() => openDeleteContactModal(contact)}
-                            title={t.pages.contacts.deleteContact}
-                            className="w-8 h-8"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                        <div className="flex-1"></div>
-                        <div className="flex flex-col gap-2 items-end justify-end w-full max-w-[160px]">
-                          <Button
-                            size="sm"
-                            className="w-full bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600"
-                            onClick={() => handleFineContact(contact)}
-                          >
-                            {t.pages.contacts.fine}
-                          </Button>
-                          <Button
-                            size="sm"
-                            className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
-                            onClick={() => handleChallengeContact(contact)}
-                          >
-                            {t.contacts.challenge}
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+<Card key={contact.id} className="rounded-[32px] border border-gray-100 shadow-sm bg-white p-0 min-h-[88px] max-w-[320px] w-full mx-auto">
+  <CardContent className="p-6">
+    {/* Layout en dos filas */}
+    <div className="flex flex-col gap-2">
+      {/* Fila 1: avatar, nombre y estado */}
+      <div className="flex items-center gap-4 min-w-0">
+        <Avatar className="h-12 w-12">
+          <AvatarImage src={avatar_url} alt={nameToShow} />
+          <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
+            {nameToShow?.charAt(0)?.toUpperCase() || "U"}
+          </AvatarFallback>
+        </Avatar>
+        <div className="flex flex-col min-w-0 flex-1">
+          <h3 className="font-semibold text-lg truncate">{nameToShow}</h3>
+          <div className="flex items-center gap-2 mt-1">
+            <Badge variant="secondary" className="bg-green-100 text-green-800">
+              {t.contacts.statusActive}
+            </Badge>
+          </div>
+        </div>
+      </div>
+      {/* Fila 2: acciones abajo */}
+      <div className="flex flex-row mt-1 w-full">
+        {/* Botón borrar a la izquierda */}
+        <div className="flex flex-col justify-end items-start flex-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => openDeleteContactModal(contact)}
+            title={t.pages.contacts.deleteContact}
+            className="w-8 h-8 text-red-500"
+          >
+            <Trash2 className="h-5 w-5" />
+          </Button>
+        </div>
+        {/* Botones de acción a la derecha */}
+        <div className="flex flex-col gap-2 items-end" style={{ minWidth: 120 }}>
+          <Button
+            size="sm"
+            className="rounded-full bg-gradient-to-r from-red-500 to-pink-500 text-white font-semibold shadow w-full"
+            onClick={() => handleFineContact(contact)}
+            style={{ minHeight: 36 }}
+          >
+            {t.pages.contacts.fine}
+          </Button>
+          <Button
+            size="sm"
+            className="rounded-full bg-gradient-to-r from-[#915ec3] to-[#b07cd6] text-white font-semibold shadow w-full"
+            onClick={() => handleChallengeContact(contact)}
+            style={{ minHeight: 36 }}
+          >
+            {t.contacts.challenge}
+          </Button>
+        </div>
+      </div>
+    </div>
+  </CardContent>
+</Card>
+
+
+
+
               );
             })
           ) : (

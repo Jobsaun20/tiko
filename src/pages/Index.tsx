@@ -34,6 +34,8 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import { useChallenges } from "@/hooks/useChallenges";
 import { ScrollText, Zap } from "lucide-react";
+import { FineCard } from "@/components/FineCard"; // Ajusta la ruta si es distinta
+
 
 
 
@@ -46,15 +48,15 @@ function Footer() {
     <footer
       className="
         w-full
-        bg-white/70
+        bg-gray-50
         border-t
         border-gray-200
         text-xs
         text-gray-500
         text-center
         py-1.5
-        backdrop-blur
-        shadow-sm
+        
+        
         mx-auto
         mt-8
       "
@@ -580,7 +582,7 @@ const pendingFinesToPay = finesList.filter(
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-50 to-pink-50">
+<div className="min-h-screen flex flex-col bg-gray-50">
       <Header />
       {/* Banner y modal teléfono */}
       {needsPhone && (
@@ -656,63 +658,43 @@ const pendingFinesToPay = finesList.filter(
           </div>
 
           {/* Última multa recibida o mensaje */}
-          {pendingFinesToPay.length > 0 ? (
-  // Solo se muestra la multa pendiente más reciente (por fecha)
-  <Card className="border-orange-200 bg-gradient-to-r from-orange-50 to-yellow-50">
-    <CardHeader>
-      <CardTitle className="text-lg text-orange-800">{t.index.lastFineRecived}</CardTitle>
-    </CardHeader>
-    <CardContent>
-      <div className="flex flex-row items-stretch gap-2">
-        {/* Info multa */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-3 mb-2">
-            <Avatar className="h-10 w-10">
-              <AvatarImage
-                src={pendingFinesToPay[0].sender_avatar_url || undefined}
-                alt={pendingFinesToPay[0].sender_name || "Avatar"}
-              />
-              <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold text-xl">
-                {pendingFinesToPay[0]?.sender_name?.charAt(0)?.toUpperCase() || "U"}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <div className="font-semibold">{t.index.de} {pendingFinesToPay[0].sender_name}</div>
-              <span className="inline-block bg-orange-100 text-orange-700 text-xs px-2 py-0.5 rounded font-semibold">
-                {t.index.pendent}
-              </span>
-            </div>
-          </div>
-          <div className="text-gray-600 text-sm mb-1">{pendingFinesToPay[0].reason}</div>
-          <div className="text-gray-400 text-xs mb-2">
-            {pendingFinesToPay[0].date ? new Date(pendingFinesToPay[0].date).toLocaleDateString() : ""}
-          </div>
-        </div>
-        {/* Precio y botón alineados a la derecha */}
-        <div className="flex flex-col items-end justify-between">
-          <div className="text-2xl font-bold text-purple-700 mb-2">{pendingFinesToPay[0].amount} CHF</div>
-          <Button
-            className="bg-green-500 hover:bg-green-600 text-white font-bold px-5"
-            onClick={() => handlePayFine(pendingFinesToPay[0])}
-          >
-            {t.fines.pay}
-          </Button>
-        </div>
+         {pendingFinesToPay.length > 0 ? (
+  <div className="flex justify-center my-2">
+    <div className="w-full max-w-md">
+      <Card className="w-full max-w-[320px] mx-auto border-0 rounded-2xl shadow bg-gradient-to-r from-orange-50 to-yellow-50">
+        <CardHeader className="pb-2 pt-2">
+          <CardTitle className="text-base text-orange-800 font-semibold">
+            {t.index.lastFineRecived}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="pb-3 pt-0">
+          <FineCard
+            fine={pendingFinesToPay[0]}
+            userId={userId}
+            showPayButton={pendingFinesToPay[0].status === "pending"}
+            onPay={() => handlePayFine(pendingFinesToPay[0])}
+          />
+        </CardContent>
+      </Card>
       </div>
-    </CardContent>
-  </Card>
+  </div>
 ) : (
   // Card verde "Congratulations" si no hay multas pendientes de pago
-  <Card className="border-green-200 bg-gradient-to-r from-green-50 to-emerald-50">
-    <CardContent className="px-2 py-1 text-center flex flex-col items-center">
-      <CheckCircle className="h-6 w-6 mx-auto text-green-600 mb-1" />
-      <h3 className="text-base font-bold text-green-800 mb-0 flex items-center justify-center gap-2">
-        {t.index.congrats} <span className="text-xs">🎉</span>
-      </h3>
-      <p className="text-green-700 text-xs mb-0">{t.index.noPendentFines}</p>
-    </CardContent>
-  </Card>
-)}   
+  <div className="flex justify-center my-2">
+    <div className="w-full max-w-md">
+      <Card className="border-0 rounded-2xl shadow bg-gradient-to-r from-green-50 to-emerald-50">
+        <CardContent className="py-4 text-center flex flex-col items-center">
+          <CheckCircle className="h-6 w-6 mx-auto text-green-600 mb-1" />
+          <h3 className="text-base font-bold text-green-800 mb-0 flex items-center justify-center gap-2">
+            {t.index.congrats} <span className="text-xs">🎉</span>
+          </h3>
+          <p className="text-green-700 text-xs mb-0">{t.index.noPendentFines}</p>
+        </CardContent>
+      </Card>
+    </div>
+  </div>
+)}
+  
 
           {/* Stats Cards */}
           <MultasRetosSection

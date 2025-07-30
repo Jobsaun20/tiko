@@ -114,7 +114,9 @@ challengeCard: {
   deleteChallenge: "Elimina sfida",
   challengeNotCompleted: "Non hai completato la sfida: {title}",
 newFineRecived: "Nuova multa ricevuta",
-fineReceivedBody: "Hai ricevuto una multa da {{sender}} di {{amount}} CHF. Motivo: {{reason}}"
+fineReceivedBody: "Hai ricevuto una multa da {{sender}} di {{amount}} CHF. Motivo: {{reason}}",
+progress: "completati",
+
 
 },
 
@@ -374,6 +376,10 @@ requestRejected: "Hai rifiutato la richiesta di contatto.",
     createGroupToStart: "Crea un gruppo per iniziare",
     confirmDeleteTitle: "Eliminare il gruppo?",
 confirmDeleteDescription: "Sei sicuro di voler eliminare il gruppo? Questa azione non può essere annullata.",
+edit: "Modifica",
+delete: "Elimina",
+leave: "Lascia il gruppo",
+
   },
 
   // History Page
@@ -387,6 +393,8 @@ confirmDeleteDescription: "Sei sicuro di voler eliminare il gruppo? Questa azion
     xpGained: "Hai guadagnato esperienza!",
     xpGainedDescription1: "Hai guadagnato",
     xpGainedDescription2: "XP per la tua azione.",
+    searchPlaceholder: "Cerca multe per nome o descrizione", // Italiano
+
   },
 
   // Navigation & Actions
@@ -442,7 +450,11 @@ confirmDeleteDescription: "Sei sicuro di voler eliminare il gruppo? Questa azion
     finePaid: "Multa pagata!",
     noReceived: "Non hai multe ricevute",
     noSent: "Non hai ancora inviato multe",
-    phone: "Telefono"
+    phone: "Telefono",
+received: "ricevuta",
+sent: "inviata",
+created: "creata",
+
   },
 
   // Create Fine Modal

@@ -69,7 +69,8 @@ export default function MyQR() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
+    <div className="min-h-screen flex flex-col bg-gray-50">
+
       <Header  />
       
       <div className="container mx-auto max-w-2xl px-4 py-6">

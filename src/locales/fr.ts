@@ -114,7 +114,9 @@ challengeCard: {
   deleteChallenge: "Supprimer le défi",
   challengeNotCompleted: "Tu n'as pas terminé le défi : {title}",
 newFineRecived: "Nouvelle amende reçue",
-fineReceivedBody: "Vous avez reçu une amende de {{sender}} pour {{amount}} CHF. Motif : {{reason}}"
+fineReceivedBody: "Vous avez reçu une amende de {{sender}} pour {{amount}} CHF. Motif : {{reason}}",
+progress: "terminés",
+
 
 },
 
@@ -373,6 +375,10 @@ requestRejected: "Vous avez refusé la demande de contact.",
     createGroupToStart: "Crée un groupe pour commencer",
     confirmDeleteTitle: "Supprimer le groupe ?",
 confirmDeleteDescription: "Êtes-vous sûr de vouloir supprimer le groupe ? Cette action ne peut pas être annulée.",
+edit: "Modifier",
+delete: "Supprimer",
+leave: "Quitter le groupe",
+
   },
 
   // History Page
@@ -386,6 +392,8 @@ confirmDeleteDescription: "Êtes-vous sûr de vouloir supprimer le groupe ? Cet
     xpGained: "Tu as gagné de l’expérience !",
     xpGainedDescription1: "Tu as gagné",
     xpGainedDescription2: "XP pour ton action.",
+    searchPlaceholder: "Rechercher des amendes par nom ou description", // Francés
+
   },
 
   // Navigation & Actions
@@ -441,7 +449,11 @@ confirmDeleteDescription: "Êtes-vous sûr de vouloir supprimer le groupe ? Cet
     finePaid: "Amende payée !",
     noReceived: "Tu n’as pas d’amendes reçues",
     noSent: "Tu n’as encore envoyé aucune amende",
-    phone: "Téléphone"
+    phone: "Téléphone",
+received: "reçue",
+sent: "envoyée",
+created: "créée",
+
   },
 
   // Create Fine Modal

@@ -116,7 +116,8 @@ challengeCard: {
   deleteChallenge: "Delete challenge",
   challengeNotCompleted: "You did not complete the challenge: {title}",
 newFineRecived: "New fine received",
-fineReceivedBody: "You have received a fine from {{sender}} for {{amount}} CHF. Reason: {{reason}}"
+fineReceivedBody: "You have received a fine from {{sender}} for {{amount}} CHF. Reason: {{reason}}",
+progress: "completed",
 
 },
 
@@ -376,6 +377,9 @@ requestRejected: "You have rejected the contact request.",
     createGroupToStart: "Create a group to get started",
  confirmDeleteTitle: "Delete group?",
 confirmDeleteDescription: "Are you sure you want to delete the group? This action cannot be undone.",
+edit: "Edit",
+delete: "Delete",
+leave: "Leave group",
 
 
   },
@@ -391,6 +395,8 @@ confirmDeleteDescription: "Are you sure you want to delete the group? This actio
     xpGained: "You've gained experience!",
     xpGainedDescription1: "You've gained",
     xpGainedDescription2: "XP for your action.",
+    searchPlaceholder: "Search fines by name or description",    // Inglés
+
   },
 
   // Navigation & Actions
@@ -446,7 +452,12 @@ confirmDeleteDescription: "Are you sure you want to delete the group? This actio
     finePaid: "Fine paid!",
     noReceived: "You have no received fines",
     noSent: "You haven't sent any fines yet",
-    phone: "Phone"
+    
+    phone: "Phone",
+received: "received",
+sent: "sent",
+created: "created",
+
   },
   
   // Create Fine Modal

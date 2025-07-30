@@ -204,7 +204,8 @@ export default function Profile() {
   if (loading) return <div className="text-center py-16">{t.contacts.loading}</div>;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
+    <div className="min-h-screen flex flex-col bg-gray-50">
+
       <Header />
       <div className="container mx-auto px-4 py-6 max-w-4xl space-y-6">
 

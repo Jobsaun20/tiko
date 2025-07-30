@@ -104,12 +104,12 @@ export default function ChallengesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
+<div className="min-h-screen flex flex-col bg-gray-50">
       <Header />
       <div className="container mx-auto max-w-4xl px-4 py-6">
         {/* Botón volver para móviles */}
         <div className="md:hidden mb-4">
-          <Button
+          {/* <Button
             variant="ghost"
             size="sm"
             onClick={() => navigate(-1)}
@@ -117,7 +117,7 @@ export default function ChallengesPage() {
           >
             <ArrowLeft className="h-4 w-4" />
             {t.challenges.back}
-          </Button>
+          </Button> */}
         </div>
         {/* Título e icono */}
         <div className="mb-6">
@@ -168,33 +168,37 @@ export default function ChallengesPage() {
         </div>
         {/* Barra de búsqueda y botón crear */}
         <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <Button
-            className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white"
-            onClick={() => setModalOpen(true)}
-          >
-            <Trophy className="h-4 w-4 mr-2" />
-            {t.challenges.createChallenge}
-          </Button>
-          <div className="relative w-full sm:w-72">
-            <input
-              type="text"
-              className="border rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
-              placeholder={t.challenges.searchChallengePlaceholder}
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-            />
-            {search && (
-              <button
-                type="button"
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 focus:outline-none"
-                onClick={clearSearch}
-                tabIndex={-1}
-              >
-                <X className="w-5 h-5" />
-              </button>
-            )}
-          </div>
-        </div>
+  {/* Botón morado redondeado */}
+  <Button
+    className="bg-[#A259E6] hover:bg-[#8b41cc] text-white font-semibold px-8 py-2 rounded-full shadow-md flex items-center gap-2 text-base transition-all"
+    onClick={() => setModalOpen(true)}
+  >
+    <span className="text-lg font-bold">+</span>
+    {t.challenges.createChallenge}
+  </Button>
+  
+  {/* Barra de búsqueda redondeada */}
+  <div className="relative w-full sm:w-72">
+    <input
+      type="text"
+      className="border border-gray-300 rounded-full px-5 py-2 w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A259E6] text-base"
+      placeholder={t.challenges.searchChallengePlaceholder}
+      value={search}
+      onChange={e => setSearch(e.target.value)}
+    />
+    {search && (
+      <button
+        type="button"
+        className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 focus:outline-none"
+        onClick={clearSearch}
+        tabIndex={-1}
+      >
+        <X className="w-5 h-5" />
+      </button>
+    )}
+  </div>
+</div>
+
         <CreateChallengeModal
           isOpen={modalOpen}
           onClose={() => setModalOpen(false)}

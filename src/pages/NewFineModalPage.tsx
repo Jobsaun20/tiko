@@ -185,13 +185,13 @@ export default function ContactsModalPage() {
           </div>
           <div className="relative">
             <input
-              type="text"
-              className="border rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm sm:text-base"
-              placeholder={t.contacts.contactSearchPlaceholder}
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              autoFocus
-            />
+  type="text"
+  className="border rounded-full px-5 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm sm:text-base shadow"
+  placeholder={t.contacts.contactSearchPlaceholder}
+  value={search}
+  onChange={e => setSearch(e.target.value)}
+  autoFocus
+/>
             {search && (
               <button
                 type="button"
@@ -206,62 +206,57 @@ export default function ContactsModalPage() {
         </div>
 
         {/* Lista de contactos filtrada */}
-        <div className="px-2 sm:px-6 pb-4 sm:pb-6 max-h-[70vh] overflow-y-auto space-y-3 sm:space-y-4">
+        <div className="space-y-4 px-2 sm:px-6">
           {loading ? (
             <div className="text-center text-gray-400 py-8">{t.contacts.loading}</div>
-          ) : uniqueFilteredContacts.length > 0 ? (
-            uniqueFilteredContacts.map((contact) => {
-              // Datos avatar desde avatarsMap
-              const avatar_url = avatarsMap?.[contact.user_supabase_id]?.avatar_url || undefined;
-              const name = avatarsMap?.[contact.user_supabase_id]?.name || contact.name || "";
-
+          ) : filteredContacts.length > 0 ? (
+            filteredContacts.map((contact) => {
+              const avatarData = avatarsMap[contact.user_supabase_id] as { avatar_url?: string; name?: string; username?: string } || {};
+              const avatar_url = avatarData.avatar_url || undefined;
+              const nameToShow = avatarData.username || contact.name || avatarData.name || contact.email || "";
               return (
-                <Card key={contact.id} className="hover:shadow-md transition-shadow">
-                  <CardContent className="p-3 sm:p-4">
-                    <div className="flex items-center gap-2 sm:gap-4">
-                      <Avatar className="h-10 w-10 sm:h-12 sm:w-12">
-                        <AvatarImage src={avatar_url} alt={name} />
-                        <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
-                          {name?.charAt(0)?.toUpperCase() || "U"}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-base sm:text-lg truncate">{name}</h3>
-                        {/* <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-gray-600 mt-1">
-                          <div className="flex items-center gap-1">
-                            <Mail className="h-4 w-4" />
-                            <span className="truncate">{contact.email}</span>
-                          </div>
-                          {contact.phone && (
-                            <div className="flex items-center gap-1">
-                              <Phone className="h-4 w-4" />
-                              <span>{contact.phone}</span>
-                            </div>
-                          )}
-                        </div> */}
-                        <Badge variant="secondary" className="mt-2 bg-green-100 text-green-800">
-                          Activo
-                        </Badge>
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <Button
-                          size="sm"
-                          className="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600"
-                          onClick={() => handleFineContact(contact)}
-                        >
-                          {t.pages.contacts.fine}
-                        </Button>
-                        <Button
-                          size="sm"
-                          className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
-                          onClick={() => handleChallengeContact(contact)}
-                        >
-                          {t.contacts.challenge}
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                <Card
+        key={contact.id}
+        className="rounded-[24px] border border-gray-100 shadow bg-white px-3 py-2 flex items-center min-h-[64px] max-w-[320px] mx-auto"
+        style={{ marginBottom: 8 }}
+      >
+  <div className="flex items-center w-full">
+    {/* Avatar y nombre */}
+    <Avatar className="h-9 w-9 mr-2">
+      <AvatarImage src={avatar_url} alt={nameToShow} />
+      <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
+        {nameToShow?.charAt(0)?.toUpperCase() || "U"}
+      </AvatarFallback>
+    </Avatar>
+    <div className="flex-1 min-w-0">
+      <h3 className="font-semibold text-base truncate">{nameToShow}</h3>
+      <div className="flex items-center gap-2 mt-1">
+        <Badge className="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full">
+          {t.contacts.statusActive}
+        </Badge>
+      </div>
+    </div>
+    {/* Botones de acción pegados a la derecha */}
+    <div className="flex flex-col gap-2 items-end w-full max-w-[150px]">
+  <Button
+    size="sm"
+    className="rounded-full bg-gradient-to-r from-red-500 to-pink-500 text-white font-semibold shadow w-full"
+    onClick={() => handleFineContact(contact)}
+  >
+    {t.pages.contacts.fine}
+  </Button>
+  <Button
+    size="sm"
+    className="rounded-full bg-gradient-to-r from-[#915ec3] to-[#b07cd6] text-white font-semibold shadow w-full"
+    onClick={() => handleChallengeContact(contact)}
+  >
+    {t.contacts.challenge}
+  </Button>
+</div>
+
+  </div>
+</Card>
+
               );
             })
           ) : (

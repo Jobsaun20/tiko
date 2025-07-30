@@ -1,15 +1,16 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Fine } from "@/types/Fine";
+import { ScrollText, Clock, Send } from "lucide-react";
+import { useGroups } from "@/hooks/useGroups";
 
 interface FineCardProps {
   fine: Fine;
   onPay?: () => void;
   showPayButton?: boolean;
-  userId?: string; // ID del usuario actual para lógica contextual
+  userId?: string;
 }
 
 export const FineCard = ({
@@ -19,89 +20,144 @@ export const FineCard = ({
   userId,
 }: FineCardProps) => {
   const { t } = useLanguage();
+  const { groups } = useGroups();
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString();
-  };
+  // Grupo
+  const group = groups?.find((g) => g.id === fine.group_id);
+  const displayGroup = group?.name || "";
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "paid":
-        return "bg-green-100 text-green-800";
-      case "pending":
-        return "bg-orange-100 text-orange-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-
-  const getTypeColor = () => {
-    if (userId) {
-      if (fine.sender_id === userId) return "border-l-blue-500";
-      if (fine.recipient_id === userId) return "border-l-purple-500";
-    }
-    return "border-l-gray-500";
-  };
-
-  // Lógica de nombre a mostrar: "Para X" si tú eres el que envía, "De X" si eres el que recibe
+  // Datos visuales
   const isSent = userId && fine.sender_id === userId;
-  const displayUser = isSent
-    ? `${t.fines.to} ${fine.recipient_name}`
-    : `${t.fines.from} ${fine.sender_name}`;
+  const displayUser = isSent ? fine.recipient_name : fine.sender_name;
+  const avatarInitial = displayUser?.charAt(0)?.toUpperCase() || "U";
+  const avatarUrl = isSent ? fine.recipient_avatar_url : fine.sender_avatar_url; // si tienes avatar_url en tus multas
+  const reason = fine.reason;
 
-  // Inicial del nombre para el avatar
-  const avatarInitial = isSent
-    ? fine.recipient_name?.charAt(0)?.toUpperCase() || "U"
-    : fine.sender_name?.charAt(0)?.toUpperCase() || "U";
+  // Formato importe y fecha
+  const amount = `${fine.amount?.toFixed(2)} ${t.common.currency}`;
+  const date = fine.date;
+  const dateLabel = t.fines.created;
 
-  // Mostrar teléfono solo si eres receptor y existe sender_phone
-  const showSenderPhone = !isSent && !!fine.sender_phone;
+  // Estado (Ausstehend/Pagada)
+  const getStatusBadge = () => {
+    if (fine.status === "pending") {
+      return (
+        <span className="flex items-center gap-1 bg-orange-50 text-orange-700 border border-orange-100 rounded-lg px-2 py-[2px] text-xs font-medium">
+          <Clock className="w-4 h-4" />
+          {t.fines.pending}
+        </span>
+      );
+    }
+    if (fine.status === "paid") {
+      return (
+        <span className="flex items-center gap-1 bg-green-50 text-green-700 border border-green-100 rounded-lg px-2 py-[2px] text-xs font-medium">
+          <Clock className="w-4 h-4" />
+          {t.fines.paid}
+        </span>
+      );
+    }
+    return (
+      <span className="flex items-center gap-1 bg-gray-100 text-gray-700 border border-gray-200 rounded-lg px-2 py-[2px] text-xs font-medium">
+        <Clock className="w-4 h-4" />
+        {fine.status}
+      </span>
+    );
+  };
+
+  // Enviada / Recibida en gris debajo del precio
+  const getTypeBadge = () => {
+    if (!userId) return null;
+    if (fine.sender_id === userId)
+      return (
+        <span className="bg-gray-100 text-gray-600 px-2 py-[2px] text-xs rounded-full font-semibold mt-1 inline-block">
+          {t.fines.sent}
+        </span>
+      );
+    if (fine.recipient_id === userId)
+      return (
+        <span className="bg-gray-100 text-gray-600 px-2 py-[2px] text-xs rounded-full font-semibold mt-1 inline-block">
+          {t.fines.received}
+        </span>
+      );
+    return null;
+  };
 
   return (
-    <Card className={`border-l-4 ${getTypeColor()} hover:shadow-md transition-shadow`}>
-      <CardContent className="p-4">
-        <div className="flex items-start justify-between">
-          <div className="flex items-start gap-3 flex-1">
-            <Avatar className="h-10 w-10">
-              <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
-                {avatarInitial}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1 min-w-0">
+  <Card className="w-full max-w-[320px] mx-auto rounded-2xl bg-white shadow-lg hover:shadow-2xl transition-shadow border border-gray-100">
+      <CardContent className="flex gap-3 px-4 py-3">
+        {/* ICONO MULTA */}
+        <div className="flex flex-col items-center pt-1">
+          <span
+            className={
+              "inline-flex items-center justify-center rounded-xl bg-pink-50 w-11 h-11 mt-1"
+            }
+          >
+            {isSent ? (
+              <Send className="w-7 h-7 text-red-400" />
+            ) : (
+              <ScrollText className="w-7 h-7 text-red-400" />
+            )}
+          </span>
+        </div>
+
+        {/* INFO PRINCIPAL */}
+        <div className="flex-1 min-w-0 flex flex-col justify-between">
+          {/* ARRIBA: Razón y cantidad */}
+          <div className="flex justify-between items-start w-full gap-2">
+            <div className="flex flex-col min-w-0 flex-1">
+              <span className="text-[15px] sm:text-base font-semibold text-gray-800 mb-1 break-words whitespace-pre-line leading-snug">
+                {reason}
+              </span>
+              {/* NOMBRE y GRUPO */}
               <div className="flex items-center gap-2 mb-1">
-                <h4 className="font-semibold text-gray-800 truncate">
-                  {displayUser}
-                </h4>
-                <Badge variant="secondary" className={getStatusColor(fine.status)}>
-                  {fine.status === "paid" ? t.fines.paid : t.fines.pending}
-                </Badge>
-              </div>
-              {/* Teléfono del emisor SOLO si eres el receptor y existe */}
-              {/* {showSenderPhone && (
-                <div className="flex items-center gap-1 mb-1 text-xs text-gray-700">
-                  <span className="font-semibold">{t.fines.phone}:</span>
-                  <span>{fine.sender_phone}</span>
-                </div>
-              )} */}
-              <p className="text-gray-600 text-sm mb-2">{fine.reason}</p>
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-gray-500">{formatDate(fine.date)}</span>
-                <span className="font-bold text-lg text-purple-700">
-                  {fine.amount} {t.common.currency}
-                </span>
+                <Avatar className="h-7 w-7 text-xs">
+                  {/* AvatarImage si tienes URL, si no muestra fallback */}
+                  {avatarUrl && (
+                    <AvatarImage src={avatarUrl} alt={displayUser} />
+                  )}
+                  <AvatarFallback className="bg-[#52AEB9] text-white font-semibold">
+                    {avatarInitial}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="text-xs font-medium text-gray-700">{displayUser}</span>
+                {displayGroup && (
+                  <>
+                    <span className="mx-1 text-xs text-gray-400 font-normal">·</span>
+                    <span className="text-xs text-gray-400 font-normal">{displayGroup}</span>
+                  </>
+                )}
               </div>
             </div>
+            {/* IMPORTE */}
+            <div className="flex flex-col items-end min-w-fit ml-2">
+              <span className="text-lg font-bold text-gray-900 leading-none mb-0" style={{ whiteSpace: "nowrap" }}>
+                {amount}
+              </span>
+              {getTypeBadge()}
+            </div>
           </div>
-          {showPayButton && (
-            <Button
-              onClick={onPay}
-              size="sm"
-              className="ml-4 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white"
-            >
-              {t.fines.pay}
-            </Button>
-          )}
+
+          {/* ABAJO: Estado, fecha y botón */}
+          <div className="flex justify-between items-end mt-2">
+            <div className="flex flex-col items-start">
+              {/* Estado (ausstehend/pagada) */}
+              {getStatusBadge()}
+              {/* Fecha */}
+              <span className="text-[12px] text-gray-400 mt-1">
+                {dateLabel}: {date && new Date(date).toLocaleDateString()}
+              </span>
+            </div>
+            {/* Botón pagar */}
+            {showPayButton && fine.status === "pending" && (
+              <Button
+                onClick={onPay}
+                size="sm"
+                className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-4 py-1.5 rounded-full text-xs font-semibold shadow ml-2"
+              >
+                {t.fines.pay}
+              </Button>
+            )}
+          </div>
         </div>
       </CardContent>
     </Card>

@@ -115,7 +115,9 @@ challengeCard: {
   deleteChallenge: "Challenge löschen",
   challengeNotCompleted: "Du hast die Herausforderung nicht abgeschlossen: {title}",
 newFineRecived: "Neue Strafe erhalten",
-fineReceivedBody: "Du hast eine Strafe von {{sender}} über {{amount}} CHF erhalten. Grund: {{reason}}"
+fineReceivedBody: "Du hast eine Strafe von {{sender}} über {{amount}} CHF erhalten. Grund: {{reason}}",
+progress: "abgeschlossen",
+
 
 },
 
@@ -372,6 +374,10 @@ requestRejected: "Du hast die Kontaktanfrage abgelehnt.",
     createGroupToStart: "Erstelle eine Gruppe, um zu beginnen",
     confirmDeleteTitle: "Gruppe löschen?",
 confirmDeleteDescription: "Bist du sicher, dass du die Gruppe löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden.",
+edit: "Bearbeiten",
+delete: "Löschen",
+leave: "Gruppe verlassen",
+
   },
 
   // History Page
@@ -385,6 +391,8 @@ confirmDeleteDescription: "Bist du sicher, dass du die Gruppe löschen möchtest
     xpGained: "Erfahrungspunkte erhalten!",
     xpGainedDescription1: "Du hast",
     xpGainedDescription2: "XP für deine Aktion bekommen.",
+    searchPlaceholder: "Strafen nach Name oder Beschreibung suchen", // Alemán
+
   },
 
   // Navigation & Actions
@@ -440,7 +448,11 @@ confirmDeleteDescription: "Bist du sicher, dass du die Gruppe löschen möchtest
     finePaid: "Strafe bezahlt!",
     noReceived: "Keine Strafen erhalten",
     noSent: "Noch keine Strafe gesendet",
-    phone: "Telefon"
+    phone: "Telefon",
+received: "erhalten",
+sent: "gesendet",
+created: "erstellt",
+
   },
 
   // Create Fine Modal

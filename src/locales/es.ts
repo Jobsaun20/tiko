@@ -119,7 +119,7 @@ challengeCard: {
   challengeNotCompleted:"No completaste el reto: {title}",
   newFineRecived:"Nueva multa recibida",
   fineReceivedBody: "Has recibido una multa de  por {{amount}} CHF. Motivo: {{reason}}",
-
+progress:"completados",
 },
 
 
@@ -382,6 +382,10 @@ requestRejected:"Has rechazado la solicitud de contacto."
     createGroupToStart: "Crea un grupo para empezar",
     confirmDeleteTitle: "¿Eliminar grupo?",
     confirmDeleteDescription: "¿Estás seguro de que deseas eliminar el grupo? Esta acción no se puede deshacer.",
+  edit:"Editar",
+  delete:"Borrar",
+leave:"Salir del grupo",
+  
   },
 
 // History Page
@@ -395,6 +399,7 @@ requestRejected:"Has rechazado la solicitud de contacto."
     xpGained: "¡Has ganado experiencia!",
     xpGainedDescription1: "Has ganado",
     xpGainedDescription2: "XP por tu acción.",
+    searchPlaceholder:"Buscar Multas por nombre o descripcion",
   },
 
   // Navigation & Actions
@@ -450,7 +455,10 @@ requestRejected:"Has rechazado la solicitud de contacto."
     finePaid: "¡Multa pagada!",
     noReceived: "No tienes multas recibidas",
     noSent: "Aún no has enviado ninguna multa",
-    phone: "Teléfono"
+    phone: "Teléfono",
+    received:"recibida",
+    sent:"enviada",
+    created:"creada",
   },
   
   // Create Fine Modal

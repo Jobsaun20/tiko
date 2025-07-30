@@ -2,9 +2,8 @@ import { useState } from "react";
 import { supabase } from "@/supabaseClient";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import {
   Users,
   Plus,
@@ -14,6 +13,7 @@ import {
   Edit,
   UserMinus,
   Hourglass,
+  MoreVertical,
 } from "lucide-react";
 import { Header } from "@/components/Header";
 import { CreateGroupModal } from "@/components/CreateGroupModal";
@@ -27,13 +27,8 @@ import { EditGroupModal } from "@/contexts/EditGroupModal";
 import { GroupRulesModal } from "@/components/GroupRulesModal";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CreateFineModal } from "@/components/CreateFineModal";
-
-// BADGES
 import { useBadgeModal } from "@/contexts/BadgeModalContext";
-import { checkAndAwardBadge } from "@/utils/checkAndAwardBadge";
 import { useAuthContext } from "@/contexts/AuthContext";
-
-// AlertDialog para la confirmación de eliminación
 import {
   AlertDialog,
   AlertDialogAction,
@@ -45,10 +40,6 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-// Fallback por si no hay avatar (URL o base64)
-const DEFAULT_GROUP_AVATAR = "https://ui-avatars.com/api/?background=6552F5&color=fff&name=GR";
-
-// URL de tu edge function badges (usa la misma que en Contacts)
 const CHECK_BADGES_URL = "https://pyecpkccpfeuittnccat.supabase.co/functions/v1/check_badges";
 
 export default function Groups() {
@@ -70,22 +61,16 @@ export default function Groups() {
   const { profile: user } = useUserProfile();
   const { contacts } = useContacts();
 
-  // Modales y popovers
   const [isCreateGroupModalOpen, setIsCreateGroupModalOpen] = useState(false);
   const [editGroupData, setEditGroupData] = useState<any>(null);
   const [openRulesGroupId, setOpenRulesGroupId] = useState<string | null>(null);
-
-  // Para agregar miembro desde edición
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
-
-  // Popover y multa
   const [selectedPopover, setSelectedPopover] = useState<{ userId: string, groupId: string } | null>(null);
   const [isCreateFineModalOpen, setIsCreateFineModalOpen] = useState(false);
   const [selectedContact, setSelectedContact] = useState<any>(null);
-
-  // Grupo pendiente de eliminar (para mostrar el AlertDialog)
   const [groupToDelete, setGroupToDelete] = useState<any>(null);
+  const [openOptionsPopoverId, setOpenOptionsPopoverId] = useState<string | null>(null);
 
   // Modal handlers
   const handleCreateGroup = () => setIsCreateGroupModalOpen(true);
@@ -97,7 +82,6 @@ export default function Groups() {
       return;
     }
     try {
-      // 1. Crear grupo
       const newGroup = await addGroup({
         name: groupData.name,
         description: groupData.description,
@@ -109,7 +93,6 @@ export default function Groups() {
         description: `${t.groups.theGroup} "${groupData.name}" ${t.groups.createdSuccessfully}`,
       });
 
-      // --- Chequear insignias Edge Function ---
       if (userAuth && session?.access_token && newGroup) {
         const response = await fetch(CHECK_BADGES_URL, {
           method: "POST",
@@ -119,7 +102,7 @@ export default function Groups() {
           },
           body: JSON.stringify({
             user_id: userAuth.id,
-            action: "group_create", // tu key de badge para crear grupo
+            action: "group_create",
             action_data: {
               group_id: newGroup.id,
               lang: language || "es",
@@ -135,6 +118,7 @@ export default function Groups() {
       toast({ title: "Error", description: err.message, variant: "destructive" });
     }
   };
+
   const handleLeaveGroup = async (groupId: string) => {
     try {
       await leaveGroup(groupId);
@@ -147,7 +131,6 @@ export default function Groups() {
     }
   };
 
-  // Solo elimina si se confirma en el AlertDialog
   const handleDeleteGroup = async (groupId: string) => {
     try {
       await deleteGroup(groupId);
@@ -188,17 +171,15 @@ export default function Groups() {
     }
   };
 
-  // BADGE: AGREGAR MIEMBRO
   const handleSubmitAddMember = async (selectedUserId: string) => {
     if (!selectedGroupId) return;
     try {
-      const result = await addMemberToGroup(selectedGroupId, selectedUserId, "member");
+      await addMemberToGroup(selectedGroupId, selectedUserId, "member");
       toast({
         title: t.groups.memberAdded,
         description: t.groups.memberAddedDescription,
       });
 
-      // Chequear badge por añadir miembro
       if (userAuth && session?.access_token) {
         const response = await fetch(CHECK_BADGES_URL, {
           method: "POST",
@@ -208,7 +189,7 @@ export default function Groups() {
           },
           body: JSON.stringify({
             user_id: userAuth.id,
-            action: "add_group_member", // tu key de badge para añadir miembro
+            action: "add_group_member",
             action_data: {
               group_id: selectedGroupId,
               new_member_id: selectedUserId,
@@ -229,22 +210,18 @@ export default function Groups() {
     setSelectedGroupId(null);
   };
 
-  // Agregar miembro desde edición
   const handleAddMember = (groupId: string) => {
     setSelectedGroupId(groupId);
     setShowAddMemberModal(true);
   };
 
-  // Encuentra el contacto real (user_supabase_id debe coincidir con el id del miembro)
   const getContactFromMember = (member: any) =>
     contacts.find((c: any) => c.user_supabase_id === member.id);
 
-  // Popover handlers usando userId+groupId
   const handleOpenSendFinePopover = (member: any, group: any) =>
     setSelectedPopover({ userId: member.id, groupId: group.id });
   const handleCloseSendFinePopover = () => setSelectedPopover(null);
 
-  // Abre el modal de multa
   const handleSendFine = (member: any, group: any) => {
     const contact = getContactFromMember(member);
     if (!contact) {
@@ -255,30 +232,27 @@ export default function Groups() {
       });
       return;
     }
-    setSelectedContact({ ...contact, group }); // Incluimos el grupo para el onSubmit
+    setSelectedContact({ ...contact, group });
     setIsCreateFineModalOpen(true);
   };
 
-  // CREAR LA MULTA REALMENTE EN SUPABASE (asegúrate recipient_id es el user_supabase_id)
   const handleCreateFine = async (fine: any) => {
     if (!selectedContact?.group?.id) {
       toast({ title: "Error", description: t.groups.groupNotFound, variant: "destructive" });
       return;
     }
-    // recipient_id debe ser siempre el user_supabase_id
     const recipientUserId = selectedContact.user_supabase_id;
     if (!recipientUserId) {
       toast({ title: "Error", description: t.groups.notDeterminedUser, variant: "destructive" });
       return;
     }
-    // --- OJO: Aquí agregamos el número de teléfono del emisor
     const senderPhone = user?.phone || "";
     const { error } = await supabase.from("fines").insert([
       {
         ...fine,
         group_id: selectedContact.group.id,
         sender_id: user?.id,
-        sender_phone: senderPhone,   // <<--- ESTA LÍNEA AGREGA EL TELÉFONO DEL EMISOR
+        sender_phone: senderPhone,
         created_at: new Date(),
         recipient_id: recipientUserId,
       },
@@ -292,33 +266,69 @@ export default function Groups() {
     setSelectedContact(null);
   };
 
-  // FUNCION PARA RENDERIZAR AVATAR DE GRUPO (Base64 o URL o fallback)
-  const renderGroupAvatar = (group: any) => {
-    const avatar = group.avatar || "";
-    const hasImage =
-      avatar.startsWith("http") || avatar.startsWith("data:image");
-
-    return (
-      <Avatar className="h-10 w-10 sm:h-12 sm:w-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-        {hasImage && (
-          <AvatarImage
-            src={avatar}
-            alt={group.name}
-          />
+  // Avatar de grupo
+  // Avatar de grupo con coronita si admin
+const renderGroupAvatar = (group: any) => {
+  const avatar = group.avatar || "";
+  const hasImage = avatar.startsWith("http") || avatar.startsWith("data:image");
+  return (
+    <div className="relative h-12 w-12">
+      <Avatar className="h-12 w-12 bg-[#F6F2FB] text-purple-400 rounded-xl flex items-center justify-center text-2xl border border-gray-200">
+        {hasImage ? (
+          <AvatarImage src={avatar} alt={group.name} />
+        ) : (
+          <AvatarFallback>
+            <Users className="h-8 w-8" />
+          </AvatarFallback>
         )}
-        <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs font-bold">
-          {group.name?.charAt(0)?.toUpperCase() || "G"}
-        </AvatarFallback>
       </Avatar>
+      {group.role === "admin" && (
+        <span className="absolute -top-1 -right-1 bg-yellow-400 rounded-full p-1 flex items-center justify-center shadow-md">
+          <Crown className="h-4 w-4 text-white" />
+        </span>
+      )}
+    </div>
+  );
+};
+
+
+  // Avatares miembros
+  const renderMembersAvatars = (members: any[]) => {
+    const maxToShow = 3;
+    const visible = members.slice(0, maxToShow);
+    const moreCount = members.length - maxToShow;
+    return (
+      <div className="flex items-center">
+        {visible.map((m) => {
+          const hasAvatar = m.avatar && (m.avatar.startsWith("http") || m.avatar.startsWith("data:image"));
+          return (
+            <Avatar
+              key={m.id}
+              className="h-8 w-8 -ml-2 first:ml-0 border-2 border-white"
+            >
+              {hasAvatar ? (
+                <AvatarImage src={m.avatar} alt={m.name} />
+              ) : (
+                <AvatarFallback className="bg-[#52aeb9] text-white font-bold">
+                  {(m.name || m.username || "").charAt(0).toUpperCase()}
+                </AvatarFallback>
+              )}
+            </Avatar>
+          );
+        })}
+        {moreCount > 0 && (
+          <span className="ml-2 text-xs font-medium text-gray-600">+{moreCount}</span>
+        )}
+      </div>
     );
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
+    <div className="min-h-screen flex flex-col bg-gray-50">
       <Header />
-      <div className="w-full px-2 sm:px-4 py-4 max-w-3xl mx-auto">
+<div className="w-full max-w-[340px] mx-auto px-2 py-4">
         {/* Back Button for mobile */}
-        <div className="md:hidden mb-4">
+        {/* <div className="md:hidden mb-4">
           <Button
             variant="ghost"
             size="sm"
@@ -328,148 +338,123 @@ export default function Groups() {
             <ArrowLeft className="h-4 w-4" />
             {t.common.back}
           </Button>
-        </div>
-        {/* Header */}
+        </div> */}
+        {/* Título, descripción y crear grupo */}
         <div className="mb-4">
           <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-2 flex items-center gap-3">
             <Users className="h-7 w-7 sm:h-8 sm:w-8" />
             {t.pages.groups.title}
           </h1>
           <p className="text-gray-600 text-sm sm:text-base">{t.pages.groups.description}</p>
+          <div className="mt-3">
+            <Button
+  onClick={handleCreateGroup}
+  className="w-full max-w-[340px] mx-auto flex items-center px-6 py-2 rounded-full bg-gradient-to-r from-[#72bfc4] to-[#57b8c9] shadow-md gap-4"
+  style={{ minHeight: 48 }}
+>
+  <span className="flex items-center justify-center w-10 h-10 rounded-full bg-[#7fcad1]/60">
+    <Plus className="w-6 h-6 text-white" />
+  </span>
+  <span className="flex flex-col items-start leading-tight">
+    <span className="font-bold text-white text-base">
+      {t.pages.groups.createGroup}
+    </span>    
+  </span>
+</Button>
+          </div>
         </div>
-        {/* Action Buttons */}
-        <div className="flex flex-wrap gap-4 mb-6">
-          <Button
-            className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
-            onClick={handleCreateGroup}
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            {t.pages.groups.createGroup}
-          </Button>
-        </div>
-        {/* Groups List */}
+        {/* Lista de grupos */}
         <div className="flex flex-col gap-6 w-full">
           {loading ? (
             <div className="text-center text-gray-400 py-8">{t.contacts.loading}</div>
           ) : groups.length > 0 ? (
             groups.map((group) => (
-              <Card key={group.id} className="hover:shadow-md transition-shadow w-full max-w-full">
-                <CardHeader>
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-                    <div className="flex items-center gap-3 w-full">
-                      {/* Aquí se muestra el avatar real */}
-                      {renderGroupAvatar(group)}
-                      <div className="min-w-0">
-                        <CardTitle className="flex items-center gap-2 truncate">
-                          {group.name}
-                          {group.role === "admin" && (
-                            <Crown className="h-4 w-4 text-yellow-500" />
-                          )}
-                        </CardTitle>
-                        <p className="text-xs sm:text-sm text-gray-600 truncate">{group.description}</p>
+              <Card
+                key={group.id}
+                className="rounded-2xl border border-gray-100 shadow-sm bg-white p-0 relative"
+              >
+                {/* Botón reglas arriba derecha */}
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className="absolute right-4 top-4 z-10"
+                  onClick={() => setOpenRulesGroupId(group.id)}
+                >
+                  <Hourglass className="h-5 w-5 text-gray-500" />
+                </Button>
+
+                <CardContent className="flex flex-col gap-2 pt-7 pb-4 pl-6 pr-6">
+                  <div className="flex gap-4 items-center mb-1">
+                    {renderGroupAvatar(group)}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center">
+                        <span className="font-bold text-base truncate text-gray-900">{group.name}</span>
+                        
                       </div>
+                      <div className="text-gray-600 text-sm truncate">{group.description}</div>
                     </div>
-                    <div className="flex items-center gap-2 mt-2 sm:mt-0">
-                      <Badge variant={group.role === "admin" ? "default" : "secondary"}>
-                        {group.role === "admin"
-                          ? t.pages.groups.admin
-                          : t.pages.groups.member}
-                      </Badge>
-                      <div className="flex gap-2">
+                  </div>
+                  <div className="flex items-center gap-2 mt-2">
+                    {renderMembersAvatars(group.members)}
+                    <span className="ml-3 text-xs text-gray-500">{group.members.length} {t.groups.members}</span>
+                  </div>
+                  {/* Botón opciones abajo derecha */}
+                  <Popover
+                    open={openOptionsPopoverId === group.id}
+                    onOpenChange={open => setOpenOptionsPopoverId(open ? group.id : null)}
+                  >
+                    <PopoverTrigger asChild>
+                      <Button size="icon" variant="ghost" className="absolute right-4 bottom-4 z-10">
+                        <MoreVertical className="h-5 w-5" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent align="end" className="w-40 p-2">
+                      <div className="flex flex-col gap-2">
                         {group.role === "admin" && (
                           <>
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => handleEditGroup(group)}
+                              className="w-full flex items-center gap-2"
+                              onClick={() => {
+                                setOpenOptionsPopoverId(null);
+                                handleEditGroup(group);
+                              }}
                             >
                               <Edit className="h-4 w-4" />
+                              {t.groups.edit}
                             </Button>
                             <Button
                               variant="destructive"
                               size="sm"
-                              onClick={() => setGroupToDelete(group)}
+                              className="w-full flex items-center gap-2"
+                              onClick={() => {
+                                setOpenOptionsPopoverId(null);
+                                setGroupToDelete(group);
+                              }}
                             >
                               <Trash2 className="h-4 w-4" />
+                              {t.groups.delete}
                             </Button>
                           </>
                         )}
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="flex items-center gap-1"
-                          onClick={() => setOpenRulesGroupId(group.id)}
-                        >
-                          <Hourglass className="h-4 w-4" />
-                          {t.groups.rules}
-                        </Button>
                         {group.role !== "admin" && (
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => handleLeaveGroup(group.id)}
+                            className="w-full flex items-center gap-2"
+                            onClick={() => {
+                              setOpenOptionsPopoverId(null);
+                              handleLeaveGroup(group.id);
+                            }}
                           >
                             <UserMinus className="h-4 w-4" />
+                            {t.groups.leave}
                           </Button>
                         )}
                       </div>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div>
-                    <h4 className="font-semibold mb-3 text-sm sm:text-base">
-                      {t.groups.members} ({group.members.length}):
-                    </h4>
-                    <div className="flex flex-wrap gap-2 mb-3">
-                      {group.members.map((member: any) => (
-                        <Popover
-                          key={member.id + group.id}
-                          open={
-                            selectedPopover?.userId === member.id &&
-                            selectedPopover?.groupId === group.id
-                          }
-                          onOpenChange={(open) =>
-                            open
-                              ? handleOpenSendFinePopover(member, group)
-                              : handleCloseSendFinePopover()
-                          }
-                        >
-                          <PopoverTrigger asChild>
-                            <div
-                              className="flex items-center gap-2 bg-gray-50 rounded-full px-3 py-1 max-w-[90vw] cursor-pointer transition-all hover:shadow-md"
-                              tabIndex={0}
-                              role="button"
-                              onClick={() => handleOpenSendFinePopover(member, group)}
-                            >
-                              <Avatar className="h-5 w-5 sm:h-6 sm:w-6">
-                                <AvatarImage src={member.avatar} alt={member.name} />
-                                <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs">
-                                  {member.name.charAt(0).toUpperCase()}
-                                </AvatarFallback>
-                              </Avatar>
-                              <span className="text-xs sm:text-sm truncate">{member.name}</span>
-                              {member.role === "admin" && (
-                                <Crown className="h-3 w-3 text-yellow-500" />
-                              )}
-                            </div>
-                          </PopoverTrigger>
-                          <PopoverContent align="center" side="top" className="w-40 p-2">
-                            <Button
-                              className="w-full"
-                              size="sm"
-                              onClick={() => {
-                                handleSendFine(member, group);
-                                handleCloseSendFinePopover();
-                              }}
-                            >
-                              {t.groups.sendFine}
-                            </Button>
-                          </PopoverContent>
-                        </Popover>
-                      ))}
-                    </div>
-                  </div>
+                    </PopoverContent>
+                  </Popover>
                 </CardContent>
               </Card>
             ))
@@ -497,8 +482,7 @@ export default function Groups() {
           )}
         </div>
       </div>
-
-      {/* ALERT DIALOG para confirmar eliminación */}
+      {/* MODALES igual que siempre */}
       <AlertDialog open={!!groupToDelete} onOpenChange={open => !open && setGroupToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -526,23 +510,17 @@ export default function Groups() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-
-      {/* Modal de creación de grupo */}
       <CreateGroupModal
         isOpen={isCreateGroupModalOpen}
         onClose={() => setIsCreateGroupModalOpen(false)}
         onSubmit={handleSubmitGroup}
       />
-
-      {/* Modal para agregar miembro desde edición */}
       <AddGroupMemberModal
         isOpen={showAddMemberModal}
         onClose={() => setShowAddMemberModal(false)}
         onSubmit={handleSubmitAddMember}
         contacts={contacts}
       />
-
-      {/* Modal de edición de grupo */}
       {editGroupData && (
         <EditGroupModal
           isOpen={!!editGroupData}
@@ -555,8 +533,6 @@ export default function Groups() {
           currentUserId={user?.id}
         />
       )}
-
-      {/* Modal de reglas de grupo */}
       {openRulesGroupId && (
         <GroupRulesModal
           isOpen={!!openRulesGroupId}
@@ -564,8 +540,6 @@ export default function Groups() {
           group={groups.find(g => g.id === openRulesGroupId)!}
         />
       )}
-
-      {/* Modal de enviar multa */}
       <CreateFineModal
         isOpen={isCreateFineModalOpen}
         onClose={() => {

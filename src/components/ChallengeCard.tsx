@@ -273,144 +273,144 @@ export function ChallengeCard({
   };
 
   return (
-    <Card className="w-full max-w-full hover:shadow-md transition-shadow">
-      <CardHeader className="pb-2">
-        <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 sm:items-start sm:justify-between">
-          <div className="flex-1 min-w-0">
-            <CardTitle className="flex items-center gap-2 text-lg sm:text-xl font-bold">
-              {challenge.title}
-              <Crown className="h-4 w-4 text-yellow-500" />
-            </CardTitle>
-            {challenge.description && (
-              <div className="text-xs sm:text-sm text-gray-600 mt-1 mb-1">
-                {challenge.description}
-              </div>
-            )}
-            <div className="text-xs text-gray-500 mb-1">
-              {t.challengeCard.createdBy}{" "}
-              <span className="text-purple-700">
-                {
-                  getParticipantDisplay({ user_id: challenge.creator_id }).name
-                }
-              </span>
-            </div>
+  <Card className="w-full max-w-[320px] mx-auto rounded-2xl bg-white shadow-lg hover:shadow-2xl transition-shadow border border-gray-100">
+  <CardHeader className="pb-2">
+    <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 sm:items-start sm:justify-between">
+      <div className="flex-1 min-w-0">
+        <CardTitle className="flex items-center gap-2 text-lg sm:text-xl font-bold">
+          {challenge.title}
+          <Crown className="h-4 w-4 text-yellow-500" />
+        </CardTitle>
+        {challenge.description && (
+          <div className="text-xs sm:text-sm text-gray-600 mt-1 mb-1">
+            {challenge.description}
           </div>
-          <div className="flex flex-col items-end sm:items-end">
-            <div className="text-xs text-gray-400 mb-0.5">
-              {t.challengeCard.penalty}
-            </div>
-            <div className="text-3xl font-extrabold text-purple-700 leading-none mb-1 sm:mb-2">
-              CHF {challenge.amount}
-            </div>
-            <div className="flex items-center gap-2 mb-2">
-              {getStatusBadge(challenge.status)}
-              {challenge.status === "finished" && isCreator(currentUserId) && (
-                <Button
-                  size="icon"
-                  variant="destructive"
-                  className="w-9 h-9"
-                  disabled={deleting}
-                  onClick={handleDelete}
-                  title={t.challengeCard.deleteChallenge}
-                >
-                  <Trash2 className="w-5 h-5" />
-                </Button>
+        )}
+        <div className="text-xs text-gray-500 mb-1">
+          {t.challengeCard.createdBy}{" "}
+          <span className="text-gray-700">
+            {
+              getParticipantDisplay({ user_id: challenge.creator_id }).name
+            }
+          </span>
+        </div>
+      </div>
+      <div className="flex flex-col items-end sm:items-end">
+        <div className="text-xs text-gray-400 mb-0.5">
+          {t.challengeCard.penalty}
+        </div>
+        <div className="text-3xl font-extrabold text-purple-700 leading-none mb-1 sm:mb-2">
+          CHF {challenge.amount}
+        </div>
+        <div className="flex items-center gap-2 mb-2">
+          {getStatusBadge(challenge.status)}
+          {challenge.status === "finished" && isCreator(currentUserId) && (
+            <Button
+              size="icon"
+              variant="destructive"
+              className="w-9 h-9"
+              disabled={deleting}
+              onClick={handleDelete}
+              title={t.challengeCard.deleteChallenge}
+            >
+              <Trash2 className="w-5 h-5" />
+            </Button>
+          )}
+        </div>
+      </div>
+    </div>
+  </CardHeader>
+  <CardContent>
+    <div className="mb-2">
+      <div className="font-semibold text-xs sm:text-sm mb-1">
+        {t.challengeCard.members} ({participants.length}):
+      </div>
+      <div className="flex flex-wrap gap-2 mb-3">
+        {participants.map((p: any) => {
+          const info = getParticipantDisplay(p);
+          let chipClass =
+            "flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-full text-xs border ";
+          if (p.completed === true)
+            chipClass += "bg-green-100 text-green-700 border-green-200";
+          else if (p.completed === false)
+            chipClass += "bg-red-100 text-red-700 border-red-200";
+          else chipClass += "text-gray-700 border-gray-200";
+          return (
+            <div key={p.user_id} className={chipClass}>
+              <Avatar className="w-5 h-5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                {info.avatar ? (
+                  <AvatarImage src={info.avatar} alt={info.name} />
+                ) : (
+                  <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs font-bold">
+                    {info.fallback}
+                  </AvatarFallback>
+                )}
+              </Avatar>
+              <span className="truncate font-medium text-gray-700">{info.name}</span>
+              {isCreator(p.user_id) && (
+                <Crown className="h-3 w-3 text-yellow-500 ml-1" />
               )}
+              {p.accepted === false && (
+                <span className="ml-1 text-xs text-red-500">
+                  ({t.challengeCard.rejected})
+                </span>
+              )}
+              {challenge.status === "finished" &&
+                (p.completed === true ? (
+                  <span className="ml-1">✔️</span>
+                ) : p.completed === false ? (
+                  <span className="ml-1">❌</span>
+                ) : null)}
             </div>
-          </div>
+          );
+        })}
+      </div>
+      {showAcceptReject && (
+        <div className="flex gap-2 mt-2 w-full">
+          <Button
+            size="sm"
+            className="bg-green-500 hover:bg-green-600 text-white w-full xs:w-1/2 py-2 font-bold"
+            disabled={loading}
+            onClick={() => handleAccept(true)}
+            style={{ minWidth: "120px" }}
+          >
+            {t.challengeCard.accept}
+          </Button>
+          <Button
+            size="sm"
+            className="bg-red-500 hover:bg-red-600 text-white w-full xs:w-1/2 py-2 font-bold"
+            disabled={loading}
+            onClick={() => handleAccept(false)}
+            style={{ minWidth: "120px" }}
+          >
+            {t.challengeCard.reject}
+          </Button>
         </div>
-      </CardHeader>
-      <CardContent>
-        <div className="mb-2">
-          <div className="font-semibold text-xs sm:text-sm mb-1">
-            {t.challengeCard.members} ({participants.length}):
-          </div>
-          <div className="flex flex-wrap gap-2 mb-3">
-            {participants.map((p: any) => {
-              const info = getParticipantDisplay(p);
-              let chipClass =
-                "flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-full text-xs border ";
-              if (p.completed === true)
-                chipClass += "bg-green-100 text-green-700 border-green-200";
-              else if (p.completed === false)
-                chipClass += "bg-red-100 text-red-700 border-red-200";
-              else chipClass += "text-gray-700 border-gray-200";
-              return (
-                <div key={p.user_id} className={chipClass}>
-                  <Avatar className="w-5 h-5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                    {info.avatar ? (
-                      <AvatarImage src={info.avatar} alt={info.name} />
-                    ) : (
-                      <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs font-bold">
-                        {info.fallback}
-                      </AvatarFallback>
-                    )}
-                  </Avatar>
-                  <span className="truncate font-medium text-gray-700">{info.name}</span>
-                  {isCreator(p.user_id) && (
-                    <Crown className="h-3 w-3 text-yellow-500 ml-1" />
-                  )}
-                  {p.accepted === false && (
-                    <span className="ml-1 text-xs text-red-500">
-                      ({t.challengeCard.rejected})
-                    </span>
-                  )}
-                  {challenge.status === "finished" &&
-                    (p.completed === true ? (
-                      <span className="ml-1">✔️</span>
-                    ) : p.completed === false ? (
-                      <span className="ml-1">❌</span>
-                    ) : null)}
-                </div>
-              );
-            })}
-          </div>
-          {showAcceptReject && (
-            <div className="flex gap-2 mt-2 w-full">
-              <Button
-                size="sm"
-                className="bg-green-500 hover:bg-green-600 text-white w-full xs:w-1/2 py-2 font-bold"
-                disabled={loading}
-                onClick={() => handleAccept(true)}
-                style={{ minWidth: "120px" }}
-              >
-                {t.challengeCard.accept}
-              </Button>
-              <Button
-                size="sm"
-                className="bg-red-500 hover:bg-red-600 text-white w-full xs:w-1/2 py-2 font-bold"
-                disabled={loading}
-                onClick={() => handleAccept(false)}
-                style={{ minWidth: "120px" }}
-              >
-                {t.challengeCard.reject}
-              </Button>
-            </div>
-          )}
-          {showComplete && (
-            <div className="flex gap-2 mt-2 w-full">
-              <Button
-                size="sm"
-                disabled={loading}
-                onClick={() => handleComplete(true)}
-                className="bg-green-500 hover:bg-green-600 text-white w-full xs:w-1/2 py-2 font-bold"
-                style={{ minWidth: "120px" }}
-              >
-                {t.challenges.status_achieved}
-              </Button>
-              <Button
-                size="sm"
-                disabled={loading}
-                onClick={() => handleComplete(false)}
-                className="bg-red-500 hover:bg-red-600 text-white w-full xs:w-1/2 py-2 font-bold"
-                style={{ minWidth: "120px" }}
-              >
-                {t.challenges.status_failed}
-              </Button>
-            </div>
-          )}
+      )}
+      {showComplete && (
+        <div className="flex gap-2 mt-2 w-full">
+          <Button
+            size="sm"
+            disabled={loading}
+            onClick={() => handleComplete(true)}
+            className="bg-green-500 hover:bg-green-600 text-white w-full xs:w-1/2 py-2 font-bold"
+            style={{ minWidth: "120px" }}
+          >
+            {t.challenges.status_achieved}
+          </Button>
+          <Button
+            size="sm"
+            disabled={loading}
+            onClick={() => handleComplete(false)}
+            className="bg-red-500 hover:bg-red-600 text-white w-full xs:w-1/2 py-2 font-bold"
+            style={{ minWidth: "120px" }}
+          >
+            {t.challenges.status_failed}
+          </Button>
         </div>
-      </CardContent>
-    </Card>
+      )}
+    </div>
+  </CardContent>
+</Card>
   );
 }
