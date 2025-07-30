@@ -33,6 +33,7 @@ import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import { useChallenges } from "@/hooks/useChallenges";
+import { ScrollText, Zap } from "lucide-react";
 
 
 
@@ -156,101 +157,143 @@ function MultasRetosSection({
   challengesFailed,
   challengesCompleted,
   t,
-  navigate
+  navigate,
 }) {
   const finesPieData = [
     { name: t.pages.history.sent, value: sentFines.length },
     { name: t.pages.history.received, value: receivedFines.length },
   ];
   const challengesPieData = [
-    { name: t.challenges.accepted || "No completados", value: challengesFailed  },
-    { name: t.challenges.completed || "Completados", value: challengesCompleted },
+    { name: t.challenges.accepted || "Nicht geschafft", value: challengesFailed },
+    { name: t.challenges.completed || "Geschafft", value: challengesCompleted },
   ];
+  const COLORS_FINES = ["#E5677E", "#68B1BC"];
+  const COLORS_CHALLENGES = ["#A259F7", "#00B36B"];
 
   return (
-    <div className="w-full grid grid-cols-2 gap-1 mb-2">
-  {/* MULTAS */}
-  <div
-    onClick={() => navigate("/history")}
-    className="bg-white rounded-2xl border shadow hover:shadow-xl cursor-pointer transition flex flex-col items-center py-2 group"
-  >
-    <div className="font-bold text-xl mb-1 text-red-500 group-hover:text-red-700 transition">{t.nav.fines || "Multas"}</div>
-    <div className="w-24 h-24 flex items-center justify-center mx-auto relative">
-      <ResponsiveContainer width="100%" height="100%">
-        <PieChart>
-          <Pie
-            data={finesPieData}
-            cx="50%"
-            cy="50%"
-            innerRadius={32}
-            outerRadius={46}
-            dataKey="value"
-            labelLine={false}
-          >
-            {finesPieData.map((entry, index) => (
-              <Cell key={`cell-fines-${index}`} fill={COLORS_FINES[index % COLORS_FINES.length]} />
-            ))}
-          </Pie>
-        </PieChart>
-      </ResponsiveContainer>
-      <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 flex flex-col items-center pointer-events-none">
-        <span className="text-lg font-bold text-red-500">{sentFines.length}</span>
-        <span className="text-lg font-bold text-teal-700">{receivedFines.length}</span>
+    <div className="w-full flex flex-row gap-4 mb-4 justify-center">
+      {/* FINES CARD */}
+      <div
+        onClick={() => navigate("/history")}
+        className="
+          bg-white
+          rounded-2xl
+          shadow
+          border border-gray-100
+          hover:shadow-lg
+          transition
+          flex flex-col items-center
+          py-3 px-4
+          cursor-pointer
+          min-w-[135px] max-w-[170px]
+        "
+        style={{ minHeight: 190 }}
+      >
+        <div className="flex items-center gap-1 mb-2">
+          <span className="rounded-full bg-[#FFF1F3] p-1">
+            {/* Icono ScrollText (lucide) */}
+            <ScrollText className="w-5 h-5 text-[#c44a3a]" />
+          </span>
+          <span className="font-semibold text-[15px] text-gray-800">{t.nav.fines || "Fines"}</span>
+        </div>
+        <div className="w-20 h-20 flex items-center justify-center mx-auto relative mb-1">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={finesPieData}
+                cx="50%"
+                cy="50%"
+                innerRadius={24}
+                outerRadius={32}
+                dataKey="value"
+                stroke="none"
+                labelLine={false}
+              >
+                {finesPieData.map((entry, idx) => (
+                  <Cell key={`cell-fines-${idx}`} fill={COLORS_FINES[idx % COLORS_FINES.length]} />
+                ))}
+              </Pie>
+            </PieChart>
+          </ResponsiveContainer>
+          {/* Números grandes, centrados uno encima de otro */}
+          <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 flex flex-col items-center pointer-events-none">
+            <span className="text-[19px] font-bold text-[#E5677E] leading-none">{sentFines.length}</span>
+            <span className="text-[17px] font-bold text-[#68B1BC] leading-none">{receivedFines.length}</span>
+          </div>
+        </div>
+        {/* Leyenda */}
+        <div className="flex flex-col gap-0.5 mt-0 text-xs font-medium w-full text-center">
+          <span className="flex items-center justify-left gap-1 text-gray-500">
+            <span className="inline-block rounded-full w-2.5 h-2.5 mr-1" style={{ background: COLORS_FINES[0] }} />
+            {t.pages.history.sent || "Sent"}
+          </span>
+          <span className="flex items-center justify-left gap-1 text-gray-500">
+            <span className="inline-block rounded-full w-2.5 h-2.5 mr-1" style={{ background: COLORS_FINES[1] }} />
+            {t.pages.history.received || "Received"}
+          </span>
+        </div>
+      </div>
+      {/* CHALLENGES CARD */}
+      <div
+        onClick={() => navigate("/challenges")}
+        className="
+          bg-white
+          rounded-2xl
+          shadow
+          border border-gray-100
+          hover:shadow-lg
+          transition
+          flex flex-col items-center
+          py-3 px-4
+          cursor-pointer
+          min-w-[135px] max-w-[170px]
+        "
+        style={{ minHeight: 190 }}
+      >
+        <div className="flex items-center gap-1 mb-2">
+          <span className="rounded-full bg-[#F4F2FD] p-1">
+            {/* Icono Zap (rayo) */}
+            <Zap className="w-5 h-5 text-[#A259F7]" />
+          </span>
+          <span className="font-semibold text-[15px] text-gray-800">{t.challenges.challenges || "Challenges"}</span>
+        </div>
+        <div className="w-20 h-20 flex items-center justify-center mx-auto relative mb-1">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={challengesPieData}
+                cx="50%"
+                cy="50%"
+                innerRadius={24}
+                outerRadius={32}
+                dataKey="value"
+                stroke="none"
+                labelLine={false}
+              >
+                {challengesPieData.map((entry, idx) => (
+                  <Cell key={`cell-challenge-${idx}`} fill={COLORS_CHALLENGES[idx % COLORS_CHALLENGES.length]} />
+                ))}
+              </Pie>
+            </PieChart>
+          </ResponsiveContainer>
+          <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 flex flex-col items-center pointer-events-none">
+            <span className="text-[19px] font-bold text-[#A259F7] leading-none">{challengesFailed}</span>
+            <span className="text-[17px] font-bold text-[#00B36B] leading-none">{challengesCompleted}</span>
+          </div>
+        </div>
+        <div className="flex flex-col gap-0.5 mt-0 text-xs font-medium w-full text-center">
+          <span className="flex items-center justify-left gap-1 text-gray-500">
+            <span className="inline-block rounded-full w-2.5 h-2.5 mr-1" style={{ background: COLORS_CHALLENGES[0] }} />
+            {t.challenges.status_failed || "Nicht geschafft"}
+          </span>
+          <span className="flex items-center justify-left gap-1 text-gray-500">
+            <span className="inline-block rounded-full w-2.5 h-2.5 mr-1" style={{ background: COLORS_CHALLENGES[1] }} />
+            {t.challenges.status_achieved || "Geschafft"}
+          </span>
+        </div>
       </div>
     </div>
-    <div className="flex flex-col items-center justify-center gap-1 mt-2 text-xs font-semibold w-full text-center">
-      <span className="flex items-center gap-1 text-red-500">
-        <span className="inline-block rounded-full w-3 h-3 mr-1" style={{ background: COLORS_FINES[0] }} />
-        {t.pages.history.sent}
-      </span>
-      <span className="flex items-center gap-1 text-teal-700">
-        <span className="inline-block rounded-full w-3 h-3 mr-1" style={{ background: COLORS_FINES[1] }} />
-        {t.pages.history.received}
-      </span>
-    </div>
-  </div>
-  {/* RETOS */}
-  <div
-    onClick={() => navigate("/challenges")}
-    className="bg-white rounded-2xl border shadow hover:shadow-xl cursor-pointer transition flex flex-col items-center py-2 group"
-  >
-    <div className="font-bold text-xl mb-1 text-blue-600 group-hover:text-purple-700 transition">{t.challenges.challenges || "Aceptados"}</div>
-    <div className="w-24 h-24 flex items-center justify-center mx-auto relative">
-      <ResponsiveContainer width="100%" height="100%">
-        <PieChart>
-          <Pie
-            data={challengesPieData}
-            cx="50%"
-            cy="50%"
-            innerRadius={32}
-            outerRadius={46}
-            dataKey="value"
-            labelLine={false}
-          >
-            {challengesPieData.map((entry, index) => (
-              <Cell key={`cell-challenge-${index}`} fill={COLORS_CHALLENGES[index % COLORS_CHALLENGES.length]} />
-            ))}
-          </Pie>
-        </PieChart>
-      </ResponsiveContainer>
-      <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 flex flex-col items-center pointer-events-none">
-        <span className="text-lg font-bold text-purple-700">{challengesFailed}</span>
-        <span className="text-lg font-bold text-green-700">{challengesCompleted}</span>
-      </div>
-    </div>
-    <div className="flex flex-col items-center justify-center gap-1 mt-2 text-xs font-semibold w-full text-center">
-      <span className="flex items-center gap-1 text-purple-700">
-        <span className="inline-block rounded-full w-3 h-3 mr-1" style={{ background: COLORS_CHALLENGES[0] }} />
-        {t.challenges.status_failed || "No conseguidos"}
-      </span>
-      <span className="flex items-center gap-1 text-green-700">
-        <span className="inline-block rounded-full w-3 h-3 mr-1" style={{ background: COLORS_CHALLENGES[1] }} />
-        {t.challenges.status_achieved || "Completados"}
-      </span>
-    </div>
-  </div>
-</div>
- );
+  );
 }
 
   const userData = profile || {
@@ -849,7 +892,7 @@ const pendingFinesToPay = finesList.filter(
         appUrl="https://deswg.vercel.app/welcome"
       />
       {/* Footer siempre al final */}
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }
