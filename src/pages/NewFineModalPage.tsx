@@ -217,7 +217,7 @@ export default function ContactsModalPage() {
               return (
                 <Card
         key={contact.id}
-        className="max-w-[320px] rounded-[24px] border border-gray-100 shadow bg-white px-3 py-2 flex items-center min-h-[64px] max-w-[320px] mx-auto"
+        className="rounded-[24px] border border-gray-100 shadow bg-white px-3 py-2 flex items-center min-h-[64px] max-w-[320px] mx-auto"
         style={{ marginBottom: 8 }}
       >
   <div className="flex items-center w-full">

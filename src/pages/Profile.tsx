@@ -223,7 +223,7 @@ export default function Profile() {
         </div>
 
         {/* Cabecera de perfil */}
-        <Card>
+        <Card className="rounded-2xl shadow-lg max-w-[320px] mx-auto">
           <CardContent className="p-6">
             <div className="flex flex-col sm:flex-row items-center gap-6">
               <div className="relative">
@@ -276,7 +276,7 @@ export default function Profile() {
                 </div>
                 <Button
                   onClick={() => setIsEditProfileOpen(true)}
-                  className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white"
+                  className="bg-gradient-to-r from-[#52AEB9] to-[#57b8c9] hover:from-[#429ca5] hover:to-[#3597aa] text-white"
                 >
                   <Edit className="h-4 w-4 mr-2" />
                   {t.profile.editProfile}
@@ -284,10 +284,54 @@ export default function Profile() {
               </div>
             </div>
           </CardContent>
+        </Card>        
+
+        {/* Insignias */}
+        <Card className="rounded-2xl shadow-lg max-w-[320px] mx-auto">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Award className="h-5 w-5" />
+              {t.profile.insignias}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {badgesLoading ? (
+              <div className="text-gray-400">{t.profile.loadingBadges || "Cargando insignias..."}</div>
+            ) : earnedBadges.length === 0 ? (
+              <div className="text-gray-400">{t.profile.noBadges || "Aún no tienes insignias"}</div>
+            ) : (
+              <div className="flex gap-4 overflow-x-auto pb-2 hide-scrollbar">
+              {earnedBadges.map((badge) => (
+                <div
+                  key={badge.id}
+                  className="border rounded-2xl shadow-lg min-w-[220px] max-w-[220px] p-4 flex-shrink-0 hover:shadow-xl transition-shadow bg-white"
+                >
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="text-2xl">{badge.icon}</span>
+                    <div className="flex-1">
+                      <h3 className="font-semibold truncate">
+                        {badge.name?.[language] || badge.name?.en || "Sin nombre"}
+                      </h3>
+                      <Badge variant="secondary" className={getRarityColor(badge.rarity)}>
+                        {badge.rarity || ""}
+                      </Badge>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-600 line-clamp-2">
+                    {badge.description?.[language] || badge.description?.en || "Sin descripción"}
+                  </p>
+                  <div className="text-xs text-gray-400 mt-2">
+                    {badge.achieved_at && `Obtenida: ${new Date(badge.achieved_at).toLocaleDateString()}`}
+                  </div>
+                </div>
+              ))}
+            </div>
+            )}
+          </CardContent>
         </Card>
 
         {/* Acciones de cuenta */}
-        <Card>
+        <Card className="rounded-2xl shadow-lg max-w-[320px] mx-auto">
           <CardHeader>
             <CardTitle>{t.profile.accountManagement}</CardTitle>
           </CardHeader>
@@ -308,47 +352,6 @@ export default function Profile() {
               <Trash2 className="h-4 w-4 mr-2" />
               {t.profile.deleteAccount}
             </Button>
-          </CardContent>
-        </Card>
-
-        {/* Insignias */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Award className="h-5 w-5" />
-              {t.profile.insignias}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {badgesLoading ? (
-              <div className="text-gray-400">{t.profile.loadingBadges || "Cargando insignias..."}</div>
-            ) : earnedBadges.length === 0 ? (
-              <div className="text-gray-400">{t.profile.noBadges || "Aún no tienes insignias"}</div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {earnedBadges.map((badge) => (
-                  <div key={badge.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
-                    <div className="flex items-center gap-3 mb-2">
-                      <span className="text-2xl">{badge.icon}</span>
-                      <div className="flex-1">
-                        <h3 className="font-semibold">
-                          {badge.name?.[language] || badge.name?.en || "Sin nombre"}
-                        </h3>
-                        <Badge variant="secondary" className={getRarityColor(badge.rarity)}>
-                          {badge.rarity || ""}
-                        </Badge>
-                      </div>
-                    </div>
-                    <p className="text-sm text-gray-600">
-                      {badge.description?.[language] || badge.description?.en || "Sin descripción"}
-                    </p>
-                    <div className="text-xs text-gray-400 mt-2">
-                      {badge.achieved_at && `Obtenida: ${new Date(badge.achieved_at).toLocaleDateString()}`}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
           </CardContent>
         </Card>
 
