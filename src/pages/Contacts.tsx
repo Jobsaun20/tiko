@@ -225,7 +225,7 @@ const filteredContacts = contacts
 
         {/* Título y descripción */}
         <div className="mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 flex items-center gap-3">
+          <h1 className="text-2xl sm:text-xl font-bold text-gray-800 mb-2 flex items-center gap-3">
             <Users className="h-8 w-8" />
             {t.pages.contacts.title}
           </h1>
@@ -283,7 +283,7 @@ const filteredContacts = contacts
               const avatar_url = avatarData.avatar_url || undefined;
               const nameToShow = avatarData.username || contact.name || avatarData.name || contact.email || "";
               return (
-<Card key={contact.id} className="rounded-[32px] border border-gray-100 shadow-sm bg-white p-0 min-h-[88px] max-w-[320px] w-full mx-auto">
+<Card key={contact.id} className="rounded-2xl border border-gray-100 shadow-sm bg-white p-0 min-h-[88px] max-w-[320px] w-full mx-auto">
   <CardContent className="p-6">
     {/* Layout en dos filas */}
     <div className="flex flex-col gap-2">
