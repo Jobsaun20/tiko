@@ -249,7 +249,7 @@ const filteredContacts = contacts
     
   </span>
 </Button>
-          <div className="relative w-full sm:w-72">
+  <div className="relative max-w-[320px] w-full mx-auto">
             <input
   type="text"
   className="border border-gray-200 bg-white rounded-full px-5 py-2 w-full focus:outline-none focus:ring-2 focus:ring-[#72bfc4] shadow-sm text-gray-700 placeholder-gray-400"
