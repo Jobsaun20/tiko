@@ -29,6 +29,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { CreateFineModal } from "@/components/CreateFineModal";
 import { useBadgeModal } from "@/contexts/BadgeModalContext";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { useFines } from "@/hooks/useFines";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -72,6 +74,7 @@ export default function Groups() {
   const [groupToDelete, setGroupToDelete] = useState<any>(null);
   const [openOptionsPopoverId, setOpenOptionsPopoverId] = useState<string | null>(null);
   const [openMembersPopoverId, setOpenMembersPopoverId] = useState<string | null>(null);
+const { createFine } = useFines();
 
   // Modal handlers
   const handleCreateGroup = () => setIsCreateGroupModalOpen(true);
@@ -240,58 +243,49 @@ export default function Groups() {
 
   // Insertar la multa igual que en contacts
   const handleCreateFine = async (fineData: any) => {
-    try {
-      if (!selectedContact?.group?.id) {
-        toast({ title: "Error", description: t.groups.groupNotFound, variant: "destructive" });
-        return;
-      }
-      // Si tienes el recipient_id directo
-      const recipientUserId = selectedContact.user_supabase_id;
-      if (!recipientUserId) {
-        toast({ title: "Error", description: t.groups.notDeterminedUser, variant: "destructive" });
-        return;
-      }
-      // Nombre y avatar del destinatario
-      const recipient_name = selectedContact.name || selectedContact.username || selectedContact.email || "";
-      // Emisor: nombre/username/avatar/phone
-      const sender_name = user?.username || user?.name || user?.email || "";
-      const sender_avatar_url = user?.avatar_url || "";
-      const sender_phone = user?.phone || "";
-
-      
-
-      // Inserta multa con todos los datos relevantes para tu view y para push
-      const { error } = await supabase.from("fines").insert([
-        {
-          ...fineData,
-          group_id: selectedContact.group.id,
-         
-          sender_id: user?.id,
-          sender_name,
-          
-          sender_phone,
-          created_at: new Date(),
-          recipient_id: recipientUserId,
-          recipient_name,
-        },
-      ]);
-      if (error) {
-        toast({ title: "Error", description: t.groups.createFineError + error.message, variant: "destructive" });
-      } else {
-        toast({
-          title: t.createFine?.created || t.groups.fineCreated,
-          description:
-            (t.createFine?.sentTo || t.groups.fineSent)
-              .replace("{amount}", String(fineData.amount))
-              .replace("{recipient}", recipient_name)
-        });
-      }
-    } catch (err: any) {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
+  try {
+    if (!selectedContact?.group?.id) {
+      toast({ title: "Error", description: t.groups.groupNotFound, variant: "destructive" });
+      return;
     }
-    setIsCreateFineModalOpen(false);
-    setSelectedContact(null);
-  };
+    const recipientUserId = selectedContact.user_supabase_id;
+    if (!recipientUserId) {
+      toast({ title: "Error", description: t.groups.notDeterminedUser, variant: "destructive" });
+      return;
+    }
+    const recipient_name = selectedContact.name || selectedContact.username || selectedContact.email || "";
+    const recipient_email = selectedContact.email || "";
+    const sender_name = user?.username || user?.name || user?.email || "";
+    const sender_phone = user?.phone || "";
+
+    // ⬇️ Usa el hook, NO inserción directa
+    await createFine({
+  reason: fineData.reason,
+  amount: parseFloat(fineData.amount),
+  recipient_id: recipientUserId,
+  recipient_name,
+  recipient_email,
+  sender_name,
+  sender_phone,
+   group_id: selectedContact.group.id,
+  type: "sent",
+});
+
+
+    toast({
+      title: t.createFine?.created || t.groups.fineCreated,
+      description:
+        (t.createFine?.sentTo || t.groups.fineSent)
+          .replace("{amount}", String(fineData.amount))
+          .replace("{recipient}", recipient_name)
+    });
+  } catch (err: any) {
+    toast({ title: "Error", description: err.message, variant: "destructive" });
+  }
+  setIsCreateFineModalOpen(false);
+  setSelectedContact(null);
+};
+
 
   // --------------------------------------------------------------------------
 

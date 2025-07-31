@@ -97,6 +97,8 @@ export function useFines() {
     sender_phone?: string;
     date?: string;
     type?: string;
+    group_id?: string; 
+    
   }) {
     if (!user) throw new Error("Usuario no autenticado");
     if (newFine.recipient_id === user.id)
@@ -120,6 +122,7 @@ export function useFines() {
         user.email!,
       sender_phone: newFine.sender_phone || "",
       sender_email: user.email!,
+      group_id: newFine.group_id,      // 👈 Aquí sí
       recipient_id: newFine.recipient_id,
       recipient_name: newFine.recipient_name,
       recipient_email: newFine.recipient_email,
