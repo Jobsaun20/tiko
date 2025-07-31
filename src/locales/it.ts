@@ -244,6 +244,7 @@ scanQR: "Numero TWINT",
   paid: "Pagamento confermato!",
   close: "Chiudi",
   noTwintNumber: "Il mittente non ha configurato il suo numero TWINT",
+  you:"tu",
 },
 
 

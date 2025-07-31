@@ -243,6 +243,7 @@ scanQR: "TWINT number",
   paid: "Payment confirmed!",
   close: "Close",
   noTwintNumber: "The sender has not set up their TWINT number",
+  you:"you",
 },
 
 

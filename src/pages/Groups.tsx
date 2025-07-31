@@ -7,13 +7,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Users,
   Plus,
-  ArrowLeft,
   Trash2,
   Crown,
   Edit,
   UserMinus,
   Hourglass,
   MoreVertical,
+  Gavel
 } from "lucide-react";
 import { Header } from "@/components/Header";
 import { CreateGroupModal } from "@/components/CreateGroupModal";
@@ -216,13 +216,13 @@ export default function Groups() {
     setShowAddMemberModal(true);
   };
 
+  // -------------- MULTA: LOGICA NUEVA E IDENTICA A CONTACTS ------------------
+
+  // Buscar el contacto a partir del miembro (igual que en contacts)
   const getContactFromMember = (member: any) =>
     contacts.find((c: any) => c.user_supabase_id === member.id);
 
-  const handleOpenSendFinePopover = (member: any, group: any) =>
-    setSelectedPopover({ userId: member.id, groupId: group.id });
-  const handleCloseSendFinePopover = () => setSelectedPopover(null);
-
+  // Abrir modal de multa con el contacto y grupo preseleccionados
   const handleSendFine = (member: any, group: any) => {
     const contact = getContactFromMember(member);
     if (!contact) {
@@ -233,42 +233,70 @@ export default function Groups() {
       });
       return;
     }
+    // Pasa el grupo también para incluir el nombre en el insert
     setSelectedContact({ ...contact, group });
     setIsCreateFineModalOpen(true);
   };
 
-  const handleCreateFine = async (fine: any) => {
-    if (!selectedContact?.group?.id) {
-      toast({ title: "Error", description: t.groups.groupNotFound, variant: "destructive" });
-      return;
-    }
-    const recipientUserId = selectedContact.user_supabase_id;
-    if (!recipientUserId) {
-      toast({ title: "Error", description: t.groups.notDeterminedUser, variant: "destructive" });
-      return;
-    }
-    const senderPhone = user?.phone || "";
-    const { error } = await supabase.from("fines").insert([
-      {
-        ...fine,
-        group_id: selectedContact.group.id,
-        sender_id: user?.id,
-        sender_phone: senderPhone,
-        created_at: new Date(),
-        recipient_id: recipientUserId,
-      },
-    ]);
-    if (error) {
-      toast({ title: "Error", description: t.groups.createFineError + error.message, variant: "destructive" });
-    } else {
-      toast({ title: t.groups.fineCreated, description: t.groups.fineSent });
+  // Insertar la multa igual que en contacts
+  const handleCreateFine = async (fineData: any) => {
+    try {
+      if (!selectedContact?.group?.id) {
+        toast({ title: "Error", description: t.groups.groupNotFound, variant: "destructive" });
+        return;
+      }
+      // Si tienes el recipient_id directo
+      const recipientUserId = selectedContact.user_supabase_id;
+      if (!recipientUserId) {
+        toast({ title: "Error", description: t.groups.notDeterminedUser, variant: "destructive" });
+        return;
+      }
+      // Nombre y avatar del destinatario
+      const recipient_name = selectedContact.name || selectedContact.username || selectedContact.email || "";
+      // Emisor: nombre/username/avatar/phone
+      const sender_name = user?.username || user?.name || user?.email || "";
+      const sender_avatar_url = user?.avatar_url || "";
+      const sender_phone = user?.phone || "";
+
+      
+
+      // Inserta multa con todos los datos relevantes para tu view y para push
+      const { error } = await supabase.from("fines").insert([
+        {
+          ...fineData,
+          group_id: selectedContact.group.id,
+         
+          sender_id: user?.id,
+          sender_name,
+          
+          sender_phone,
+          created_at: new Date(),
+          recipient_id: recipientUserId,
+          recipient_name,
+        },
+      ]);
+      if (error) {
+        toast({ title: "Error", description: t.groups.createFineError + error.message, variant: "destructive" });
+      } else {
+        toast({
+          title: t.createFine?.created || t.groups.fineCreated,
+          description:
+            (t.createFine?.sentTo || t.groups.fineSent)
+              .replace("{amount}", String(fineData.amount))
+              .replace("{recipient}", recipient_name)
+        });
+      }
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
     }
     setIsCreateFineModalOpen(false);
     setSelectedContact(null);
   };
 
+  // --------------------------------------------------------------------------
+
   // Avatar de grupo
- const renderGroupAvatar = (group: any) => {
+  const renderGroupAvatar = (group: any) => {
     const avatar = group.avatar || "";
     const hasImage = avatar.startsWith("http") || avatar.startsWith("data:image");
     return (
@@ -291,8 +319,8 @@ export default function Groups() {
     );
   };
 
-  // Avatares miembros: ahora abre Popover al hacer clic
-  const renderMembersAvatars = (members: any[], groupId: string) => {
+  // Avatares miembros: Popover, botón Multa menos para ti
+  const renderMembersAvatars = (members: any[], groupId: string, group: any) => {
     const maxToShow = 3;
     const visible = members.slice(0, maxToShow);
     const moreCount = members.length - maxToShow;
@@ -337,9 +365,24 @@ export default function Groups() {
                     {(member.username?.[0] || member.name?.[0] || "U").toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
-                <span className="truncate font-medium text-gray-800">
+                <span className="truncate font-medium text-gray-800 flex-1">
                   {member.username || member.name}
                 </span>
+                {member.id !== user?.id && (
+                  <Button
+                    size="sm"
+                    className="rounded-full bg-gradient-to-r from-red-500 to-pink-500 text-white font-semibold shadow px-2 max-w-[92px] min-w-[80px]"
+                    onClick={() => {
+                      setOpenMembersPopoverId(null);
+                      handleSendFine(member, group);
+                    }}
+                  >
+                    {t.pages.contacts?.fine || t.paymentModal?.fine || "Multa"}
+                  </Button>
+                )}
+                {member.id === user?.id && (
+                  <span className="text-[11px] text-gray-400 ml-1">({t.paymentModal?.you})</span>
+                )}
               </li>
             ))}
           </ul>
@@ -407,8 +450,8 @@ export default function Groups() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2 mt-2">
-                    {/* --- AVATARES CON POPOVER --- */}
-                    {renderMembersAvatars(group.members, group.id)}
+                    {/* --- AVATARES CON POPOVER Y MULTA --- */}
+                    {renderMembersAvatars(group.members, group.id, group)}
                     <span className="ml-3 text-xs text-gray-500">{group.members.length} {t.groups.members}</span>
                   </div>
                   {/* Botón opciones abajo derecha */}
@@ -561,13 +604,8 @@ export default function Groups() {
         }}
         preselectedContact={selectedContact}
         contacts={contacts}
-        currentUser={{
-          id: user?.id ?? "",
-          name: user?.name,
-          email: user?.email,
-          phone: user?.phone,
-        }}
-        currentUserUsername={user?.name ?? ""}
+        currentUser={user}
+        currentUserUsername={user?.username ?? user?.name ?? ""}
         onSubmit={handleCreateFine}
       />
     </div>

@@ -243,6 +243,7 @@ scanQR: "TWINT-Nummer",
   paid: "Bezahlung bestätigt!",
   close: "Schliessen",
   noTwintNumber: "Der Absender hat seine TWINT-Nummer nicht hinterlegt",
+  you:"du",
 },
 
 

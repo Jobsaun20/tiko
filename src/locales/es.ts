@@ -247,6 +247,7 @@ paymentModal: {
   paid: "¡Pago confirmado!",
   close: "Cerrar",
   noTwintNumber: "El remitente no ha configurado su número de TWINT",
+  you:"tú",
   },
 
 installApp: {

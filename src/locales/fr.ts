@@ -242,6 +242,7 @@ scanQR: "Numéro TWINT",
   paid: "Paiement confirmé !",
   close: "Fermer",
   noTwintNumber: "L'expéditeur n'a pas configuré son numéro TWINT",
+  you:"toi",
 },
 
 
