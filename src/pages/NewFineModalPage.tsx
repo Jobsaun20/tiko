@@ -206,78 +206,83 @@ export default function ContactsModalPage() {
         </div>
 
         {/* Lista de contactos filtrada */}
-        <div className="space-y-4 px-2 sm:px-6">
-          {loading ? (
-  <div className="text-center text-gray-400 py-8">{t.contacts.loading}</div>
-) : uniqueFilteredContacts.length > 0 ? (
-  uniqueFilteredContacts.map((contact) => {
-              const avatarData = avatarsMap[contact.user_supabase_id] as { avatar_url?: string; name?: string; username?: string } || {};
-              const avatar_url = avatarData.avatar_url || undefined;
-              const nameToShow = avatarData.username || contact.name || avatarData.name || contact.email || "";
-              return (
-                <Card
-        key={contact.id}
-        className="rounded-[24px] border border-gray-100 shadow bg-white px-3 py-2 flex items-center min-h-[64px] max-w-[320px] mx-auto"
-        style={{ marginBottom: 8 }}
-      >
-  <div className="flex items-center w-full">
-    {/* Avatar y nombre */}
-    <Avatar className="h-9 w-9 mr-2">
-      <AvatarImage src={avatar_url} alt={nameToShow} />
-      <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
-        {nameToShow?.charAt(0)?.toUpperCase() || "U"}
-      </AvatarFallback>
-    </Avatar>
-    <div className="flex-1 min-w-0">
-      <h3 className="font-semibold text-base truncate">{nameToShow}</h3>
-      <div className="flex items-center gap-2 mt-1">
-        <Badge className="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full">
-          {t.contacts.statusActive}
-        </Badge>
-      </div>
+        {/* Lista de contactos filtrada */}
+<div className="space-y-4 px-2 sm:px-6">
+  {loading ? (
+    <div className="text-center text-gray-400 py-8">{t.contacts.loading}</div>
+  ) : uniqueFilteredContacts.length > 0 ? (
+    // Envolvemos la lista en un contenedor scrollable
+    <div
+      className="max-h-[320px] overflow-y-auto space-y-4 pr-1"
+      style={{ minHeight: 0 }}
+    >
+      {uniqueFilteredContacts.map((contact) => {
+        const avatarData = avatarsMap[contact.user_supabase_id] as { avatar_url?: string; name?: string; username?: string } || {};
+        const avatar_url = avatarData.avatar_url || undefined;
+        const nameToShow = avatarData.username || contact.name || avatarData.name || contact.email || "";
+        return (
+          <Card
+            key={contact.id}
+            className="rounded-[24px] border border-gray-100 shadow bg-white px-3 py-2 flex items-center min-h-[64px] max-w-[320px] mx-auto"
+            style={{ marginBottom: 8 }}
+          >
+            <div className="flex items-center w-full">
+              {/* Avatar y nombre */}
+              <Avatar className="h-9 w-9 mr-2">
+                <AvatarImage src={avatar_url} alt={nameToShow} />
+                <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
+                  {nameToShow?.charAt(0)?.toUpperCase() || "U"}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-base truncate">{nameToShow}</h3>
+                <div className="flex items-center gap-2 mt-1">
+                  <Badge className="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full">
+                    {t.contacts.statusActive}
+                  </Badge>
+                </div>
+              </div>
+              {/* Botones de acción pegados a la derecha */}
+              <div className="flex flex-col gap-2 items-end w-full max-w-[110px]">
+                <Button
+                  size="sm"
+                  className="rounded-full bg-gradient-to-r from-red-500 to-pink-500 text-white font-semibold shadow px-2 max-w-[92px] min-w-[80px]"
+                  onClick={() => handleFineContact(contact)}
+                >
+                  {t.pages.contacts.fine}
+                </Button>
+                <Button
+                  size="sm"
+                  className="rounded-full bg-gradient-to-r from-[#915ec3] to-[#b07cd6] text-white font-semibold shadow px-2 max-w-[92px] min-w-[80px]"
+                  onClick={() => handleChallengeContact(contact)}
+                >
+                  {t.contacts.challenge}
+                </Button>
+              </div>
+            </div>
+          </Card>
+        );
+      })}
     </div>
-    {/* Botones de acción pegados a la derecha */}
-    <div className="flex flex-col gap-2 items-end w-full max-w-[110px]">
-  <Button
-    size="sm"
-    className="rounded-full bg-gradient-to-r from-red-500 to-pink-500 text-white font-semibold shadow px-2 max-w-[92px] min-w-[80px]"
-    onClick={() => handleFineContact(contact)}
-  >
-    {t.pages.contacts.fine}
-  </Button>
-  <Button
-    size="sm"
-    className="rounded-full bg-gradient-to-r from-[#915ec3] to-[#b07cd6] text-white font-semibold shadow px-2 max-w-[92px] min-w-[80px]"
-    onClick={() => handleChallengeContact(contact)}
-  >
-    {t.contacts.challenge}
-  </Button>
+  ) : (
+    <Card className="text-center py-10">
+      <CardContent>
+        <Users className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+        <h3 className="text-base sm:text-lg font-medium text-gray-800 mb-2">
+          {t.pages.contacts.noContacts}
+        </h3>
+        <Button
+          className="mt-4 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+          onClick={handleAddContact}
+        >
+          <UserPlus className="h-4 w-4 mr-2" />
+          {t.pages.contacts.addContact}
+        </Button>
+      </CardContent>
+    </Card>
+  )}
 </div>
 
-
-  </div>
-</Card>
-
-              );
-            })
-          ) : (
-            <Card className="text-center py-10">
-              <CardContent>
-                <Users className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                <h3 className="text-base sm:text-lg font-medium text-gray-800 mb-2">
-                  {t.pages.contacts.noContacts}
-                </h3>
-                <Button
-                  className="mt-4 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
-                  onClick={handleAddContact}
-                >
-                  <UserPlus className="h-4 w-4 mr-2" />
-                  {t.pages.contacts.addContact}
-                </Button>
-              </CardContent>
-            </Card>
-          )}
-        </div>
       </div>
 
       {/* Modales */}

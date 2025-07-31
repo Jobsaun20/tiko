@@ -291,7 +291,7 @@ const filteredContacts = contacts
       <div className="flex items-center gap-4 min-w-0">
         <Avatar className="h-12 w-12">
           <AvatarImage src={avatar_url} alt={nameToShow} />
-          <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
+          <AvatarFallback className="bg-gradient-to-r from-[#72bfc4] to-[#57b8c9] shadow-md text-white">
             {nameToShow?.charAt(0)?.toUpperCase() || "U"}
           </AvatarFallback>
         </Avatar>

@@ -520,7 +520,7 @@ const { createFine } = useFines();
                 </p>
                 <div className="flex justify-center gap-4">
                   <Button
-                    className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+                    className="bg-gradient-to-r from-[#72bfc4] to-[#57b8c9] shadow-md"
                     onClick={handleCreateGroup}
                   >
                     <Plus className="h-4 w-4 mr-2" />

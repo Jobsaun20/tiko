@@ -210,7 +210,7 @@ export default function Profile() {
       <div className="container mx-auto px-4 py-6 max-w-4xl space-y-6">
 
         {/* Volver atrás móvil */}
-        <div className="md:hidden mb-4">
+        {/* <div className="md:hidden mb-4">
           <Button
             variant="ghost"
             size="sm"
@@ -220,7 +220,7 @@ export default function Profile() {
             <ArrowLeft className="h-4 w-4" />
             {t.profile.goBack}
           </Button>
-        </div>
+        </div> */}
 
         {/* Cabecera de perfil */}
         <Card className="rounded-2xl shadow-lg max-w-[320px] mx-auto">
@@ -229,7 +229,7 @@ export default function Profile() {
               <div className="relative">
                 <Avatar className="h-24 w-24">
                   <AvatarImage src={user.avatar_url} alt={user.username} />
-                  <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white text-2xl">
+                  <AvatarFallback className="bg-gradient-to-r from-[#72bfc4] to-[#57b8c9] shadow-md text-white text-2xl">
                     {user.username?.charAt(0)?.toUpperCase() || "U"}
                   </AvatarFallback>
                 </Avatar>

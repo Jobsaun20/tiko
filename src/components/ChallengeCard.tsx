@@ -9,6 +9,8 @@ import { useContacts } from "@/hooks/useContacts";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/supabaseClient";
 import locales from "@/locales"; // <--- IMPORTANTE
+import { ScrollText, Clock, Send, Zap } from "lucide-react";
+
 
 interface ChallengeCardProps {
   challenge: any;
@@ -66,7 +68,7 @@ export function ChallengeCard({
   const getParticipantDisplay = (participant: any) => {
     if (participant.user_id === currentUserId) {
       return {
-        name: "Tú",
+        name: t.paymentModal.you,
         avatar: avatars[currentUserId] || null,
         fallback: "T",
       };
@@ -133,51 +135,66 @@ export function ChallengeCard({
   return (
   <Card className="w-full max-w-[320px] mx-auto rounded-2xl bg-white shadow-lg hover:shadow-2xl transition-shadow border border-gray-100">
   <CardHeader className="pb-2">
-    <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 sm:items-start sm:justify-between">
-      <div className="flex-1 min-w-0">
-        <CardTitle className="flex items-center gap-2 text-lg sm:text-xl font-bold">
-          {challenge.title}
-          <Crown className="h-4 w-4 text-yellow-500" />
-        </CardTitle>
-        {challenge.description && (
-          <div className="text-xs sm:text-sm text-gray-600 mt-1 mb-1">
-            {challenge.description}
-          </div>
-        )}
-        <div className="text-xs text-gray-500 mb-1">
-          {t.challengeCard.createdBy}{" "}
-          <span className="text-gray-700">
-            {
-              getParticipantDisplay({ user_id: challenge.creator_id }).name
-            }
-          </span>
-        </div>
-      </div>
-      <div className="flex flex-col items-end sm:items-end">
-        <div className="text-xs text-gray-400 mb-0.5">
-          {t.challengeCard.penalty}
-        </div>
-        <div className="text-3xl font-extrabold text-purple-700 leading-none mb-1 sm:mb-2">
-          CHF {challenge.amount}
-        </div>
-        <div className="flex items-center gap-2 mb-2">
-          {getStatusBadge(challenge.status)}
-          {challenge.status === "finished" && isCreator(currentUserId) && (
-            <Button
-              size="icon"
-              variant="destructive"
-              className="w-9 h-9"
-              disabled={deleting}
-              onClick={handleDelete}
-              title={t.challengeCard.deleteChallenge}
-            >
-              <Trash2 className="w-5 h-5" />
-            </Button>
-          )}
-        </div>
+  <div className="flex flex-row gap-3 items-start">
+    {/* Columna icono + corona (badge) */}
+    <div className="flex flex-col items-center min-w-[48px] mr-1 pt-1">
+      <div className="relative inline-block">
+        <span className="inline-flex items-center justify-center rounded-xl w-12 h-12 bg-purple-100">
+          <Zap className="w-7 h-7 text-purple-500" />
+        </span>
+       
       </div>
     </div>
-  </CardHeader>
+    {/* Columna texto alineada a la izquierda */}
+    <div className="flex flex-col flex-1 min-w-0 justify-center">
+      {/* Título */}
+      <CardTitle className="flex items-center gap-2 text-lg sm:text-xl font-bold pl-0">
+        {challenge.title}
+      </CardTitle>
+      {/* Descripción */}
+      {challenge.description && (
+        <div className="text-xs sm:text-sm text-gray-600 mt-1 mb-1 pl-0">
+          {challenge.description}
+        </div>
+      )}
+      {/* Erstellt von */}
+      <div className="text-xs text-gray-500 mb-1 pl-0">
+        {t.challengeCard.createdBy}{" "}
+        <span className="text-gray-700">
+          {getParticipantDisplay({ user_id: challenge.creator_id }).name}
+        </span>
+      </div>
+    </div>
+    {/* Columna lateral derecha (penalty, cantidad, status, papelera) */}
+    <div className="flex flex-col items-end sm:items-end min-w-fit ml-2">
+      <div className="text-xs text-gray-800 mb-0.5">
+        {t.challengeCard.penalty}
+      </div>
+      <div className="text-3xl font-extrabold text-purple-700 leading-none mb-0 sm:mb-2">
+        CHF {challenge.amount}
+      </div>
+      {/* STATUS debajo del precio */}
+      <div className="mt-1 mb-1">
+        {getStatusBadge(challenge.status)}
+      </div>
+      {/* Papelera solo si finished y creator */}
+      {challenge.status === "finished" && isCreator(currentUserId) && (
+        <Button
+          size="icon"
+          variant="destructive"
+          className="w-9 h-9 mt-1"
+          disabled={deleting}
+          onClick={handleDelete}
+          title={t.challengeCard.deleteChallenge}
+        >
+          <Trash2 className="w-5 h-5" />
+        </Button>
+      )}
+    </div>
+  </div>
+</CardHeader>
+
+
   <CardContent>
     <div className="mb-2">
       <div className="font-semibold text-xs sm:text-sm mb-1">
@@ -199,7 +216,7 @@ export function ChallengeCard({
                 {info.avatar ? (
                   <AvatarImage src={info.avatar} alt={info.name} />
                 ) : (
-                  <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs font-bold">
+                  <AvatarFallback className="bg-gradient-to-r from-[#72bfc4] to-[#57b8c9] shadow-md text-white text-xs font-bold">
                     {info.fallback}
                   </AvatarFallback>
                 )}
