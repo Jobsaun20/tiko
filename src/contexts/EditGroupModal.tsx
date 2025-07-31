@@ -1,4 +1,3 @@
-// src/components/EditGroupModal.tsx
 import React, { useState, useEffect, useRef } from "react";
 import {
   Dialog,
@@ -100,32 +99,32 @@ export function EditGroupModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md w-[95vw]">
+      <DialogContent className="max-w-[320px] w-full shadow-lg rounded-2xl px-4 py-6">
         <DialogHeader>
-          <DialogTitle>{t.modal.editGroup}</DialogTitle>
+          <DialogTitle className="text-[#52AEB9]">{t.modal.editGroup}</DialogTitle>
           <DialogDescription>
             {t.modal.editGroupDescription}
           </DialogDescription>
         </DialogHeader>
 
-        <Tabs value={tab} onValueChange={setTab} className="w-full">
-          <TabsList className="grid grid-cols-3 mb-4">
-            <TabsTrigger value="general">{t.modal.generalTab}</TabsTrigger>
-            <TabsTrigger value="avatar">{t.modal.avatarTab}</TabsTrigger>
-            <TabsTrigger value="members" disabled={!isAdmin}>
+        <Tabs value={tab} onValueChange={setTab} className="w-full mt-4">
+          <TabsList className="grid grid-cols-3 mb-5 rounded-2xl overflow-hidden border border-gray-200">
+            <TabsTrigger value="general" className="rounded-none">{t.modal.generalTab}</TabsTrigger>
+            <TabsTrigger value="avatar" className="rounded-none">{t.modal.avatarTab}</TabsTrigger>
+            <TabsTrigger value="members" className="rounded-none" disabled={!isAdmin}>
               {t.modal.membersTab}
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="general" className="space-y-4 px-2">
+          <TabsContent value="general" className="space-y-4 px-1">
             <label className="block font-semibold text-sm">
               {t.modal.groupName}
             </label>
-            <Input value={name} onChange={e => setName(e.target.value)} />
+            <Input value={name} onChange={e => setName(e.target.value)} className="rounded-2xl" />
             <label className="block font-semibold text-sm">
               {t.modal.description}
             </label>
-            <Input value={description} onChange={e => setDescription(e.target.value)} />
+            <Input value={description} onChange={e => setDescription(e.target.value)} className="rounded-2xl" />
           </TabsContent>
 
           <TabsContent
@@ -136,19 +135,17 @@ export function EditGroupModal({
               {t.modal.avatarLabel}
             </label>
             <Avatar
-              className={`h-16 w-16 mb-2 ${
-                isAdmin ? "cursor-pointer hover:ring-2 ring-blue-400 transition-all" : ""
-              }`}
+              className={`h-16 w-16 mb-2 shadow ${isAdmin ? "cursor-pointer hover:ring-2 ring-[#52AEB9] transition-all" : ""}`}
               onClick={handleAvatarUpload}
               title={isAdmin ? t.modal.changeAvatarTitle : ""}
             >
               <AvatarImage src={avatarUrl} />
-              <AvatarFallback className="bg-gray-200 text-gray-700 font-bold text-2xl">
+              <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold text-2xl">
                 {name?.slice(0, 2).toUpperCase() || "GR"}
               </AvatarFallback>
               {uploading && (
                 <div className="absolute inset-0 flex items-center justify-center bg-white/60 rounded-full">
-                  <Upload className="w-8 h-8 text-blue-500 animate-spin" />
+                  <Upload className="w-8 h-8 text-[#52AEB9] animate-spin" />
                 </div>
               )}
             </Avatar>
@@ -159,6 +156,7 @@ export function EditGroupModal({
                   size="sm"
                   onClick={handleAvatarUpload}
                   disabled={uploading}
+                  className="rounded-full border-[#52AEB9] text-[#52AEB9] font-semibold hover:bg-[#e5f8fa] transition"
                 >
                   <Upload className="h-4 w-4 mr-2" />
                   {uploading ? t.modal.uploading : t.modal.changeAvatar}
@@ -187,7 +185,7 @@ export function EditGroupModal({
               </span>
               <Button
                 variant="outline"
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 rounded-full border-[#52AEB9] text-[#52AEB9] font-semibold hover:bg-[#e5f8fa] transition"
                 onClick={() => onAddMember(group.id)}
               >
                 <UserPlus className="h-4 w-4" />
@@ -200,10 +198,10 @@ export function EditGroupModal({
               </span>
               <ul className="mt-2 space-y-1">
                 {group?.members?.map((m: any) => (
-                  <li key={m.id} className="flex items-center gap-2 text-sm">
+                  <li key={m.id} className="flex items-center gap-2 text-sm py-1">
                     <Avatar className="h-5 w-5">
                       <AvatarImage src={m.avatar} />
-                      <AvatarFallback>
+                      <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs font-bold">
                         {m.name?.charAt(0)?.toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
@@ -217,7 +215,7 @@ export function EditGroupModal({
                       <Button
                         size="icon"
                         variant="ghost"
-                        className="ml-2 text-red-500"
+                        className="ml-2 text-[#52AEB9] hover:bg-[#e5f8fa] rounded-full"
                         title={t.modal.removeMemberTitle}
                         onClick={() => onRemoveMember(group.id, m.id)}
                       >
@@ -231,15 +229,22 @@ export function EditGroupModal({
           </TabsContent>
         </Tabs>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
-            {t.modal.cancel}
-          </Button>
+        <DialogFooter className="flex flex-col gap-3 pt-4">
+        
           <Button
             onClick={handleSave}
             disabled={saving || (!name.trim())}
+            className="w-full py-2 font-bold rounded-full bg-[#52AEB9] hover:bg-[#42a0b0] text-white shadow transition"
           >
             {t.modal.saveChanges}
+          </Button>
+
+            <Button
+            variant="outline"
+            onClick={onClose}
+            className="w-full py-2 rounded-full border-[#52AEB9] text-[#52AEB9] font-semibold hover:bg-[#e5f8fa] transition"
+          >
+            {t.modal.cancel}
           </Button>
         </DialogFooter>
       </DialogContent>

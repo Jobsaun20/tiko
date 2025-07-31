@@ -59,7 +59,7 @@ export function GroupRulesModal({
     if (!newRule.trim() || newAmount === "" || Number(newAmount) <= 0) return;
     setSubmitting(true);
     try {
-      await proposeRule(newRule.trim(), Number(newAmount)); // PASA también la cantidad
+      await proposeRule(newRule.trim(), Number(newAmount));
       toast({
         title: m.toastProposedTitle,
         description: `${newRule.trim()} – ${m.amountLabel}: ${newAmount} CHF`,
@@ -120,18 +120,27 @@ export function GroupRulesModal({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
-        className="w-full max-w-[98vw] sm:max-w-xl md:max-w-2xl lg:max-w-3xl !p-0 rounded-2xl shadow-2xl"
-        style={{ maxHeight: "95vh" }}
+        className="
+          w-full 
+          max-w-[320px] 
+          mx-auto 
+          rounded-2xl 
+          shadow-xl 
+          p-0 
+          border border-gray-100
+          bg-white
+        "
+        style={{ maxHeight: "98vh" }}
       >
         <DialogHeader className="p-4 pb-2 border-b">
-          <DialogTitle className="flex items-center gap-2 text-lg md:text-xl">
-            <Users className="h-6 w-6" /> {m.title}
+          <DialogTitle className="flex items-center gap-2 text-lg">
+            <Users className="h-6 w-6 text-[#52AEB9]" /> {m.title}
           </DialogTitle>
         </DialogHeader>
 
         <div
           className="flex flex-col space-y-4 mt-2 px-4 pb-4 pt-2"
-          style={{ maxHeight: "70vh", overflowY: "auto" }}
+          style={{ maxHeight: "62vh", overflowY: "auto" }}
         >
           <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
             <Input
@@ -154,7 +163,7 @@ export function GroupRulesModal({
               }
               placeholder={m.amountPlaceholder ?? "Cantidad (CHF)"}
               disabled={submitting}
-              className="w-32"
+              className="w-28"
             />
             <Button
               onClick={handlePropose}
@@ -164,7 +173,13 @@ export function GroupRulesModal({
                 Number(newAmount) <= 0 ||
                 submitting
               }
-              className="flex items-center gap-1 w-full sm:w-auto"
+              className="
+                flex items-center gap-1 w-full sm:w-auto
+                bg-gradient-to-r from-[#72bfc4] to-[#52AEB9]
+                text-white font-bold rounded-full
+                shadow hover:from-[#52AEB9] hover:to-[#3c8791]
+                transition-all
+              "
             >
               <Plus className="h-4 w-4" /> {m.propose}
             </Button>
@@ -185,7 +200,7 @@ export function GroupRulesModal({
                   return (
                     <li
                       key={rule.id}
-                      className={`flex flex-col gap-2 p-3 rounded-lg border w-full
+                      className={`flex flex-col gap-2 p-3 rounded-xl border w-full shadow
                         ${
                           rule.pending_deletion
                             ? "bg-yellow-100 border-yellow-300"
@@ -218,10 +233,10 @@ export function GroupRulesModal({
                             </Badge>
                           ) : (
                             <div className="flex flex-row gap-2 justify-end">
-                              <Button size="sm" variant="destructive" onClick={() => handleAccept(rule.id)} disabled={submitting} className="flex items-center gap-1">
+                              <Button size="sm" variant="destructive" onClick={() => handleAccept(rule.id)} disabled={submitting} className="rounded-full flex items-center gap-1">
                                 <Trash2 className="h-4 w-4" /> {m.confirmDelete}
                               </Button>
-                              <Button size="sm" variant="outline" onClick={() => handleReject(rule.id)} disabled={submitting} className="flex items-center gap-1">
+                              <Button size="sm" variant="outline" onClick={() => handleReject(rule.id)} disabled={submitting} className="rounded-full flex items-center gap-1">
                                 <X className="h-4 w-4" /> {m.keepRule}
                               </Button>
                             </div>
@@ -232,7 +247,7 @@ export function GroupRulesModal({
                           <Badge variant="default" className="bg-green-500 text-white flex items-center gap-1 w-fit">
                             <CheckCircle2 className="h-4 w-4" /> {m.validated}
                           </Badge>
-                          <Button size="sm" variant="destructive" onClick={() => handleProposeDelete(rule.id)} disabled={submitting} className="flex items-center gap-1">
+                          <Button size="sm" variant="destructive" onClick={() => handleProposeDelete(rule.id)} disabled={submitting} className="rounded-full flex items-center gap-1">
                             <Trash2 className="h-4 w-4" /> {m.proposeDelete}
                           </Button>
                         </div>
@@ -246,10 +261,10 @@ export function GroupRulesModal({
                         </Badge>
                       ) : (
                         <div className="flex flex-row gap-2 justify-end">
-                          <Button size="sm" variant="outline" onClick={() => handleAccept(rule.id)} disabled={submitting} className="flex items-center gap-1">
+                          <Button size="sm" variant="outline" onClick={() => handleAccept(rule.id)} disabled={submitting} className="rounded-full flex items-center gap-1">
                             <CheckCircle2 className="h-4 w-4" /> {m.accept}
                           </Button>
-                          <Button size="sm" variant="destructive" onClick={() => handleReject(rule.id)} disabled={submitting} className="flex items-center gap-1">
+                          <Button size="sm" variant="destructive" onClick={() => handleReject(rule.id)} disabled={submitting} className="rounded-full flex items-center gap-1">
                             <X className="h-4 w-4" /> {m.reject}
                           </Button>
                         </div>
@@ -263,7 +278,7 @@ export function GroupRulesModal({
         </div>
 
         <DialogFooter className="p-4 pt-2 border-t flex justify-end">
-          <Button variant="outline" onClick={onClose} className="flex items-center gap-1">
+          <Button variant="outline" onClick={onClose} className="rounded-full flex items-center gap-1">
             <X className="h-4 w-4" /> {m.close}
           </Button>
         </DialogFooter>

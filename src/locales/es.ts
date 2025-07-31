@@ -333,6 +333,7 @@ onboard: {
     seeAllInsignias: "Ver todas las insignias",
     pendingFinesTitle:"Multas pendientes",
     seeAllPendingFines:"Ver todas las multas pendientes",
+    subtitle:"Empieza a impartir justicia!",
   },
 
   // Contacts Page
@@ -385,6 +386,7 @@ requestRejected:"Has rechazado la solicitud de contacto."
   edit:"Editar",
   delete:"Borrar",
 leave:"Salir del grupo",
+showMembers:"Ver miembros",
   
   },
 
@@ -416,6 +418,7 @@ leave:"Salir del grupo",
     contacts: "Contactos",
     fines: "Multas",
     history: "Historial",
+    language:"Idioma",
   },
   
   // Dashboard Stats

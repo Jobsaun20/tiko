@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { QrCode, Smartphone, Copy, CheckCircle, ExternalLink } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Fine } from "@/types/Fine";
-import { useLanguage } from "@/contexts/LanguageContext"; // <--- usa tu contexto de idioma
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -29,7 +29,7 @@ export const PaymentModal = ({
 }: PaymentModalProps) => {
   const [isPaid, setIsPaid] = useState(false);
   const { toast } = useToast();
-  const { t } = useLanguage(); // <--- obtiene el objeto de idioma actual
+  const { t } = useLanguage();
 
   useEffect(() => {
     setIsPaid(false);
@@ -65,10 +65,10 @@ export const PaymentModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="max-w-[320px] rounded-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <QrCode className="h-5 w-5 text-green-500" />
+            <QrCode className="h-5 w-5" style={{ color: "#52AEB9" }} />
             {t.paymentModal.title} - {fine.amount} CHF
           </DialogTitle>
           <DialogDescription>
@@ -78,7 +78,7 @@ export const PaymentModal = ({
 
         <div className="space-y-4">
           {/* Fine Details */}
-          <Card className="bg-red-50 border-red-200">
+          <Card className="max-w-[320px] shadow-lg rounded-2xl bg-red-50 border-red-200 mx-auto">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm text-red-800">{t.paymentModal.fine}</CardTitle>
             </CardHeader>
@@ -99,10 +99,10 @@ export const PaymentModal = ({
           </Card>
 
           {/* Opciones de pago */}
-          <Card>
+          <Card className="max-w-[320px] shadow-lg rounded-2xl mx-auto">
             <CardHeader>
               <CardTitle className="text-sm flex items-center gap-2">
-                <Smartphone className="h-4 w-4" />
+                <Smartphone className="h-4 w-4" style={{ color: "#52AEB9" }} />
                 {t.paymentModal.scanQR}
               </CardTitle>
             </CardHeader>
@@ -115,6 +115,7 @@ export const PaymentModal = ({
                     <Button
                       variant="outline"
                       size="sm"
+                      className="rounded-full border-[#52AEB9] text-[#52AEB9] hover:bg-[#e5f8fa]"
                       onClick={() => copyToClipboard(fine.sender_phone!)}
                     >
                       <Copy className="h-3 w-3" />
@@ -122,7 +123,7 @@ export const PaymentModal = ({
                   </div>
                   {/* <Button
                     type="button"
-                    className="mt-3 w-full flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white"
+                    className="mt-3 w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#52AEB9] to-[#52AEB9] text-white rounded-full"
                     onClick={openTwintApp}
                   >
                     <ExternalLink className="h-4 w-4" />
@@ -138,27 +139,32 @@ export const PaymentModal = ({
           </Card>
 
           {(isPaid || isAlreadyPaid) && (
-            <div className="flex items-center justify-center py-4 text-green-600">
-              <CheckCircle className="h-6 w-6 mr-2" />
+            <div className="flex items-center justify-center py-4 text-[#52AEB9]">
+              <CheckCircle className="h-6 w-6 mr-2" style={{ color: "#52AEB9" }} />
               <span className="font-medium">{t.paymentModal.paid}</span>
             </div>
           )}
         </div>
 
-        <DialogFooter className="pt-4">
-          <Button variant="outline" onClick={onClose}>
-            {t.paymentModal.close}
-          </Button>
-          <Button
+<DialogFooter className="pt-4 flex flex-col gap-3">
+          
+          <Button 
             onClick={markAsPaid}
             disabled={isPaid || !fine.sender_phone || isAlreadyPaid}
-            className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white"
+            className={ `rounded-full bg-[#52AEB9] hover:bg-[#4cb0be] text-white font-bold transition-colors`}
           >
             {isPaid
               ? t.paymentModal.processing
               : isAlreadyPaid
                 ? t.paymentModal.paid
                 : t.paymentModal.markAsPaid}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={onClose}
+            className="rounded-full border-[#52AEB9] text-[#52AEB9] hover:bg-[#e5f8fa]"
+          >
+            {t.paymentModal.close}
           </Button>
         </DialogFooter>
       </DialogContent>

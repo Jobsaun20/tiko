@@ -14,19 +14,18 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/supabaseClient";
 import { useSendContactRequest } from "@/hooks/useSendContactRequest"; // <-- IMPORTANTE
+import { BookUser } from "lucide-react";
 
-// Sugerencias de usuario para autocompletar
 interface UserSuggestion {
   id: string;
   username: string;
-  /* email: string; */
 }
 
 interface AddContactModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (contactData: any) => void;
-  editingContact?: any; // Opcional, para edición
+  editingContact?: any;
 }
 
 export const AddContactModal: React.FC<AddContactModalProps> = ({
@@ -37,21 +36,19 @@ export const AddContactModal: React.FC<AddContactModalProps> = ({
 }) => {
   const { t } = useLanguage();
   const { toast } = useToast();
-  const { sendContactRequest } = useSendContactRequest(); // <-- Hook de invitación
+  const { sendContactRequest } = useSendContactRequest();
 
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState<UserSuggestion[]>([]);
   const [selectedUser, setSelectedUser] = useState<UserSuggestion | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Si estás editando, precarga el usuario (opcional)
   useEffect(() => {
     if (editingContact) {
       setQuery(editingContact.username || "");
       setSelectedUser({
         id: editingContact.user_id || editingContact.id,
         username: editingContact.username,
-       /*  email: editingContact.email, */
       });
     } else {
       setQuery("");
@@ -59,7 +56,6 @@ export const AddContactModal: React.FC<AddContactModalProps> = ({
     }
   }, [editingContact, isOpen]);
 
-  // Busca usuarios en Supabase por username o email
   const searchUsers = async (q: string) => {
     setLoading(true);
     const { data } = await supabase
@@ -85,7 +81,6 @@ export const AddContactModal: React.FC<AddContactModalProps> = ({
     setSuggestions([]);
   };
 
-  // Aquí el flujo importante: edición vs nuevo contacto
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedUser) {
@@ -97,12 +92,10 @@ export const AddContactModal: React.FC<AddContactModalProps> = ({
       return;
     }
 
-    // Si es edición, mantén el flujo anterior
     if (editingContact) {
       onSubmit({
         user_id: selectedUser.id,
         name: selectedUser.username,
-       /*  email: selectedUser.email, */
       });
       setQuery("");
       setSelectedUser(null);
@@ -110,7 +103,6 @@ export const AddContactModal: React.FC<AddContactModalProps> = ({
       return;
     }
 
-    // NUEVO: Envía la solicitud de contacto
     const result = await sendContactRequest(selectedUser.id);
 
     if (result.success) {
@@ -133,19 +125,21 @@ export const AddContactModal: React.FC<AddContactModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="w-full max-w-[320px] shadow-lg rounded-2xl px-4 py-6 max-h-[90vh] overflow-y-auto !min-h-0">
         <DialogHeader>
-          <DialogTitle>
+                 
+          <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl text-black">
+            <BookUser className="h-5 w-5 text-[#52AEB9]" />   
             {editingContact
               ? t.pages.contacts.editContact
               : t.pages.contacts.addContact}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-xs sm:text-sm">
             {t.modal.searchContactToAdd}
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2 relative">
             <Input
               id="search"
@@ -154,6 +148,7 @@ export const AddContactModal: React.FC<AddContactModalProps> = ({
               placeholder={t.modal.searchNameOrEmail}
               autoComplete="off"
               disabled={!!editingContact}
+              className="rounded-2xl"
             />
             {loading && (
               <div className="text-xs text-gray-400 pl-1">
@@ -161,27 +156,37 @@ export const AddContactModal: React.FC<AddContactModalProps> = ({
               </div>
             )}
             {!selectedUser && suggestions.length > 0 && (
-              <div className="bg-white border rounded-md shadow p-1 max-h-48 overflow-y-auto z-50 absolute w-full">
+              <div className="bg-white border rounded-2xl shadow p-1 max-h-48 overflow-y-auto z-50 absolute w-full">
                 {suggestions.map((user) => (
                   <div
                     key={user.id}
-                    className="cursor-pointer px-2 py-1 hover:bg-purple-50"
+                    className="cursor-pointer px-2 py-1 rounded-lg hover:bg-[#e5f8fa] transition"
                     onClick={() => handleSelect(user)}
                   >
-                    <div className="font-medium">{user.username}</div>
-                    <div className="text-xs text-gray-600"></div>
+                    <div className="font-medium text-black]">{user.username}</div>
                   </div>
                 ))}
               </div>
             )}
           </div>
 
-          <DialogFooter className="gap-2">
-            <Button variant="outline" type="button" onClick={onClose}>
-              {t.common.cancel}
-            </Button>
-            <Button type="submit" disabled={!selectedUser && !editingContact}>
+          <DialogFooter className="flex flex-col gap-3 pt-4">
+            
+            <Button
+              type="submit"
+              disabled={!selectedUser && !editingContact}
+              className="rounded-full bg-[#52AEB9] hover:bg-[#42a0b0] text-white font-bold w-full transition-colors"
+            >
               {t.common.save}
+            </Button>
+
+            <Button
+              variant="outline"
+              type="button"
+              onClick={onClose}
+              className="rounded-full border-[#52AEB9] text-[#52AEB9] w-full hover:bg-[#e5f8fa] transition"
+            >
+              {t.common.cancel}
             </Button>
           </DialogFooter>
         </form>

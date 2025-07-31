@@ -28,12 +28,12 @@ interface CreateFineModalProps {
   preselectedContact?: Contact | null;
   contacts: Contact[];
   currentUser: {
-  id: string;
-  name?: string;
-  email?: string;
-  phone?: string;
-}
-  currentUserUsername: string; // <- obligatorio
+    id: string;
+    name?: string;
+    email?: string;
+    phone?: string;
+  };
+  currentUserUsername: string;
 }
 
 export const CreateFineModal = ({
@@ -55,7 +55,6 @@ export const CreateFineModal = ({
     recipient_email: preselectedContact?.email || "",
   });
 
-  // Autocompletado de búsqueda y lista
   const [search, setSearch] = useState("");
   const [showList, setShowList] = useState(false);
 
@@ -68,7 +67,6 @@ export const CreateFineModal = ({
     setSearch(preselectedContact?.name || preselectedContact?.email || "");
   }, [preselectedContact]);
 
-  // Filtrado robusto: nombre + email (aunque alguno esté vacío)
   const filteredContacts = contacts.filter(contact => {
     const name = (contact.name || "").toLowerCase().trim();
     const email = (contact.email || "").toLowerCase().trim();
@@ -76,7 +74,6 @@ export const CreateFineModal = ({
     return name.includes(term) || email.includes(term);
   });
 
-  // Selección de contacto desde lista
   const handleSelectContact = (contact: Contact) => {
     setFormData(prev => ({
       ...prev,
@@ -87,7 +84,6 @@ export const CreateFineModal = ({
     setShowList(false);
   };
 
-  // Envío del formulario
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -109,7 +105,6 @@ export const CreateFineModal = ({
       return;
     }
 
-    // Validar que el recipient existe
     const recipient = contacts.find(c => c.id === formData.recipient_id);
     if (!recipient) {
       toast({
@@ -120,7 +115,6 @@ export const CreateFineModal = ({
       return;
     }
 
-    // Validar que no se envía a sí mismo
     if (recipient.id === currentUser.id) {
       toast({
         title: t.common.error,
@@ -130,7 +124,6 @@ export const CreateFineModal = ({
       return;
     }
 
-    // Preparar y enviar datos
     const fineData = {
       reason: formData.reason,
       amount: parseFloat(formData.amount),
@@ -162,15 +155,17 @@ export const CreateFineModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="w-full max-w-[320px] shadow-lg rounded-2xl px-4 py-6 max-h-[90vh] overflow-y-auto !min-h-0">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5 text-red-500" />
+          <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl text-[#52AEB9]">
+            <AlertTriangle className="h-5 w-5 text-[#ffbc2a]" />
             {t.createFine.title}
           </DialogTitle>
-          <DialogDescription>{t.createFine.description}</DialogDescription>
+          <DialogDescription className="text-xs sm:text-sm">
+            {t.createFine.description}
+          </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
             <Label htmlFor="reason">{t.createFine.reason} *</Label>
             <Textarea
@@ -180,7 +175,7 @@ export const CreateFineModal = ({
               onChange={e =>
                 setFormData(prev => ({ ...prev, reason: e.target.value }))
               }
-              className="min-h-[80px]"
+              className="min-h-[80px] rounded-2xl"
             />
           </div>
           <div className="space-y-2">
@@ -195,18 +190,18 @@ export const CreateFineModal = ({
               onChange={e =>
                 setFormData(prev => ({ ...prev, amount: e.target.value }))
               }
+              className="rounded-2xl"
             />
           </div>
           <div className="space-y-2">
             <Label htmlFor="recipient_id">{t.createFine.selectContact} *</Label>
-            {/* Autocompletado de contacto */}
             <div className="relative">
               <Input
                 id="recipient_id"
                 type="text"
                 autoComplete="off"
                 disabled={!!preselectedContact}
-                placeholder="Buscar contacto por nombre o email"
+                placeholder={t.createFine.selectContactPlaceholder || "Buscar contacto por nombre o email"}
                 value={
                   !!preselectedContact
                     ? preselectedContact.name || preselectedContact.email
@@ -222,23 +217,22 @@ export const CreateFineModal = ({
                   setShowList(true);
                 }}
                 onFocus={() => setShowList(true)}
+                className="rounded-2xl"
               />
-              {/* Lista desplegable */}
               {showList && !preselectedContact && search.length > 0 && (
-                <div className="absolute z-10 left-0 right-0 bg-white border border-gray-200 rounded shadow mt-1 max-h-48 overflow-auto">
+                <div className="absolute z-10 left-0 right-0 bg-white border border-gray-100 rounded-2xl shadow mt-1 max-h-48 overflow-auto">
                   {filteredContacts.length === 0 ? (
                     <div className="p-3 text-gray-400 text-sm text-center">
-                      No se encontraron contactos
+                      {t.modal.noContactsFound || "No se encontraron contactos"}
                     </div>
                   ) : (
                     filteredContacts.map(contact => (
                       <div
                         key={contact.id}
-                        className="cursor-pointer px-4 py-2 hover:bg-gray-100"
+                        className="cursor-pointer px-4 py-2 rounded-xl hover:bg-[#e5f8fa] transition"
                         onClick={() => handleSelectContact(contact)}
                       >
-                        <div className="font-medium">{contact.name || contact.email}</div>
-                        {/* <div className="text-xs text-gray-500">{contact.email}</div> */}
+                        <div className="font-medium text-[#52AEB9]">{contact.name || contact.email}</div>
                       </div>
                     ))
                   )}
@@ -246,16 +240,23 @@ export const CreateFineModal = ({
               )}
             </div>
           </div>
-          <DialogFooter className="pt-4">
-            <Button type="button" variant="outline" onClick={onClose}>
-              {t.createFine.cancel}
-            </Button>
-            <Button
+          <DialogFooter className="flex flex-col gap-3 pt-4">
+  <Button
               type="submit"
-              className="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white"
+              className="rounded-full bg-[#52AEB9] hover:bg-[#42a0b0] text-white font-bold w-full transition-colors"
             >
               {t.createFine.create}
             </Button>
+
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              className="rounded-full border-[#52AEB9] text-[#52AEB9] w-full hover:bg-[#e5f8fa] transition"
+            >
+              {t.createFine.cancel}
+            </Button>
+          
           </DialogFooter>
         </form>
       </DialogContent>

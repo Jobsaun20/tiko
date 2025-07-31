@@ -187,7 +187,7 @@ function MultasRetosSection({
           flex flex-col items-center
           py-3 px-4
           cursor-pointer
-          min-w-[135px] max-w-[170px]
+          min-w-[150px] max-w-[170px]
         "
         style={{ minHeight: 190 }}
       >
@@ -248,7 +248,7 @@ function MultasRetosSection({
           flex flex-col items-center
           py-3 px-4
           cursor-pointer
-          min-w-[135px] max-w-[170px]
+          min-w-[150px] max-w-[170px]
         "
         style={{ minHeight: 190 }}
       >
@@ -436,6 +436,7 @@ const pendingFinesToPay = finesList.filter(
     fetchUserBadges();
   }, [profile?.id]);
 
+  
   const handleCreateFine = async (newFine: any) => {
     setIsCreateFineModalOpen(false);
     toast({ title: "Multa creada", description: "La multa ha sido enviada" });
@@ -597,77 +598,84 @@ const pendingFinesToPay = finesList.filter(
       <div className="flex-grow">
         <div className="container mx-auto px-4 py-6 space-y-6">
           {/* Mensaje bienvenida */}
-          <div className="text-center mb-6 flex flex-col items-center">
-            {/* Foto de perfil */}
-            {userData.avatar_url ? (
-              <img
-                src={userData.avatar_url}
-                alt={userData.username || userData.email || "Foto de perfil"}
-                className="mx-auto mb-3 rounded-full border-4 border-[#52AEB9] shadow h-20 w-20 object-cover"
-                style={{ background: "#fff" }}
-              />
-            ) : (
-              <div className="mx-auto mb-3 rounded-full bg-[#52AEB9] flex items-center justify-center h-20 w-20 text-white text-3xl font-bold shadow">
-                {userData.username?.charAt(0)?.toUpperCase() || "U"}
-              </div>
-            )}
-            <h1
-              className="text-2xl sm:text-3xl font-bold mb-2"
-              style={{ color: "#52AEB9" }}
-            >
-              {t.index.hola}, {userData.username || "usuario"}! 👋
-            </h1>
-            <div className="flex items-center justify-center gap-4 mb-4">
-              <Badge variant="secondary" className="bg-purple-100 text-purple-800">
-                {t.index.level} {currentLevel}
-              </Badge>
-            </div>
-            <div className="w-full mb-4">
-              <div className="flex justify-center text-sm text-gray-600 mb-1">
-                <span>{xpProgress.current} XP</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div
-                  className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${xpProgress.percentage}%` }}
-                ></div>
-              </div>
-            </div>
-            <div className="w-full flex flex-col items-center mb-2">
-              {badgesLoading ? (
-                <div className="text-gray-400 text-xs">{t.profile.loadingBadges || "Cargando insignias..."}</div>
-              ) : earnedBadges.length === 0 ? (
-                <Badge variant="secondary" className="bg-gray-100 text-gray-700 text-xs py-1 px-2">
-                  {t.index.noinsignias}
-                </Badge>
-              ) : (
-                <Badge
-                  key={earnedBadges[0].id}
-                  variant="secondary"
-                  className={
-                    getRarityColor(earnedBadges[0].rarity) +
-                    " flex items-center gap-1 text-xs font-medium py-1 px-3"
-                  }
-                  style={{ fontWeight: 500 }}
-                >
-                  <span className="mr-1 text-base">{earnedBadges[0].icon}</span>
-                  {earnedBadges[0].name?.[language] || earnedBadges[0].name?.en || "Sin nombre"}
-                </Badge>
-              )}
-            </div>
-          </div>
 
+          <Card className="rounded-2xl shadow-lg bg-white px-6 py-6 w-full max-w-[340px] mx-auto mb-6">
+            <div className="text-center flex flex-col items-center">
+              {/* Avatar */}
+              {userData.avatar_url ? (
+                <img
+                  src={userData.avatar_url}
+                  alt={userData.username || userData.email || "Foto de perfil"}
+                  className="mx-auto mb-3 rounded-full border-4 border-[#52AEB9] shadow h-20 w-20 object-cover"
+                  style={{ background: "#fff" }}
+                />
+              ) : (
+                <div className="mx-auto mb-3 rounded-full bg-[#52AEB9] flex items-center justify-center h-20 w-20 text-white text-3xl font-bold shadow">
+                  {userData.username?.charAt(0)?.toUpperCase() || "U"}
+                </div>
+              )}
+
+              {/* <h1
+                className="text-2xl sm:text-3xl font-bold mb-2"
+                style={{ color: "#52AEB9" }}
+              >
+                {t.index.hola}, {userData.username || "usuario"}! 👋
+              </h1> */}
+
+              <div className="flex items-center justify-center gap-4 mb-4">
+                <Badge variant="secondary" className="bg-purple-100 text-purple-800">
+                  {t.index.level} {currentLevel}
+                </Badge>
+              </div>
+
+              <div className="w-full mb-4">
+                <div className="flex justify-center text-sm text-gray-600 mb-1">
+                  <span>{xpProgress.current} XP</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${xpProgress.percentage}%` }}
+                  ></div>
+                </div>
+              </div>
+
+              <div className="w-full flex flex-col items-center mb-2">
+                {badgesLoading ? (
+                  <div className="text-gray-400 text-xs">{t.profile.loadingBadges || "Cargando insignias..."}</div>
+                ) : earnedBadges.length === 0 ? (
+                  <Badge variant="secondary" className="bg-gray-100 text-gray-700 text-xs py-1 px-2">
+                    {t.index.noinsignias}
+                  </Badge>
+                ) : (
+                  <Badge
+                    key={earnedBadges[0].id}
+                    variant="secondary"
+                    className={
+                      getRarityColor(earnedBadges[0].rarity) +
+                      " flex items-center gap-1 text-xs font-medium py-1 px-3"
+                    }
+                    style={{ fontWeight: 500 }}
+                  >
+                    <span className="mr-1 text-base">{earnedBadges[0].icon}</span>
+                    {earnedBadges[0].name?.[language] || earnedBadges[0].name?.en || "Sin nombre"}
+                  </Badge>
+                )}
+              </div>
+            </div>
+          </Card>
+          
           {/* Última multa recibida o mensaje */}
          {pendingFinesToPay.length > 0 ? (
   <div className="flex justify-center my-2">
     <div className="w-full max-w-md">
-      <Card className="w-full max-w-[320px] mx-auto border-0 rounded-2xl shadow bg-gradient-to-r from-orange-50 to-yellow-50">
+      <Card className="w-full max-w-[340px] mx-auto border-0 rounded-2xl shadow bg-gradient-to-r from-orange-50 to-yellow-50">
         <CardHeader className="pb-2 pt-2">
           <CardTitle className="text-base text-orange-800 font-semibold">
             {t.index.lastFineRecived}
           </CardTitle>
         </CardHeader>
-        <CardContent className="pb-3 pt-0">
+        <CardContent className="pb-3 pt-0 px-2">
           <FineCard
             fine={pendingFinesToPay[0]}
             userId={userId}

@@ -14,9 +14,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Users, Upload, X } from "lucide-react";
+import { Users, Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useContacts } from "@/hooks/useContacts"; 
+import { useContacts } from "@/hooks/useContacts";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface CreateGroupModalProps {
@@ -30,7 +30,7 @@ export const CreateGroupModal = ({
   onClose,
   onSubmit,
 }: CreateGroupModalProps) => {
-  const { toast } = useToast();  
+  const { toast } = useToast();
   const { t } = useLanguage();
   const m = t.createGroupModal;
 
@@ -38,7 +38,6 @@ export const CreateGroupModal = ({
     name: "",
     description: "",
     paymentMode: "direct",
-    
   });
 
   // ... lógica de búsqueda y selección de contactos ...
@@ -55,17 +54,13 @@ export const CreateGroupModal = ({
       return;
     }
 
-    
-
     onSubmit({ ...formData, members: [] /* o los que vinieran */ });
     const savedName = formData.name;
     setFormData({
       name: "",
       description: "",
       paymentMode: "direct",
-     
     });
-    // reset contactos si los estuvieras usando
 
     toast({
       title: m.toastSuccess,
@@ -78,17 +73,16 @@ export const CreateGroupModal = ({
       name: "",
       description: "",
       paymentMode: "direct",
-     
     });
     onClose();
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-full max-w-[95vw] sm:max-w-[500px] px-2 sm:px-8 py-4 rounded-lg max-h-[90vh] overflow-y-auto !min-h-0">
+      <DialogContent className="w-full max-w-[320px] shadow-lg rounded-2xl px-4 py-6 max-h-[90vh] overflow-y-auto !min-h-0">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl">
-            <Users className="h-5 w-5" />
+            <Users className="h-5 w-5 text-[#52AEB9]" />
             {m.createGroup}
           </DialogTitle>
           <DialogDescription className="text-xs sm:text-sm">
@@ -100,12 +94,17 @@ export const CreateGroupModal = ({
           {/* Avatar */}
           <div className="flex items-center space-x-4">
             <Avatar className="h-16 w-16">
-              <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xl">
+              <AvatarFallback className="bg-gradient-to-r from-[#52AEB9] to-[#72bfc4] text-white text-xl">
                 {formData.name.charAt(0).toUpperCase() || "G"}
               </AvatarFallback>
             </Avatar>
-            <Button type="button" variant="outline" size="sm">
-              <Upload className="h-4 w-4 mr-2" />
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="rounded-full border-[#52AEB9] text-[#52AEB9] flex items-center gap-2 hover:bg-[#e5f8fa] transition"
+            >
+              <Upload className="h-4 w-4 mr-1 text-[#52AEB9]" />
               {m.uploadAvatar}
             </Button>
           </div>
@@ -127,6 +126,7 @@ export const CreateGroupModal = ({
                 }
                 placeholder={m.groupNamePlaceholder}
                 required
+                className="rounded-2xl"
               />
             </div>
 
@@ -146,20 +146,26 @@ export const CreateGroupModal = ({
                 }
                 placeholder={m.groupDescriptionPlaceholder}
                 rows={3}
+                className="rounded-2xl"
               />
             </div>
           </div>
 
           {/* Footer */}
-          <DialogFooter className="gap-2">
-            <Button type="button" variant="outline" onClick={handleCancel}>
-              {m.cancel}
-            </Button>
+          <DialogFooter className="flex flex-col gap-3 pt-4">
             <Button
               type="submit"
-              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+              className="rounded-full bg-[#52AEB9] hover:bg-[#42a0b0] text-white font-bold w-full transition-colors"
             >
               {m.createGroupButton}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleCancel}
+              className="rounded-full border-[#52AEB9] text-[#52AEB9] w-full hover:bg-[#e5f8fa] transition"
+            >
+              {m.cancel}
             </Button>
           </DialogFooter>
         </form>

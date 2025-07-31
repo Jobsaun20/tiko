@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Filter, Search } from "lucide-react";
+import { ArrowLeft, Filter, Search, ScrollText } from "lucide-react";
 import { Header } from "@/components/Header";
 import { PaymentModal } from "@/components/PaymentModal";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -11,8 +11,13 @@ import { useUserProfile } from "@/hooks/useUserProfile";
 import { useFines } from "@/hooks/useFines";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useBadgeModal } from "@/contexts/BadgeModalContext";
-import { ScrollText } from "lucide-react";
-import { FineCard } from "@/components/FineCard"; // <--- Importa tu FineCard
+import { FineCard } from "@/components/FineCard";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
 
 const CHECK_BADGES_URL = "https://pyecpkccpfeuittnccat.supabase.co/functions/v1/check_badges";
 
@@ -156,54 +161,26 @@ export default function History() {
     pending: "text-yellow-600",
   };
 
+  // Lista de claves para los filtros
+  const FILTER_KEYS = ["all", "sent", "received", "paid", "pending"];
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
 
       <Header />
-      <div className="container mx-auto max-w-4xl px-4 py-6">
-        {/* <div className="md:hidden mb-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            {t.common.back}
-          </Button>
-        </div> */}
-        <div className="mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 flex items-center gap-3">
+      <div className="w-full max-w-[340px] mx-auto px-2 py-4">
+        <div className="md:hidden mb-4"></div>
+
+        <div className="mb-4">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-2 flex items-center gap-3">
             <ScrollText className="h-8 w-8 text-black" />
             {t.pages.history.title}
           </h1>
           <p className="text-gray-600">{t.pages.history.description}</p>
-        </div>
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Filter className="h-5 w-5" />
-              {t.pages.history.filter}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-2">
-              {["all","sent","received","paid","pending"].map(key => (
-                <Button
-                  key={key}
-                  variant={filter === key ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setFilter(key)}
-                  className={filter === key ? "bg-purple-600 text-white" : ""}
-                >
-                  {t.pages.history[key as keyof typeof t.pages.history]}
-                </Button>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        </div>      
+
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          {(["sent","received","paid","pending"] as const).map((type) => (
+          {(["sent", "received", "paid", "pending"] as const).map((type) => (
             <Card key={type}>
               <CardContent className="p-4 text-center">
                 <div className={`text-2xl font-bold ${colorMap[type]}`}>
@@ -216,6 +193,37 @@ export default function History() {
             </Card>
           ))}
         </div>
+
+{/* Filtros en Dropdown con nombre seleccionado */}
+        <div className="mb-6 flex items-center gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors border border-gray-200"
+                aria-label="Filtrar"
+                type="button"
+              >
+                <Filter className="h-5 w-5 text-gray-700" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-44">
+              {FILTER_KEYS.map(key => (
+                <DropdownMenuItem
+                  key={key}
+                  onClick={() => setFilter(key)}
+                  className={filter === key ? "font-semibold text-purple-600" : ""}
+                >
+                  {t.pages.history[key as keyof typeof t.pages.history]}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          {/* Texto del filtro seleccionado */}
+          <span className="ml-1 text-sm text-gray-700 font-medium flex items-center bg-gray-100 rounded-lg px-2 py-1">
+            {t.pages.history[filter as keyof typeof t.pages.history]}
+          </span>
+        </div>
+
         <div className="space-y-4">
           {loading ? (
             <div className="text-center text-gray-400 py-8">{t.contacts.loading}</div>

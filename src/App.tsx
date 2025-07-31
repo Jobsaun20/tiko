@@ -41,7 +41,8 @@ import { supabase } from "@/supabaseClient";
 import ContactsModalPage from "./pages/NewFineModalPage";
 import InstallAppIOS from "./pages/InstallAppIOS";
 
-
+// --- Nuevo Hook ---
+import { useSendPendingChallengeFines } from "@/hooks/useSendPendingChallengeFines";
 
 // FUNCION: Decodifica clave VAPID (para PushManager)
 function urlBase64ToUint8Array(base64String: string) {
@@ -181,8 +182,6 @@ function AppRoutes() {
       <Route path="/fine-modal" element={<ContactsModalPage />} />
       <Route path="/install-ios" element={<InstallAppIOS />} />
 
-
-
       {/* Catch-all */}
       <Route path="*" element={user ? <Navigate to="/" replace /> : <Navigate to="/welcome" replace />} />
     </Routes>
@@ -192,6 +191,7 @@ function AppRoutes() {
 function App() {
   const { user } = useAuthContext();
   usePushNotifications(user);
+  useSendPendingChallengeFines();  // <<--- AQUÍ VA EL NUEVO HOOK
 
   return (
     <LanguageProvider>

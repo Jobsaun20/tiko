@@ -159,9 +159,10 @@ export default function Notifications() {
     <div className="min-h-screen flex flex-col bg-gray-50">
 
       <Header />
-      <div className="container mx-auto max-w-4xl px-4 py-6">
+<div className="w-full max-w-[340px] mx-auto px-2 py-4">
         {/* Botón volver para móvil */}
-        <div className="md:hidden mb-4">
+        <div className="md:hidden mb-4"></div>
+        {/* <div className="md:hidden mb-4">
           <Button
             variant="ghost"
             size="sm"
@@ -172,13 +173,14 @@ export default function Notifications() {
             {t?.common?.back || "Atrás"}
           </Button>
         </div>
-
+ */}
         {/* Cabecera */}
-        <div className="mb-6">
+        <div className="mb-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="flex items-center gap-3">
-              <Bell className="h-8 w-8" />
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 flex items-center gap-2">
+              
+              <Bell className="h-8 w-8 text-black" />
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-2 flex items-center gap-3">
                 {t.notifications.title}
                 {unreadCountVisible > 0 && (
                   <Badge variant="destructive" className="ml-2">
@@ -186,7 +188,11 @@ export default function Notifications() {
                   </Badge>
                 )}
               </h1>
+              
             </div>
+            <p className="text-gray-600">
+            {t.notifications.description}
+          </p>
             {/* Botones de acciones */}
             <div className="flex gap-2 mt-3 sm:mt-0 w-full sm:w-auto justify-end">
               {unreadCountVisible > 0 && (
@@ -216,9 +222,7 @@ export default function Notifications() {
               )}
             </div>
           </div>
-          <p className="text-gray-600 mt-2">
-            {t.notifications.description}
-          </p>
+          
         </div>
 
         {/* Lista de notificaciones */}

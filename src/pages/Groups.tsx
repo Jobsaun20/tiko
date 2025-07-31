@@ -71,6 +71,7 @@ export default function Groups() {
   const [selectedContact, setSelectedContact] = useState<any>(null);
   const [groupToDelete, setGroupToDelete] = useState<any>(null);
   const [openOptionsPopoverId, setOpenOptionsPopoverId] = useState<string | null>(null);
+  const [openMembersPopoverId, setOpenMembersPopoverId] = useState<string | null>(null);
 
   // Modal handlers
   const handleCreateGroup = () => setIsCreateGroupModalOpen(true);
@@ -267,78 +268,90 @@ export default function Groups() {
   };
 
   // Avatar de grupo
-  // Avatar de grupo con coronita si admin
-const renderGroupAvatar = (group: any) => {
-  const avatar = group.avatar || "";
-  const hasImage = avatar.startsWith("http") || avatar.startsWith("data:image");
-  return (
-    <div className="relative h-12 w-12">
-      <Avatar className="h-12 w-12 bg-[#F6F2FB] text-purple-400 rounded-xl flex items-center justify-center text-2xl border border-gray-200">
-        {hasImage ? (
-          <AvatarImage src={avatar} alt={group.name} />
-        ) : (
-          <AvatarFallback>
-            <Users className="h-8 w-8" />
-          </AvatarFallback>
+ const renderGroupAvatar = (group: any) => {
+    const avatar = group.avatar || "";
+    const hasImage = avatar.startsWith("http") || avatar.startsWith("data:image");
+    return (
+      <div className="relative h-12 w-12">
+        <Avatar className="h-12 w-12 bg-[#F6F2FB] text-purple-400 rounded-xl flex items-center justify-center text-2xl border border-gray-200">
+          {hasImage ? (
+            <AvatarImage src={avatar} alt={group.name} />
+          ) : (
+            <AvatarFallback>
+              <Users className="h-8 w-8" />
+            </AvatarFallback>
+          )}
+        </Avatar>
+        {group.role === "admin" && (
+          <span className="absolute -top-1 -right-1 bg-yellow-400 rounded-full p-1 flex items-center justify-center shadow-md">
+            <Crown className="h-4 w-4 text-white" />
+          </span>
         )}
-      </Avatar>
-      {group.role === "admin" && (
-        <span className="absolute -top-1 -right-1 bg-yellow-400 rounded-full p-1 flex items-center justify-center shadow-md">
-          <Crown className="h-4 w-4 text-white" />
-        </span>
-      )}
-    </div>
-  );
-};
+      </div>
+    );
+  };
 
-
-  // Avatares miembros
-  const renderMembersAvatars = (members: any[]) => {
+  // Avatares miembros: ahora abre Popover al hacer clic
+  const renderMembersAvatars = (members: any[], groupId: string) => {
     const maxToShow = 3;
     const visible = members.slice(0, maxToShow);
     const moreCount = members.length - maxToShow;
+
     return (
-      <div className="flex items-center">
-        {visible.map((m) => {
-          const hasAvatar = m.avatar && (m.avatar.startsWith("http") || m.avatar.startsWith("data:image"));
-          return (
-            <Avatar
-              key={m.id}
-              className="h-8 w-8 -ml-2 first:ml-0 border-2 border-white"
-            >
-              {hasAvatar ? (
-                <AvatarImage src={m.avatar} alt={m.name} />
-              ) : (
-                <AvatarFallback className="bg-[#52aeb9] text-white font-bold">
-                  {(m.name || m.username || "").charAt(0).toUpperCase()}
-                </AvatarFallback>
-              )}
-            </Avatar>
-          );
-        })}
-        {moreCount > 0 && (
-          <span className="ml-2 text-xs font-medium text-gray-600">+{moreCount}</span>
-        )}
-      </div>
+      <Popover
+        open={openMembersPopoverId === groupId}
+        onOpenChange={open => setOpenMembersPopoverId(open ? groupId : null)}
+      >
+        <PopoverTrigger asChild>
+          <div className="flex items-center cursor-pointer" title={t.groups.showMembers || "Mostrar miembros"}>
+            {visible.map((m) => {
+              const hasAvatar = m.avatar && (m.avatar.startsWith("http") || m.avatar.startsWith("data:image"));
+              return (
+                <Avatar
+                  key={m.id}
+                  className="h-8 w-8 -ml-2 first:ml-0 border-2 border-white bg-gradient-to-r from-blue-500 to-purple-500"
+                >
+                  {hasAvatar ? (
+                    <AvatarImage src={m.avatar} alt={m.name} />
+                  ) : (
+                    <AvatarFallback className="bg-[#52aeb9] text-white font-bold">
+                      {(m.name || m.username || "").charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  )}
+                </Avatar>
+              );
+            })}
+            {moreCount > 0 && (
+              <span className="ml-2 text-xs font-medium text-gray-600">+{moreCount}</span>
+            )}
+          </div>
+        </PopoverTrigger>
+        <PopoverContent align="start" className="w-64 p-3 rounded-xl shadow-lg">
+          <div className="font-bold mb-2 text-sm text-gray-700">{t.groups.members || "Miembros del grupo"}</div>
+          <ul className="space-y-2">
+            {members.map(member => (
+              <li key={member.id} className="flex items-center gap-3">
+                <Avatar className="w-7 h-7 bg-gradient-to-r from-blue-500 to-purple-500">
+                  <AvatarImage src={member.avatar} alt={member.username || "Avatar"} />
+                  <AvatarFallback className="bg-[#52AEB9] text-white font-semibold">
+                    {(member.username?.[0] || member.name?.[0] || "U").toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="truncate font-medium text-gray-800">
+                  {member.username || member.name}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </PopoverContent>
+      </Popover>
     );
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Header />
-<div className="w-full max-w-[340px] mx-auto px-2 py-4">
-        {/* Back Button for mobile */}
-        {/* <div className="md:hidden mb-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            {t.common.back}
-          </Button>
-        </div> */}
+      <div className="w-full max-w-[340px] mx-auto px-2 py-4">
         {/* Título, descripción y crear grupo */}
         <div className="mb-4">
           <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-2 flex items-center gap-3">
@@ -348,19 +361,19 @@ const renderGroupAvatar = (group: any) => {
           <p className="text-gray-600 text-sm sm:text-base">{t.pages.groups.description}</p>
           <div className="mt-3">
             <Button
-  onClick={handleCreateGroup}
-  className="w-full max-w-[340px] mx-auto flex items-center px-6 py-2 rounded-full bg-gradient-to-r from-[#72bfc4] to-[#57b8c9] shadow-md gap-4"
-  style={{ minHeight: 48 }}
->
-  <span className="flex items-center justify-center w-10 h-10 rounded-full bg-[#7fcad1]/60">
-    <Plus className="w-6 h-6 text-white" />
-  </span>
-  <span className="flex flex-col items-start leading-tight">
-    <span className="font-bold text-white text-base">
-      {t.pages.groups.createGroup}
-    </span>    
-  </span>
-</Button>
+              onClick={handleCreateGroup}
+              className="w-full max-w-[320px] mx-auto flex items-center px-6 py-2 rounded-full bg-gradient-to-r from-[#72bfc4] to-[#57b8c9] shadow-md gap-4"
+              style={{ minHeight: 48 }}
+            >
+              <span className="flex items-center justify-center w-10 h-10 rounded-full bg-[#7fcad1]/60">
+                <Plus className="w-6 h-6 text-white" />
+              </span>
+              <span className="flex flex-col items-start leading-tight">
+                <span className="font-bold text-white text-base">
+                  {t.pages.groups.createGroup}
+                </span>
+              </span>
+            </Button>
           </div>
         </div>
         {/* Lista de grupos */}
@@ -389,13 +402,13 @@ const renderGroupAvatar = (group: any) => {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center">
                         <span className="font-bold text-base truncate text-gray-900">{group.name}</span>
-                        
                       </div>
                       <div className="text-gray-600 text-sm truncate">{group.description}</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 mt-2">
-                    {renderMembersAvatars(group.members)}
+                    {/* --- AVATARES CON POPOVER --- */}
+                    {renderMembersAvatars(group.members, group.id)}
                     <span className="ml-3 text-xs text-gray-500">{group.members.length} {t.groups.members}</span>
                   </div>
                   {/* Botón opciones abajo derecha */}

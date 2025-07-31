@@ -325,6 +325,7 @@ onboard: {
     seeAllInsignias: "Alle Abzeichen anzeigen",
     pendingFinesTitle:"Multas pendientes",
     seeAllPendingFines:"Ver todas las multas pendientes",
+    subtitle: "Fang an, Gerechtigkeit zu verteilen!",
   },
 
   // Contacts Page
@@ -377,6 +378,8 @@ confirmDeleteDescription: "Bist du sicher, dass du die Gruppe löschen möchtest
 edit: "Bearbeiten",
 delete: "Löschen",
 leave: "Gruppe verlassen",
+showMembers: "Mitglieder anzeigen",
+
 
   },
 
@@ -409,6 +412,8 @@ leave: "Gruppe verlassen",
   contacts: "Kontakte",
   fines: "Strafen",
   history: "Verlauf",
+  language: "Sprache",
+
   },
 
   // Dashboard Stats

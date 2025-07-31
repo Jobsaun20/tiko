@@ -88,16 +88,18 @@ export const FineCard = ({
         {/* ICONO MULTA */}
         <div className="flex flex-col items-center pt-1">
           <span
-            className={
-              "inline-flex items-center justify-center rounded-xl bg-pink-50 w-11 h-11 mt-1"
-            }
-          >
-            {isSent ? (
-              <Send className="w-7 h-7 text-red-400" />
-            ) : (
-              <ScrollText className="w-7 h-7 text-red-400" />
-            )}
-          </span>
+  className={
+    `inline-flex items-center justify-center rounded-xl w-11 h-11 mt-1 ` +
+    (isSent ? "bg-blue-50" : "bg-pink-50")
+  }
+>
+  {isSent ? (
+    <Send className="w-7 h-7" style={{ color: "#52AEB9" }} />
+  ) : (
+    <ScrollText className="w-7 h-7 text-red-400" />
+  )}
+</span>
+
         </div>
 
         {/* INFO PRINCIPAL */}

@@ -51,7 +51,7 @@ export function ChallengeCard({
   const [loading, setLoading] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const { t } = useLanguage();
-  const finesSentRef = useRef(false);
+  
 
   // -- Cargar los avatares SOLO para los participantes actuales (incluyendo creador)
   const userIds = [
@@ -61,18 +61,6 @@ export function ChallengeCard({
     ]),
   ];
   const avatars = useUsersAvatars(userIds);
-
-  useEffect(() => {
-    if (
-      challenge.status === "finished" &&
-      isCreator(currentUserId) &&
-      !finesSentRef.current
-    ) {
-      finesSentRef.current = true;
-      sendFinesToFailedParticipants();
-    }
-    // eslint-disable-next-line
-  }, [challenge.status]);
 
   // Devuelve el display info de un participante
   const getParticipantDisplay = (participant: any) => {
@@ -130,137 +118,7 @@ export function ChallengeCard({
   };
 
   // --------- MULTAS Y PUSH EN IDIOMA DEL RECEPTOR ---------
-  const sendFinesToFailedParticipants = async () => {
-    const { data: finesCandidates, error } = await supabase
-      .from("challenge_fines_candidates")
-      .select("*")
-      .eq("challenge_id", challenge.id);
-
-    if (error) {
-      console.error("❌ Error cargando la view challenge_fines_candidates:", error);
-      return;
-    }
-
-    if (!finesCandidates || !finesCandidates.length) {
-      console.log("ℹ️ No hay multas por enviar desde la view");
-      return;
-    }
-
-    const finesToInsert = [];
-
-    for (const fine of finesCandidates) {
-      // 1. Buscar idioma del destinatario
-      const { data: recipientData } = await supabase
-        .from("users")
-        .select("language")
-        .eq("id", fine.recipient_id)
-        .maybeSingle();
-      const lang = recipientData?.language || "es";
-      const locale = locales[lang] || locales["es"];
-
-      
-      // 2. Construir el motivo con el idioma del receptor
-      const reason = locale.challengeCard.challengeNotCompleted.replace(
-        "{title}",
-        challenge.title
-      );
-
-      const { data: exists } = await supabase
-        .from("fines")
-        .select("id")
-        .eq("sender_id", fine.sender_id)
-        .eq("recipient_id", fine.recipient_id)
-        .eq("reason", reason);
-
-      if (!exists?.length) {
-        finesToInsert.push({
-          sender_id: fine.sender_id,
-          sender_name: fine.sender_name,
-          sender_phone: fine.sender_phone,
-          recipient_id: fine.recipient_id,
-          recipient_name: fine.recipient_name,
-          recipient_email: fine.recipient_email,
-          reason,
-          amount: fine.amount,
-          status: "pending",
-          date: new Date().toISOString(),
-          type: "challenge",
-        });
-      }
-    }
-
-    if (finesToInsert.length > 0) {
-      const { error: insertError } = await supabase.from("fines").insert(finesToInsert);
-      if (insertError) {
-        console.error("❌ Error al insertar multas:", insertError);
-      } else {
-        console.log("✅ Multas enviadas desde view:", finesToInsert);
-
-        // ---- PUSH NOTIFICATION por multa, en el idioma del receptor ----
-        for (const fine of finesToInsert) {
-          const { data: recipientData } = await supabase
-            .from("users")
-            .select("language")
-            .eq("id", fine.recipient_id)
-            .maybeSingle();
-          const lang = recipientData?.language || "es";
-          const locale = locales[lang] || locales["es"];
-
-          function templateReplace(str: string, vars: Record<string, string | number>) {
-            return str.replace(/{{(.*?)}}/g, (_, key) => String(vars[key.trim()] ?? ""));
-          }
-          const notifPayload = {
-            title: locale.challengeCard.newFineRecived,
-            body: templateReplace(locale.challengeCard.fineReceivedBody, {
-              sender: fine.sender_name,
-              amount: fine.amount,
-              reason: fine.reason,
-            }),
-            url: "/history",
-          };
-
-          const { data: pushSubs, error: subError } = await supabase
-            .from("push_subscriptions")
-            .select("subscription")
-            .eq("user_id", fine.recipient_id);
-
-          if (subError) {
-            console.error("❌ Error buscando subscripciones:", subError);
-            continue;
-          }
-
-          const subs = (pushSubs || [])
-            .map((s: any) => {
-              try {
-                return typeof s.subscription === "string"
-                  ? JSON.parse(s.subscription)
-                  : s.subscription;
-              } catch {
-                return null;
-              }
-            })
-            .filter(
-              (s: any) => s && s.endpoint && s.keys?.auth && s.keys?.p256dh
-            );
-
-          for (const subscription of subs) {
-            try {
-              await fetch(PUSH_ENDPOINT, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  subs: subscription,
-                  notif: notifPayload,
-                }),
-              });
-            } catch (err) {
-              console.error("Error sending push:", err);
-            }
-          }
-        }
-      }
-    }
-  };
+  
 
   const getStatusBadge = (status: string) => {
     if (status === "pending")
@@ -369,7 +227,7 @@ export function ChallengeCard({
         <div className="flex gap-2 mt-2 w-full">
           <Button
             size="sm"
-            className="bg-green-500 hover:bg-green-600 text-white w-full xs:w-1/2 py-2 font-bold"
+            className="rounded-full bg-green-500 hover:bg-green-600 text-white w-full xs:w-1/2 py-2 font-bold"
             disabled={loading}
             onClick={() => handleAccept(true)}
             style={{ minWidth: "120px" }}
@@ -378,7 +236,7 @@ export function ChallengeCard({
           </Button>
           <Button
             size="sm"
-            className="bg-red-500 hover:bg-red-600 text-white w-full xs:w-1/2 py-2 font-bold"
+            className="rounded-full bg-red-500 hover:bg-red-600 text-white w-full xs:w-1/2 py-2 font-bold"
             disabled={loading}
             onClick={() => handleAccept(false)}
             style={{ minWidth: "120px" }}
@@ -393,7 +251,7 @@ export function ChallengeCard({
             size="sm"
             disabled={loading}
             onClick={() => handleComplete(true)}
-            className="bg-green-500 hover:bg-green-600 text-white w-full xs:w-1/2 py-2 font-bold"
+            className="rounded-full bg-green-500 hover:bg-green-600 text-white w-full xs:w-1/2 py-2 font-bold"
             style={{ minWidth: "120px" }}
           >
             {t.challenges.status_achieved}
@@ -402,7 +260,7 @@ export function ChallengeCard({
             size="sm"
             disabled={loading}
             onClick={() => handleComplete(false)}
-            className="bg-red-500 hover:bg-red-600 text-white w-full xs:w-1/2 py-2 font-bold"
+            className="rounded-full bg-red-500 hover:bg-red-600 text-white w-full xs:w-1/2 py-2 font-bold"
             style={{ minWidth: "120px" }}
           >
             {t.challenges.status_failed}

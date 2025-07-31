@@ -6,10 +6,17 @@ import { Button } from "@/components/ui/button";
 import { CreateChallengeModal } from "@/components/CreateChallengeModal";
 import { ChallengeCard } from "@/components/ChallengeCard";
 import { Header } from "@/components/Header";
-import { X, Trophy, ArrowLeft, Filter, Zap  } from "lucide-react";
+import { X, Trophy, ArrowLeft, Filter, Zap } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/supabaseClient"; // ⬅️ IMPORTANTE
+
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
 
 const colorMap: Record<string, string> = {
   accepted: "text-blue-600",
@@ -27,6 +34,7 @@ export default function ChallengesPage() {
     achieved: t.challenges.status_achieved,
     failed: t.challenges.status_failed,
   };
+  const FILTER_KEYS = Object.keys(statusLabels) as Array<keyof typeof statusLabels>;
   const navigate = useNavigate();
   const { user } = useAuthContext();
   const { challenges, loading, fetchChallenges } = useChallenges();
@@ -47,8 +55,6 @@ export default function ChallengesPage() {
           table: 'challenges', // <-- Cambia aquí si usas view
         },
         (payload) => {
-          // Opcional: puedes loggear el cambio
-          // console.log("🔄 Cambio realtime en challenges:", payload);
           fetchChallenges();
         }
       )
@@ -104,53 +110,20 @@ export default function ChallengesPage() {
   }
 
   return (
-<div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-gray-50">
       <Header />
-      <div className="container mx-auto max-w-4xl px-4 py-6">
+      <div className="w-full max-w-[340px] mx-auto px-2 py-4">
         {/* Botón volver para móviles */}
-        <div className="md:hidden mb-4">
-          {/* <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            {t.challenges.back}
-          </Button> */}
-        </div>
+        <div className="md:hidden mb-4"></div>
         {/* Título e icono */}
-        <div className="mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 flex items-center gap-3">
+        <div className="mb-4">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-2 flex items-center gap-3">
             <Zap className="h-8 w-8" />
             {t.challenges.titleChallengePage}
           </h1>
           <p className="text-gray-600">{t.challenges.subtitle}</p>
-        </div>
-        {/* Filtros */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Filter className="h-5 w-5" />
-              {t.challenges.filterChallenges}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-2">
-              {Object.keys(statusLabels).map((key) => (
-                <Button
-                  key={key}
-                  variant={filter === key ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setFilter(key as keyof typeof statusLabels)}
-                  className={filter === key ? "bg-purple-600 text-white" : ""}
-                >
-                  {statusLabels[key as keyof typeof statusLabels]}
-                </Button>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        </div>       
+
         {/* Resumen de contadores por estado */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           {(["accepted", "rejected", "achieved", "failed"] as const).map((type) => (
@@ -166,54 +139,83 @@ export default function ChallengesPage() {
             </Card>
           ))}
         </div>
+
         {/* Barra de búsqueda y botón crear */}
         <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-  {/* Botón morado redondeado */}
-  <Button
-  onClick={() => setModalOpen(true)}
-  className="
-    w-full max-w-[320px] mx-auto
-    flex items-center px-6 py-2
-    rounded-full
-    bg-gradient-to-r from-[#72bfc4] to-[#57b8c9]
-    shadow-md gap-4 
-    font-bold text-white text-base
-    transition-all
-  "
-  style={{ minHeight: 48 }}
->
-  <span className="flex items-center justify-center w-10 h-10 rounded-full bg-[#7fcad1]/60">
-    <Zap className="w-6 h-6 text-white" />
-  </span>
-  <span className="flex flex-col items-start leading-tight">
-    <span className="font-bold text-white text-base">
-      {t.challenges.createChallenge}
-    </span>
-  </span>
-</Button>
+          {/* Botón azul redondeado */}
+          <Button
+            onClick={() => setModalOpen(true)}
+            className="
+              w-full max-w-[320px] mx-auto
+              flex items-center px-6 py-2
+              rounded-full
+              bg-gradient-to-r from-[#72bfc4] to-[#57b8c9]
+              shadow-md gap-4 
+              font-bold text-white text-base
+              transition-all
+            "
+            style={{ minHeight: 48 }}
+          >
+            <span className="flex items-center justify-center w-10 h-10 rounded-full bg-[#7fcad1]/60">
+              <Zap className="w-6 h-6 text-white" />
+            </span>
+            <span className="flex flex-col items-start leading-tight">
+              <span className="font-bold text-white text-base">
+                {t.challenges.createChallenge}
+              </span>
+            </span>
+          </Button>
 
-  
-  {/* Barra de búsqueda redondeada */}
-  <div className="relative w-full max-w-[320px] mx-auto sm:w-72">
-    <input
-      type="text"
-      className="border border-gray-300 rounded-full px-5 py-2 w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A259E6] text-base"
-      placeholder={t.challenges.searchChallengePlaceholder}
-      value={search}
-      onChange={e => setSearch(e.target.value)}
-    />
-    {search && (
-      <button
-        type="button"
-        className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 focus:outline-none"
-        onClick={clearSearch}
-        tabIndex={-1}
-      >
-        <X className="w-5 h-5" />
-      </button>
-    )}
-  </div>
-</div>
+          {/* Barra de búsqueda redondeada */}
+          <div className="relative w-full max-w-[320px] mx-auto sm:w-72 ">
+            <input
+              type="text"
+              className="border border-gray-300 rounded-full px-5 py-2 w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A259E6] text-base"
+              placeholder={t.challenges.searchChallengePlaceholder}
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
+            {search && (
+              <button
+                type="button"
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 focus:outline-none"
+                onClick={clearSearch}
+                tabIndex={-1}
+              >
+                <X className="w-5 h-5" />
+              </button>
+            )}
+          </div>
+        </div>
+        {/* Botón de filtro y filtro seleccionado */}
+        <div className="mb-6 flex items-center gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors border border-gray-200"
+                aria-label="Filtrar"
+                type="button"
+              >
+                <Filter className="h-5 w-5 text-gray-700" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-44">
+              {FILTER_KEYS.map(key => (
+                <DropdownMenuItem
+                  key={key}
+                  onClick={() => setFilter(key)}
+                  className={filter === key ? "font-semibold text-purple-600" : ""}
+                >
+                  {statusLabels[key]}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          {/* Texto del filtro seleccionado */}
+          <span className="ml-1 text-sm text-gray-700 font-medium flex items-center bg-gray-100 rounded-lg px-2 py-1">
+            {statusLabels[filter]}
+          </span>
+        </div>
 
         <CreateChallengeModal
           isOpen={modalOpen}

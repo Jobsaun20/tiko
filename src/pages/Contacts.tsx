@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Users, UserPlus, ArrowLeft, Mail, Phone, Trash2, X } from "lucide-react";
+import { Users, UserPlus, ArrowLeft, Mail, Phone, Trash2, X, BookUser } from "lucide-react";
 import { Header } from "@/components/Header";
 import { CreateFineModal } from "@/components/CreateFineModal";
 import { CreateChallengeModal } from "@/components/CreateChallengeModal";
@@ -209,7 +209,7 @@ const filteredContacts = contacts
   return (
 <div className="min-h-screen flex flex-col bg-gray-50">
       <Header />
-      <div className="container mx-auto max-w-4xl px-4 py-6">
+<div className="w-full max-w-[340px] mx-auto px-2 py-4">
         {/* Botón volver para móviles */}
         <div className="md:hidden mb-4">
           {/* <Button
@@ -224,9 +224,9 @@ const filteredContacts = contacts
         </div>
 
         {/* Título y descripción */}
-        <div className="mb-6">
-          <h1 className="text-2xl sm:text-xl font-bold text-gray-800 mb-2 flex items-center gap-3">
-            <Users className="h-8 w-8" />
+        <div className="mb-4">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-2 flex items-center gap-3">
+           <BookUser className="h-7 w-7 sm:h-8 sm:w-8" />
             {t.pages.contacts.title}
           </h1>
           <p className="text-gray-600">{t.pages.contacts.description}</p>
