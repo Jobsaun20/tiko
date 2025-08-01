@@ -194,19 +194,19 @@ function App() {
   useSendPendingChallengeFines();  // <<--- AQUÍ VA EL NUEVO HOOK
 
   return (
-    <LanguageProvider>
-      <PWAInstallProvider>
-        <Router>
-          <BadgeModalProvider>
-            <div className="App">
-              <AppRoutes />
-              <InstallBanner />
-              <Toaster />
-            </div>
-          </BadgeModalProvider>
-        </Router>
-      </PWAInstallProvider>
-    </LanguageProvider>
+   <LanguageProvider>
+  <PWAInstallProvider>
+    <BadgeModalProvider>
+      <Router>
+        <div className="App">
+          <AppRoutes />
+          <InstallBanner />
+          <Toaster />
+        </div>
+      </Router>
+    </BadgeModalProvider>
+  </PWAInstallProvider>
+</LanguageProvider>
   );
 }
 
