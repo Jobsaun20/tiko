@@ -74,13 +74,13 @@ export function AddGroupMemberModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[420px]">
+      <DialogContent className="w-full max-w-[320px] rounded-2xl shadow-lg p-6">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5" />
+          <DialogTitle className="flex items-center gap-2 text-lg">
+            <Users className="h-5 w-5 text-[#52AEB9]" />
             {t.modal.addMember}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-xs text-gray-500">
             {t.modal.searchContactToAdd}
           </DialogDescription>
         </DialogHeader>
@@ -91,6 +91,7 @@ export function AddGroupMemberModal({
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             autoFocus
+            className="rounded-xl"
           />
         </div>
 
@@ -107,15 +108,15 @@ export function AddGroupMemberModal({
             {uniqueFiltered.map((contact) => (
               <button
                 key={contact.id}
-                className={`flex w-full items-center gap-3 px-2 py-2 hover:bg-purple-50 rounded transition text-left ${
-                  selectedId === contact.id ? "bg-purple-100" : ""
+                className={`flex w-full items-center gap-3 px-2 py-2 hover:bg-[#e5f8fa] rounded-xl transition text-left ${
+                  selectedId === contact.id ? "bg-[#b2e3ea]" : ""
                 }`}
                 type="button"
                 onClick={() => setSelectedId(contact.id)}
               >
                 <Avatar className="h-8 w-8">
                   <AvatarImage src={contact.avatar} alt={contact.name} />
-                  <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white text-sm">
+                  <AvatarFallback className="bg-gradient-to-r from-[#52AEB9] to-[#72bfc4] text-white text-sm">
                     {contact.name.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
@@ -128,14 +129,19 @@ export function AddGroupMemberModal({
           </div>
         )}
 
-        <DialogFooter className="mt-2 gap-2">
-          <Button variant="outline" type="button" onClick={handleClose}>
+        <DialogFooter className="mt-3 flex gap-2">
+          <Button
+            variant="outline"
+            type="button"
+            onClick={handleClose}
+            className="rounded-full"
+          >
             {t.modal.cancel}
           </Button>
           <Button
             type="button"
             disabled={!selectedId}
-            className="bg-gradient-to-r from-blue-500 to-purple-500 text-white"
+            className="rounded-full bg-[#52AEB9] text-white font-semibold hover:bg-[#3192a4] transition"
             onClick={handleConfirm}
           >
             {t.modal.add}
@@ -145,3 +151,5 @@ export function AddGroupMemberModal({
     </Dialog>
   );
 }
+
+export default AddGroupMemberModal;

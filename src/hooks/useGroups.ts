@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/supabaseClient";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { useBadgeModal } from "@/contexts/BadgeModalContext";
+import { useLanguage } from "@/contexts/LanguageContext";
+import locales from "@/locales"; // Si necesitas notificaciones localizadas
+// URL del Edge Function de badges
+const CHECK_BADGES_URL = "https://pyecpkccpfeuittnccat.supabase.co/functions/v1/check_badges";
 
 // Tipos para miembros y grupos
 export interface GroupMember {
@@ -30,7 +35,10 @@ type NewGroupInput = {
 };
 
 export function useGroups() {
-  const { user } = useAuthContext();
+  const { user, session } = useAuthContext();
+  const { showBadges } = useBadgeModal();
+  const { language } = useLanguage();
+
   const [groups, setGroups] = useState<Group[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -174,36 +182,57 @@ export function useGroups() {
       }]);
     if (err2) throw new Error(err2.message);
 
+    // BADGES - Check y mostrar
+    if (user && session?.access_token && groupData) {
+      try {
+        const resp = await fetch(CHECK_BADGES_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + session.access_token,
+          },
+          body: JSON.stringify({
+            user_id: user.id,
+            action: "create_group",
+            action_data: { lang: language || "es" },
+          }),
+        });
+        const result = await resp.json();
+        if (result?.newlyEarned?.length) {
+          showBadges(result.newlyEarned, language);
+        }
+      } catch (err) {
+        console.error("Error check_badges:", err);
+      }
+    }
+
     await fetchGroups();
     return groupData;
   }
 
   // ---------- Editar grupo ----------
-  // src/hooks/useGroups.ts
+  async function editGroup(
+    groupId: string,
+    changes: { name?: string; description?: string; avatar_url?: string }
+  ) {
+    // Cambia 'avatar_url' a 'avatar' para el update (según el nombre del campo en la base de datos)
+    const updatePayload: any = {};
 
-async function editGroup(
-  groupId: string,
-  changes: { name?: string; description?: string; avatar_url?: string }
-) {
-  // Cambia 'avatar_url' a 'avatar' para el update (según el nombre del campo en la base de datos)
-  const updatePayload: any = {};
+    if (changes.name !== undefined) updatePayload.name = changes.name;
+    if (changes.description !== undefined) updatePayload.description = changes.description;
+    // Admite avatar_url o avatar para máxima compatibilidad
+    if (changes.avatar_url !== undefined) updatePayload.avatar = changes.avatar_url;
+    if ((changes as any).avatar !== undefined) updatePayload.avatar = (changes as any).avatar;
 
-  if (changes.name !== undefined) updatePayload.name = changes.name;
-  if (changes.description !== undefined) updatePayload.description = changes.description;
-  // Admite avatar_url o avatar para máxima compatibilidad
-  if (changes.avatar_url !== undefined) updatePayload.avatar = changes.avatar_url;
-  if ((changes as any).avatar !== undefined) updatePayload.avatar = (changes as any).avatar;
+    const { error } = await supabase
+      .from("groups")
+      .update(updatePayload)
+      .eq("id", groupId);
 
-  const { error } = await supabase
-    .from("groups")
-    .update(updatePayload)
-    .eq("id", groupId);
+    if (error) throw new Error(error.message);
 
-  if (error) throw new Error(error.message);
-
-  await fetchGroups();
-}
-
+    await fetchGroups();
+  }
 
   // ---------- Eliminar grupo ----------
   async function deleteGroup(groupId: string) {
