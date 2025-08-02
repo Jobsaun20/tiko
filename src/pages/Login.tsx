@@ -27,7 +27,7 @@ export default function Login() {
         .eq("username", identifier)
         .single();
       if (findError || !data?.email) {
-        setError("Usuario o email no encontrado");
+        setError("username or email not found");
         return;
       }
       email = data.email;
