@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader } from "lucide-react";
 import { supabase } from "@/supabaseClient";
+import { LanguageSelector } from "@/components/LanguageSelector"; // <-- Importa el selector
 
 export default function Register() {
   const { register, loading, user } = useAuthContext();
@@ -121,7 +122,11 @@ export default function Register() {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen bg-[#52AEB9]">
+    <div className="flex flex-col justify-center items-center min-h-screen bg-[#52AEB9] relative">
+      {/* Selector de idioma en la esquina superior derecha */}
+      <div className="absolute top-5 right-5 z-50">
+        <LanguageSelector />
+      </div>
       <div className="bg-white rounded-2xl shadow-xl px-8 py-10 max-w-md w-full flex flex-col gap-6 items-center">
         <h2 className="text-2xl font-bold text-[#52AEB9] text-center mb-4">Create account</h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">

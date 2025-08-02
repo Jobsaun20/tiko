@@ -761,6 +761,9 @@ created: "created",
     adminLabel: "Admin",
     removeMemberTitle: "Remove from group",
     saveChanges: "Save changes",
+    addTelephoneNumber: "Enter your phone number for TWINT",
+placeholderPhone: "E.g.: +41791234567 or 079 123 45 67",
+errorPhone: "Enter a valid Swiss number (+41 or 07X).",
   }
 };
 export default en;

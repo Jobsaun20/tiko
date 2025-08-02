@@ -765,6 +765,9 @@ showMembers:"Ver miembros",
   removeMemberTitle: "Eliminar del grupo",
   
   saveChanges: "Guardar cambios",
+  addTelephoneNumber:"Introduce tu número de teléfono para TWINT",
+  placeholderPhone:"Ej: +41791234567 o 079 123 45 67",
+  errorPhone:"Introduce un número suizo válido (+41 o 07X).",
  
   }
 };

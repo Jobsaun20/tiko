@@ -758,6 +758,9 @@ created: "créée",
     adminLabel: "Admin",
     removeMemberTitle: "Retirer du groupe",
     saveChanges: "Enregistrer les modifications",
+    addTelephoneNumber: "Saisis ton numéro de téléphone pour TWINT",
+placeholderPhone: "Ex. : +41791234567 ou 079 123 45 67",
+errorPhone: "Saisis un numéro suisse valide (+41 ou 07X).",
   }
 };
 export default fr;
