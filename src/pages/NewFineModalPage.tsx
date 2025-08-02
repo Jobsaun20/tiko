@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Users, UserPlus, Mail, Phone, Trash2, X } from "lucide-react";
+import { Users, UserPlus, Mail, Phone, Trash2, X, BookUser } from "lucide-react";
 
 import { CreateFineModal } from "@/components/CreateFineModal";
 import { CreateChallengeModal } from "@/components/CreateChallengeModal";
@@ -179,7 +179,7 @@ export default function ContactsModalPage() {
         <div className="flex flex-col gap-2 px-4 pt-6 pb-2 sm:px-6">
           <div className="flex items-center justify-between gap-2 mb-2">
             <div className="text-lg sm:text-xl font-bold flex items-center gap-2">
-              <Users className="h-6 w-6 sm:h-7 sm:w-7" />
+              <BookUser className="h-6 w-6 sm:h-7 sm:w-7" />
               {t.contacts.titleFineModalPage}
             </div>
           </div>
@@ -267,12 +267,12 @@ export default function ContactsModalPage() {
   ) : (
     <Card className="text-center py-10">
       <CardContent>
-        <Users className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+        <BookUser className="h-12 w-12 mx-auto text-gray-400 mb-4" />
         <h3 className="text-base sm:text-lg font-medium text-gray-800 mb-2">
           {t.pages.contacts.noContacts}
         </h3>
         <Button
-          className="mt-4 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+          className="mt-4 bg-gradient-to-r from-[#72bfc4] to-[#57b8c9]"
           onClick={handleAddContact}
         >
           <UserPlus className="h-4 w-4 mr-2" />

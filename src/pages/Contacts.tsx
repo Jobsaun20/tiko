@@ -355,7 +355,7 @@ const filteredContacts = contacts
                   {t.pages.contacts.noContacts}
                 </h3>
                 <Button
-                  className="mt-4 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+                  className="mt-4 bg-gradient-to-r from-[#72bfc4] to-[#57b8c9]"
                   onClick={handleAddContact}
                 >
                   <UserPlus className="h-4 w-4 mr-2" />
