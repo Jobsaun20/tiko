@@ -29,7 +29,6 @@ export const EditProfileModal = ({
   user,
   onSave
 }: EditProfileModalProps) => {
-  // Incluye SIEMPRE todos los campos editables
   const [formData, setFormData] = useState({
     username: user?.username || "",
     email: user?.email || "user@example.com",
@@ -112,7 +111,7 @@ export const EditProfileModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleCancel}>
-      <DialogContent className="sm:max-w-[450px]">
+      <DialogContent className="max-w-[320px] rounded-2xl shadow-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <User className="h-5 w-5" />
@@ -128,7 +127,7 @@ export const EditProfileModal = ({
           <div className="flex flex-col items-center space-y-4">
             <Avatar className="h-24 w-24">
               <AvatarImage src={avatarUrl} alt={formData.username || "Usuario"} />
-              <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-500 text-white text-2xl">
+              <AvatarFallback className="bg-gradient-to-r from-[#72bfc4] to-[#57b8c9] text-white text-2xl">
                 {(formData.username?.charAt(0) || "U").toUpperCase()}
               </AvatarFallback>
               {uploading && (
@@ -137,11 +136,16 @@ export const EditProfileModal = ({
                 </div>
               )}
             </Avatar>
-            <Button variant="outline" size="sm" onClick={handlePhotoUpload} disabled={uploading}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handlePhotoUpload}
+              disabled={uploading}
+              className="rounded-full px-6"
+            >
               <Upload className="h-4 w-4 mr-2" />
               {uploading ? "Subiendo..." : m.changePhoto}
             </Button>
-            {/* input oculto */}
             <input
               type="file"
               accept="image/*"
@@ -186,11 +190,19 @@ export const EditProfileModal = ({
           </div>
         </div>
 
-        <DialogFooter className="pt-6">
-          <Button variant="outline" onClick={handleCancel}>
+        <DialogFooter className="pt-6 flex gap-2">
+          <Button
+            variant="outline"
+            onClick={handleCancel}
+            className="rounded-full px-6"
+          >
             {t.createGroupModal.cancel}
           </Button>
-          <Button onClick={handleSave} className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
+          <Button
+            onClick={handleSave}
+            className="rounded-full px-6"
+            style={{ background: "#52AEB9", color: "white" }}
+          >
             {t.profile.save}
           </Button>
         </DialogFooter>

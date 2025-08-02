@@ -52,7 +52,7 @@ export const InviteModal = ({ isOpen, onClose }: InviteModalProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="max-w-[320px] rounded-2xl shadow-lg">
         <DialogHeader>
           <DialogTitle>{t.invite.title}</DialogTitle>
           <DialogDescription>
@@ -69,19 +69,27 @@ export const InviteModal = ({ isOpen, onClose }: InviteModalProps) => {
                 readOnly
                 className="bg-gray-50"
               />
-              <Button variant="outline" size="icon" onClick={handleCopyLink}>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={handleCopyLink}
+                className="rounded-full"
+              >
                 <Copy className="h-4 w-4" />
               </Button>
             </div>
           </div>
-          <Button onClick={handleShare} variant="default" className="w-full">
+          <Button
+            onClick={handleShare}
+            variant="default"
+            className="w-full rounded-full"
+            style={{ background: "#52AEB9", color: "white" }}
+          >
             <Share2 className="h-4 w-4 mr-2" />
             {t.common.share}
           </Button>
         </div>
-        <DialogFooter>
-          
-        </DialogFooter>
+        <DialogFooter />
       </DialogContent>
     </Dialog>
   );

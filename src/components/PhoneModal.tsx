@@ -1,17 +1,16 @@
-// src/components/PhoneModal.tsx
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { isValidSwissPhone, normalizeSwissPhone } from "@/utils/validateSwissPhone";
-import { useLanguage } from "@/contexts/LanguageContext"; // <-- Importa el hook
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function PhoneModal({ isOpen, onClose, onSave }: {
   isOpen: boolean;
   onClose: () => void;
   onSave: (phone: string) => Promise<void>;
 }) {
-  const { t } = useLanguage(); // <-- Hook para traducciones
+  const { t } = useLanguage();
   const [phone, setPhone] = useState("");
   const [error, setError] = useState("");
 
@@ -28,7 +27,7 @@ export default function PhoneModal({ isOpen, onClose, onSave }: {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent className="max-w-[320px] rounded-2xl shadow-lg">
         <DialogHeader>
           <DialogTitle>
             {t.modal.addTelephoneNumber || "Introduce tu número de teléfono suizo"}
@@ -41,11 +40,19 @@ export default function PhoneModal({ isOpen, onClose, onSave }: {
           autoFocus
         />
         {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
+        <DialogFooter className="flex gap-2 mt-4">
+          <Button
+            variant="outline"
+            onClick={onClose}
+            className="rounded-full px-6"
+          >
             {t.challenges.cancel || "Cancelar"}
           </Button>
-          <Button onClick={handleSave}>
+          <Button
+            onClick={handleSave}
+            className="rounded-full px-6"
+            style={{ background: "#52AEB9", color: "white" }}
+          >
             {t.pages.contacts.save || "Guardar"}
           </Button>
         </DialogFooter>
