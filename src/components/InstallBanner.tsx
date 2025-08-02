@@ -1,6 +1,6 @@
 import { usePWAInstall } from "@/contexts/PWAInstallContext";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // Detecta Safari (iOS o macOS)
 function isSafari() {
@@ -8,16 +8,31 @@ function isSafari() {
   return /safari/i.test(ua) && !/chrome|android/i.test(ua);
 }
 
+// Detecta si la app está instalada
+function isAppInstalled() {
+  return (
+    window.matchMedia("(display-mode: standalone)").matches ||
+    (window.navigator as any).standalone === true
+  );
+}
+
+
 export function InstallBanner() {
   const { canInstall, promptInstall } = usePWAInstall();
   const { t } = useLanguage();
   const [closed, setClosed] = useState(false);
+  const [installed, setInstalled] = useState(isAppInstalled());
 
-  // Mostrar el banner si:
-  //  - canInstall === true (botón instalar)
-  //  - o (canInstall === false y navegador es Safari) (solo mensaje)
-  //  - No mostrar si closed === true
-  if (closed) return null;
+  // Escuchar cambios de instalación
+  useEffect(() => {
+    const handler = () => setInstalled(isAppInstalled());
+    window.addEventListener("appinstalled", handler);
+    // Algunos navegadores iOS no lanzan "appinstalled", por lo que también se puede comprobar al renderizar
+    return () => window.removeEventListener("appinstalled", handler);
+  }, []);
+
+  if (installed || closed) return null;
+
   const showInstructionsOnly = !canInstall && isSafari();
 
   if (!canInstall && !showInstructionsOnly) return null;
