@@ -688,6 +688,8 @@ created: "creata",
     linkCopiedDescription: "Il link è stato copiato negli appunti",
     sendInvite: "Invia invito",
     invitationLink: "Link di invito",
+    sendAskToContact: "Invia richiesta",
+
   },
 
   // Achievements

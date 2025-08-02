@@ -690,6 +690,8 @@ created: "created",
     linkCopiedDescription: "The link has been copied to the clipboard",
     sendInvite: "Send invite",
     invitationLink: "Invitation link",
+    sendAskToContact: "Send request",
+
   },
   
   // Achievements

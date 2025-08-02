@@ -690,6 +690,7 @@ showMembers:"Ver miembros",
     linkCopiedDescription: "El enlace ha sido copiado al portapapeles",
     sendInvite: "Enviar invitación",
     invitationLink: "Enlace de invitación",
+    sendAskToContact:"Enviar petición",
   },
   
   // Achievements

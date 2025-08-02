@@ -687,6 +687,8 @@ created: "créée",
     linkCopiedDescription: "Le lien a été copié dans le presse-papiers",
     sendInvite: "Envoyer une invitation",
     invitationLink: "Lien d’invitation",
+    sendAskToContact: "Envoyer la demande",
+
   },
 
   // Achievements

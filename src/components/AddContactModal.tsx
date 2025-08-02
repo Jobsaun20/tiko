@@ -177,7 +177,7 @@ export const AddContactModal: React.FC<AddContactModalProps> = ({
               disabled={!selectedUser && !editingContact}
               className="rounded-full bg-[#52AEB9] hover:bg-[#42a0b0] text-white font-bold w-full transition-colors"
             >
-              {t.common.save}
+              {t.invite.sendAskToContact}
             </Button>
 
             <Button

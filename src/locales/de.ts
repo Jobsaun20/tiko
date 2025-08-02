@@ -685,6 +685,8 @@ created: "erstellt",
     linkCopiedDescription: "Der Link wurde in die Zwischenablage kopiert",
     sendInvite: "Einladung senden",
     invitationLink: "Einladungslink",
+    sendAskToContact: "Anfrage senden",
+
   },
 
   // Achievements
