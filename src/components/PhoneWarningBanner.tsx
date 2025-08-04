@@ -14,7 +14,7 @@ export default function PhoneWarningBanner({ onAddPhone }: PhoneWarningBannerPro
       <div className="mb-3">
         <span>
           {t.banner.phoneWarning ||
-            "Debes añadir tu número de teléfono para enviar y recibir multas con Twint."}
+            "Debes añadir tu número de teléfono para enviar y recibir multas con Bizum."}
         </span>
       </div>
       <Button

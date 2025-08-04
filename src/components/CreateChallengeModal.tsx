@@ -193,7 +193,7 @@ export function CreateChallengeModal({
                 required
                 className="rounded-2xl w-28"
               />
-              <span className="ml-2 text-gray-500">CHF</span>
+              <span className="ml-2 text-gray-500">€</span>
             </div>
           </div>
           <div className="relative">

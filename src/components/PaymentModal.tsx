@@ -51,15 +51,7 @@ export const PaymentModal = ({
     }, 1500);
   };
 
-  const openTwintApp = () => {
-    if (fine.sender_phone) {
-      const twintUrl = `twint://sendmoney?phone=${fine.sender_phone.replace(/\D/g, "")}&amount=${fine.amount}`;
-      window.location.href = twintUrl;
-      setTimeout(() => {
-        window.open("https://www.twint.ch/en/", "_blank");
-      }, 1000);
-    }
-  };
+  
 
   const isAlreadyPaid = fine.status === "paid";
 
@@ -69,7 +61,7 @@ export const PaymentModal = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <QrCode className="h-5 w-5" style={{ color: "#52AEB9" }} />
-            {t.paymentModal.title} - {fine.amount} CHF
+            {t.paymentModal.title} - {fine.amount} €
           </DialogTitle>
           <DialogDescription>
             {t.paymentModal.description}
@@ -93,7 +85,7 @@ export const PaymentModal = ({
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">{t.paymentModal.amount}:</span>
-                <span className="text-lg font-bold text-red-600">{fine.amount} CHF</span>
+                <span className="text-lg font-bold text-red-600">{fine.amount} €</span>
               </div>
             </CardContent>
           </Card>
@@ -132,7 +124,7 @@ export const PaymentModal = ({
                 </div>
               ) : (
                 <div className="flex items-center justify-center text-orange-600 gap-2 py-2">
-                  <span>{t.paymentModal.noTwintNumber ?? "No hay número TWINT disponible."}</span>
+                  <span>{t.paymentModal.noBizumNumber ?? "No hay número Bizum disponible."}</span>
                 </div>
               )}
             </CardContent>

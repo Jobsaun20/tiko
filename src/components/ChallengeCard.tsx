@@ -171,7 +171,7 @@ export function ChallengeCard({
         {t.challengeCard.penalty}
       </div>
       <div className="text-3xl font-extrabold text-purple-700 leading-none mb-0 sm:mb-2">
-        CHF {challenge.amount}
+        € {challenge.amount}
       </div>
       {/* STATUS debajo del precio */}
       <div className="mt-1 mb-1">

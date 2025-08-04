@@ -453,7 +453,7 @@ const pendingFinesToPay = finesList.filter(
         await payFine(selectedFine.id);
         toast({
           title: t.fines.finePaid,
-          description: `Multa de ${selectedFine.amount} CHF pagada correctamente`,
+          description: `Multa de ${selectedFine.amount} € pagada correctamente`,
         });
 
         const BASE_XP = 2;

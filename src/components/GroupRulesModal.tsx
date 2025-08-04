@@ -62,7 +62,7 @@ export function GroupRulesModal({
       await proposeRule(newRule.trim(), Number(newAmount));
       toast({
         title: m.toastProposedTitle,
-        description: `${newRule.trim()} – ${m.amountLabel}: ${newAmount} CHF`,
+        description: `${newRule.trim()} – ${m.amountLabel}: ${newAmount} €`,
       });
       setNewRule("");
       setNewAmount("");
@@ -161,7 +161,7 @@ export function GroupRulesModal({
               onChange={(e) =>
                 setNewAmount(e.target.value === "" ? "" : Number(e.target.value))
               }
-              placeholder={m.amountPlaceholder ?? "Cantidad (CHF)"}
+              placeholder={m.amountPlaceholder ?? "Cantidad (€)"}
               disabled={submitting}
               className="w-28"
             />
@@ -217,7 +217,7 @@ export function GroupRulesModal({
                         {" "}
                         <span className="text-sm text-blue-800 font-semibold">
                           {rule.amount != null
-                            ? `– ${m.amountLabel}: ${rule.amount} CHF`
+                            ? `– ${m.amountLabel}: ${rule.amount} €`
                             : ""}
                         </span>
                       </span>

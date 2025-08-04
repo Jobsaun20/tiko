@@ -5,7 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader } from "lucide-react";
 import { supabase } from "@/supabaseClient";
-import { LanguageSelector } from "@/components/LanguageSelector"; // <-- Importa el selector
+import { LanguageSelector } from "@/components/LanguageSelector";
+// 🔵 IMPORTA EL CONTEXTO DE IDIOMA
+import { useLanguage } from "@/contexts/LanguageContext"; // <-- ajusta si tu contexto tiene otro nombre
 
 export default function Register() {
   const { register, loading, user } = useAuthContext();
@@ -15,6 +17,11 @@ export default function Register() {
   const [username, setUsername] = useState('');
   const [usernameStatus, setUsernameStatus] = useState<"checking" | "ok" | "taken" | "">("");
   const [error, setError] = useState<string | null>(null);
+
+  // 🔵 OBTIENE EL IDIOMA ACTUAL DEL CONTEXTO O LOCALSTORAGE
+  const { language } = useLanguage?.() || {};
+  // Si NO usas contexto de idioma, usa:
+  // const language = localStorage.getItem("language") || "es";
 
   // 🔵 Redirect if user is already logged in
   useEffect(() => {
@@ -105,7 +112,8 @@ export default function Register() {
         badges: [],
         groups: [],
         achievements: [],
-        // any other initial fields
+        // 🔵 GUARDA EL IDIOMA ELEGIDO (por defecto "es" si no hay)
+        language: language || "es"
       }]);
       if (insertError) {
         if (insertError.code === "23505") {

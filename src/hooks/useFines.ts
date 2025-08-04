@@ -41,7 +41,7 @@ export function useFines() {
   const [error, setError] = useState<string | null>(null);
 
   // --- Recargar multas desde la VIEW ---
-  async function refetchFines() {
+  async function refetCHFines() {
     if (!user) {
       setFines([]);
       setLoading(false);
@@ -65,7 +65,7 @@ export function useFines() {
   }
 
   useEffect(() => {
-    refetchFines();
+    refetCHFines();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
@@ -82,7 +82,7 @@ export function useFines() {
 
     if (updateError) throw new Error(updateError.message);
 
-    await refetchFines();
+    await refetCHFines();
     return data;
   }
 
@@ -258,7 +258,7 @@ export function useFines() {
     }
 
     // 7. Refrescar lista
-    await refetchFines();
+    await refetCHFines();
 
     return data;
   }

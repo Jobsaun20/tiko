@@ -8,16 +8,28 @@ const PUSH_ENDPOINT = import.meta.env.VITE_PUSH_SERVER_URL;
 
 // --- FUNCION AUXILIAR PARA CREAR NOTIFICACION ---
 async function addNotification(user_id: string, type: string, data: any, link?: string) {
-  await supabase.from("notifications").insert([
-    {
-      user_id,
-      type,
-      data,
-      link: link || null,
-      read: false,
-    },
-  ]);
+  try {
+    // ✅ Elimina valores `undefined` automáticamente
+    const cleanData = JSON.parse(JSON.stringify(data));
+
+    const { error } = await supabase.from("notifications").insert([
+      {
+        user_id,
+        type,
+        data: cleanData, // ← limpio y seguro
+        link: link || null,
+        read: false,
+      },
+    ]);
+
+    if (error) {
+      console.error("❌ Error insertando notificación:", error);
+    }
+  } catch (err) {
+    console.error("❌ Error preparando notificación:", err);
+  }
 }
+
 
 // --- Función para traducir textos con variables ---
 function templateReplace(str: string, vars: Record<string, any>) {

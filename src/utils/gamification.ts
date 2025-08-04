@@ -101,9 +101,9 @@ export const BADGES: Badge[] = [
     id: 'master-collector',
     name: { es: 'Coleccionista Maestro', en: 'Master Collector', de: 'Meistersammler' },
     description: {
-      es: 'Recaudaste más de 500 CHF',
-      en: 'You collected more than 500 CHF',
-      de: 'Du hast mehr als 500 CHF gesammelt'
+      es: 'Recaudaste más de 500 €',
+      en: 'You collected more than 500 €',
+      de: 'Du hast mehr als 500 € gesammelt'
     },
     icon: '💰',
     rarity: 'legendary',

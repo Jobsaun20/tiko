@@ -57,7 +57,7 @@ export default function History() {
       await payFine(selectedFine.id);
       toast({
         title: t.fines.finePaid,
-        description: `${t.history.fineForAmount} ${selectedFine.amount} CHF ${t.history.correctlyPaid}`,
+        description: `${t.history.fineForAmount} ${selectedFine.amount} € ${t.history.correctlyPaid}`,
       });
 
       const BASE_XP = 2;
