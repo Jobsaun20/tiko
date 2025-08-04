@@ -879,7 +879,7 @@ const pendingFinesToPay = finesList.filter(
       <ShareAppModal
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}
-        appUrl="https://Tiko.vercel.app/welcome"
+        appUrl="https://Tikoes.vercel.app/welcome"
       />
       {/* Footer siempre al final */}
       {/* <Footer /> */}
