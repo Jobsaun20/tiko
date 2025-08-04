@@ -40,7 +40,7 @@ import { FineCard } from "@/components/FineCard"; // Ajusta la ruta si es distin
 
 
 // URL de tu Edge Function en Supabase
-const CHECK_BADGES_URL = "https://pyecpkccpfeuittnccat.supabase.co/functions/v1/check_badges";
+const CHECK_BADGES_URL = "https://psnxdeykxselxxtvlgzb.supabase.co/functions/v1/check_badges";
 
 // Footer
 function Footer() {

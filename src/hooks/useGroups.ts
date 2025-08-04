@@ -5,7 +5,7 @@ import { useBadgeModal } from "@/contexts/BadgeModalContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import locales from "@/locales"; // Si necesitas notificaciones localizadas
 // URL del Edge Function de badges
-const CHECK_BADGES_URL = "https://pyecpkccpfeuittnccat.supabase.co/functions/v1/check_badges";
+const CHECK_BADGES_URL = "https://psnxdeykxselxxtvlgzb.supabase.co/functions/v1/check_badges";
 
 // Tipos para miembros y grupos
 export interface GroupMember {

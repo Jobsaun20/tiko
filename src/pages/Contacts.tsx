@@ -28,7 +28,7 @@ import {
   DialogFooter
 } from "@/components/ui/dialog";
 
-const CHECK_BADGES_URL = "https://pyecpkccpfeuittnccat.supabase.co/functions/v1/check_badges";
+const CHECK_BADGES_URL = "https://psnxdeykxselxxtvlgzb.supabase.co/functions/v1/check_badges";
 
 async function getUserIdByEmail(email: string): Promise<string | null> {
   const { data, error } = await supabase

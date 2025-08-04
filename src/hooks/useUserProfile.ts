@@ -29,7 +29,7 @@ type UpdateProfileResult = {
 };
 
 // URL Edge Function para chequear badges por XP/level
-const CHECK_BADGES_URL = "https://pyecpkccpfeuittnccat.supabase.co/functions/v1/check_badges";
+const CHECK_BADGES_URL = "https://psnxdeykxselxxtvlgzb.supabase.co/functions/v1/check_badges";
 
 export function useUserProfile() {
   const { user, session } = useAuthContext();

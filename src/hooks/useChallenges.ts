@@ -9,7 +9,7 @@ import locales from "@/locales";
 const PUSH_ENDPOINT = import.meta.env.VITE_PUSH_SERVER_URL;
 
 // ENDPOINT check_badges
-const CHECK_BADGES_URL = "https://pyecpkccpfeuittnccat.supabase.co/functions/v1/check_badges";
+const CHECK_BADGES_URL = "https://psnxdeykxselxxtvlgzb.supabase.co/functions/v1/check_badges";
 
 // --- FUNCION AUXILIAR PARA CREAR NOTIFICACION ---
 async function addNotification(user_id: string, type: string, data: any, link?: string) {

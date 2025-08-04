@@ -10,5 +10,5 @@ export function getSupabaseFunctionUrl(functionName: string): string {
     return `http://localhost:8080/functions/v1/${functionName}`;
   }
   // En producción o preview
-  return `https://pyecpkccpfeuittnccat.supabase.co/functions/v1/${functionName}`;
+  return `https://psnxdeykxselxxtvlgzb.supabase.co/functions/v1/${functionName}`;
 }

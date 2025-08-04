@@ -27,7 +27,7 @@ export interface Fine {
 }
 
 // URL del Edge Function de badges
-const CHECK_BADGES_URL = "https://pyecpkccpfeuittnccat.supabase.co/functions/v1/check_badges";
+const CHECK_BADGES_URL = "https://psnxdeykxselxxtvlgzb.supabase.co/functions/v1/check_badges";
 // ENDPOINT push notification
 const PUSH_ENDPOINT = import.meta.env.VITE_PUSH_SERVER_URL;
 
