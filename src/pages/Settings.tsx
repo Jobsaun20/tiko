@@ -281,7 +281,7 @@ export default function Settings() {
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Desarrollado por:</span>
-                <span className="text-sm font-medium">DESWG Team</span>
+                <span className="text-sm font-medium">Tiko Team</span>
               </div>
             </CardContent>
           </Card>

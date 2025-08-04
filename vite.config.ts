@@ -16,8 +16,8 @@ export default defineConfig(({ mode }) => ({
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: "DESWG",
-        short_name: "DESWG",
+        name: "Tiko",
+        short_name: "Tiko",
         description: "They fail, you win",
         start_url: "/",
         scope: "/",

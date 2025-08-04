@@ -3,7 +3,7 @@ import { add } from "date-fns";
 export const de = {
   // Header
   app: {
-    name: "DESWG",
+    name: "Tiko",
     subtitle: "Unter Freunden",
     installApp: "App installieren",
     other: "Andere", 
@@ -259,13 +259,13 @@ scanQR: "TWINT-Nummer",
   },
 
   share: {
-    title: "Teile DESWG",
+    title: "Teile Tiko",
     description: "Teile diese Website mit deinen Freunden oder deiner Familie:",
     copy: "Link kopieren",
     copied: "Kopiert!",
     close: "Schliessen",
     button: "App teilen",
-    buttonDesc: "Teile DESWG mit deinen Freunden",
+    buttonDesc: "Teile Tiko mit deinen Freunden",
     intro: "Teile die App mit deinen Freunden:",
     share: "Senden...",
     text: "Probier diese App aus!"
@@ -281,7 +281,7 @@ showInstallBanner: "Für die Installation auf iOS: Tippe auf „Teilen“ 📤 u
   },
 
   welcome: {
-  title: "Willkommen bei DESWG",
+  title: "Willkommen bei Tiko",
   subtitle1: "Ihre Fehler – dein Gewinn",
   description: "Erstellt eure Gruppe, legt eure Regeln fest, startet Herausforderungen… und keiner entkommt! Wer sich nicht an die Regeln hält, muss zahlen!",
   login: "Einloggen",
@@ -289,14 +289,14 @@ showInstallBanner: "Für die Installation auf iOS: Tippe auf „Teilen“ 📤 u
 },
 
 onboard: {
-  whatIsDeswg: "Was ist DESWG?",
-  whatIsDeswgDescription: "DESWG ist die App, die das Zusammenleben in ein Spiel verwandelt, bei dem gewinnt, wer die Regeln einhält und durchsetzt.",
+  whatIsTiko: "Was ist Tiko?",
+  whatIsTikoDescription: "Tiko ist die App, die das Zusammenleben in ein Spiel verwandelt, bei dem gewinnt, wer die Regeln einhält und durchsetzt.",
   createGroups: "Gruppen und Regeln erstellen",
   createGroupsDescription: "Erstelle eine Gruppe mit deinem Partner, Freunden, Mitbewohnern oder Kollegen und definiert eure eigenen Regeln (Keine Haare in der Dusche, Kein Unterbrechen in Meetings...) und wenn sich jemand nicht daran hält, zahlt er!",
   challengeTitle: "Fordere deine Kontakte heraus",
   challengeDefinition: "Erstelle Herausforderungen und verbessere Gewohnheiten auf spielerische Weise (eine Woche ohne Zucker, die nächste Prüfung bestehen oder ins Fitnessstudio gehen). Wer es nicht schafft, zahlt. Zusammenleben, Gewohnheiten verbessern, XP sammeln.",
   payAndLevelUp: "Zusammenleben & gewinnen",
-  payAndLevelUpDescription: "Das Ziel von DESWG ist, das Zusammenleben zu verbessern, als Team zu spielen, Gewohnheiten zu verbessern und Spass zu haben, während du zum PERFEKTEN PARTNER wirst.",
+  payAndLevelUpDescription: "Das Ziel von Tiko ist, das Zusammenleben zu verbessern, als Team zu spielen, Gewohnheiten zu verbessern und Spass zu haben, während du zum PERFEKTEN PARTNER wirst.",
   back: "Zurück",
   next: "Weiter",
   createAccount: "Konto erstellen",
@@ -677,9 +677,9 @@ created: "erstellt",
   // Invite
   invite: {
     title: "Freunde einladen",
-    description: "Lade deine Freunde ein, DESWG zu nutzen",
+    description: "Lade deine Freunde ein, Tiko zu nutzen",
     shareText: "Wo Regelbruch dir Punkte bringt (solange du es nicht selbst bist 😏)",
-    shareTextShort: "Tritt DESWG bei!",
+    shareTextShort: "Tritt Tiko bei!",
     copyLink: "Link kopieren",
     linkCopied: "Link kopiert!",
     linkCopiedDescription: "Der Link wurde in die Zwischenablage kopiert",

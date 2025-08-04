@@ -12,17 +12,17 @@ export default function Impressum() {
         <CardContent className="space-y-4 text-sm text-gray-700">
           <p>
             <b>Betreiber dieser Plattform:</b><br />
-            DESWG – Eine Plattform für soziale Unterhaltung<br />
-            [info@DESWG-app.com]<br />
+            Tiko – Eine Plattform für soziale Unterhaltung<br />
+            [info@Tiko-app.com]<br />
             Luzern, Schweiz
           </p>
           <p>
             <b>Kontakt:</b><br />
-            E-Mail: info@DESWG-app.com
+            E-Mail: info@Tiko-app.com
           </p>
           <p>
             <b>Verantwortlich für den Inhalt:</b><br />
-            [DESWG Team]<br />
+            [Tiko Team]<br />
           </p>
           <p>
             <b>Haftungsausschluss:</b><br />

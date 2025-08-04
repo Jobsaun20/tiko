@@ -5,7 +5,7 @@ import { add } from "date-fns";
 export const es = {
   // Header
  app: {
-  name: "DESWG",
+  name: "Tiko",
   subtitle: "Entre amigos",
   installApp: "Instalar app",
   other:"Otros",
@@ -263,13 +263,13 @@ installApp: {
 
 
 share: {
-   title: "Comparte DESWG",
+   title: "Comparte Tiko",
     description: "Comparte esta web con tus amigos o familiares:",
     copy: "Copiar enlace",
     copied: "¡Copiado!",
     close: "Cerrar",
     button: "Compartir app",
-    buttonDesc: "Comparte DESWG con tus amigos",
+    buttonDesc: "Comparte Tiko con tus amigos",
     
   intro: "Comparte la app con tus amigos:",
   
@@ -288,7 +288,7 @@ banner: {
 },
 
 welcome: {
-  title: "Bienvenido a DESWG",
+  title: "Bienvenido a Tiko",
   subtitle1: "Ellos fallan, tú ganas",
 description: "Cread vuestro grupo, definid vuestras reglas, lanzad retos... ¡y que nadie se escape! Quien no cumpla las reglas, ¡que pague!",
   login: "Iniciar sesión",
@@ -296,14 +296,14 @@ description: "Cread vuestro grupo, definid vuestras reglas, lanzad retos... ¡y 
 },
 
 onboard: {
-  whatIsDeswg: "¿Qué es DESWG?",
-  whatIsDeswgDescription: "DESWG es la app que transforma la convivencia en un juego donde gana quien cumple y hace cumplir las reglas.",
+  whatIsTiko: "¿Qué es Tiko?",
+  whatIsTikoDescription: "Tiko es la app que transforma la convivencia en un juego donde gana quien cumple y hace cumplir las reglas.",
   createGroups: "Crea grupos y reglas",
   createGroupsDescription: "Crea un grupo con tu pareja, amigos, compañeros de piso o de trabajo y definid vuestras propias reglas (No dejar pelos en la ducha, No interrumpir en reuniones...) y si alguien no las cumple, Paga!",
   challengeTitle:"Reta a tus contactos",
   challengeDefinition:"Crea retos y mejora habitos de forma divertida (una semana sin azucar, aprobar el proximo examen o apuntarse al gimnasio). Si alguien no lo cumple paga. Convive, mejora habitos, gana XP",
   payAndLevelUp: "Convive y gana",
-  payAndLevelUpDescription: "El objetivo de DESWG es mejorar la convivencia, jugar en equipo, mejorar hábitos y divertirse en el proceso mientras te conviertes en EL COMPAÑERO PERFECTO",
+  payAndLevelUpDescription: "El objetivo de Tiko es mejorar la convivencia, jugar en equipo, mejorar hábitos y divertirse en el proceso mientras te conviertes en EL COMPAÑERO PERFECTO",
   back: "Atrás",
   next: "Siguiente",
   createAccount: "Crear cuenta",
@@ -682,9 +682,9 @@ showMembers:"Ver miembros",
   // Invite
   invite: {
     title: "Invitar amigos",
-    description: "Invita a tus amigos a usar DESWG",
+    description: "Invita a tus amigos a usar Tiko",
     shareText: "Donde romper las reglas te hace ganar (si no eres tú el que las rompe 😏)",
-    shareTextShort: "¡Únete a DESWG!",
+    shareTextShort: "¡Únete a Tiko!",
     copyLink: "Copiar enlace",
     linkCopied: "¡Enlace copiado!",
     linkCopiedDescription: "El enlace ha sido copiado al portapapeles",

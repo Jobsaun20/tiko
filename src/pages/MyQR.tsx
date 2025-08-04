@@ -44,7 +44,7 @@ export default function MyQR() {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'Mi código QR de DESWG',
+          title: 'Mi código QR de Tiko',
           text: 'Escanea este código para enviarme multas sociales',
           url: qrData
         });

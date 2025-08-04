@@ -19,7 +19,7 @@ export default function Welcome() {
       <div className="mb-8 flex flex-col items-center">
         <img
           src="/img/logowelcome.png"
-          alt="DESWG logo"
+          alt="Tiko logo"
           className="w-32 h-32 object-contain mb-3"
         />
         {/* <h1 className="text-white text-4xl font-bold tracking-tight mb-1">
@@ -33,7 +33,7 @@ export default function Welcome() {
       {/* Tarjeta de bienvenida */}
       <div className="bg-white rounded-2xl shadow-xl px-8 py-8 max-w-md w-full flex flex-col gap-6 items-center">
         <h2 className="text-2xl font-bold text-[#52AEB9] text-center">
-          {t.welcome?.title || "Welcome to DESWG!"}
+          {t.welcome?.title || "Welcome to Tiko!"}
         </h2>
         <p className="text-gray-700 text-center">
           {t.welcome?.description ||

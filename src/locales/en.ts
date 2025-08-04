@@ -3,7 +3,7 @@ import { add } from "date-fns";
 export const en = {
   // Header
   app: {
-    name: "DESWG",
+    name: "Tiko",
     subtitle: "Among friends",
     installApp: "Install app",
     other: "Other", 
@@ -260,13 +260,13 @@ scanQR: "TWINT number",
   },
 
   share: {
-    title: "Share DESWG",
+    title: "Share Tiko",
     description: "Share this website with your friends or family:",
     copy: "Copy link",
     copied: "Copied!",
     close: "Close",
     button: "Share app",
-    buttonDesc: "Share DESWG with your friends",
+    buttonDesc: "Share Tiko with your friends",
     intro: "Share the app with your friends:",
     share: "Send...",
     text: "Try this app!"
@@ -282,7 +282,7 @@ showInstallBanner: "To install on iOS: Tap “Share” 📤 and select “Add to
   },
 
   welcome: {
-  title: "Welcome to DESWG",
+  title: "Welcome to Tiko",
   subtitle1: "They fail, you win",
   description: "Create your group, set your rules, launch challenges... and no one escapes! Whoever breaks the rules pays up!",
   login: "Log in",
@@ -290,14 +290,14 @@ showInstallBanner: "To install on iOS: Tap “Share” 📤 and select “Add to
 },
 
 onboard: {
-  whatIsDeswg: "What is DESWG?",
-  whatIsDeswgDescription: "DESWG is the app that turns living together into a game where those who follow and enforce the rules win.",
+  whatIsTiko: "What is Tiko?",
+  whatIsTikoDescription: "Tiko is the app that turns living together into a game where those who follow and enforce the rules win.",
   createGroups: "Create groups and rules",
   createGroupsDescription: "Create a group with your partner, friends, roommates, or coworkers and set your own rules (No hair in the shower, No interrupting in meetings...) and if someone breaks them, they pay!",
   challengeTitle: "Challenge your contacts",
   challengeDefinition: "Create challenges and improve habits in a fun way (a week without sugar, passing the next exam, or joining the gym). If someone fails, they pay. Live together, improve habits, earn XP.",
   payAndLevelUp: "Live and win",
-  payAndLevelUpDescription: "The goal of DESWG is to improve coexistence, play as a team, develop better habits, and have fun while becoming THE PERFECT ROOMMATE.",
+  payAndLevelUpDescription: "The goal of Tiko is to improve coexistence, play as a team, develop better habits, and have fun while becoming THE PERFECT ROOMMATE.",
   back: "Back",
   next: "Next",
   createAccount: "Create account",
@@ -682,9 +682,9 @@ created: "created",
   // Invite
   invite: {
     title: "Invite friends",
-    description: "Invite your friends to use DESWG",
+    description: "Invite your friends to use Tiko",
     shareText: "Where breaking the rules makes you win (as long as you're not the one breaking them 😏)",
-    shareTextShort: "Join DESWG!",
+    shareTextShort: "Join Tiko!",
     copyLink: "Copy link",
     linkCopied: "Link copied!",
     linkCopiedDescription: "The link has been copied to the clipboard",

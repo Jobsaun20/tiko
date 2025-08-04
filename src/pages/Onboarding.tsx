@@ -15,8 +15,8 @@ export default function Onboarding() {
   const slides = [
     {
       lottie: "https://lottie.host/b7826704-df29-4a8b-a785-6f10c66c9468/YShWMObADu.json",
-      title: t.onboard.whatIsDeswg,
-      desc: t.onboard.whatIsDeswgDescription,
+      title: t.onboard.whatIsTiko,
+      desc: t.onboard.whatIsTikoDescription,
     },
     {
       lottie: "https://lottie.host/a9b25b68-7a1d-4f4f-be12-60dfc31814d8/b3dGcYKY5h.json",

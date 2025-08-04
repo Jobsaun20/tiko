@@ -12,7 +12,7 @@ export default function Datenschutz() {
         <CardContent className="space-y-4 text-sm text-gray-700">
           <p>
             <b>1. Allgemeines</b><br />
-            DESWG verpflichtet sich, die Privatsphäre der Nutzer zu schützen. Wir erheben und speichern nur Daten, die für die Nutzung der Plattform notwendig sind.
+            Tiko verpflichtet sich, die Privatsphäre der Nutzer zu schützen. Wir erheben und speichern nur Daten, die für die Nutzung der Plattform notwendig sind.
           </p>
           <p>
             <b>2. Datenerhebung und -verarbeitung</b><br />
@@ -24,7 +24,7 @@ export default function Datenschutz() {
           </p>
           <p>
             <b>4. Externe Inhalte & Links</b><br />
-            Die Plattform kann Inhalte Dritter oder Links zu anderen Webseiten enthalten. Für deren Datenschutzbestimmungen übernimmt DESWG keine Verantwortung.
+            Die Plattform kann Inhalte Dritter oder Links zu anderen Webseiten enthalten. Für deren Datenschutzbestimmungen übernimmt Tiko keine Verantwortung.
           </p>
           <p>
             <b>5. Auskunfts- und Löschungsrecht</b><br />

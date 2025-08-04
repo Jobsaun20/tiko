@@ -62,7 +62,7 @@ function Footer() {
       "
       style={{ fontSize: "12px", letterSpacing: "0.01em" }}
     >
-      © {new Date().getFullYear()} DESWG · Plataforma de entretenimiento —{" "}
+      © {new Date().getFullYear()} Tiko · Plataforma de entretenimiento —{" "}
       <a href="/legal/agb" className="underline text-blue-500">AGB</a> ·{" "}
       <a href="/legal/datenschutz" className="underline text-blue-500">Datenschutz</a> ·{" "}
       <a href="/legal/haftungsausschluss" className="underline text-blue-500">Haftungsausschluss</a>
@@ -879,7 +879,7 @@ const pendingFinesToPay = finesList.filter(
       <ShareAppModal
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}
-        appUrl="https://deswg.vercel.app/welcome"
+        appUrl="https://Tiko.vercel.app/welcome"
       />
       {/* Footer siempre al final */}
       {/* <Footer /> */}
