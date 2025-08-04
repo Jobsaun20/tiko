@@ -9,7 +9,7 @@ export default function Welcome() {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen bg-[#52AEB9] relative">
+    <div className="flex flex-col justify-center items-center min-h-screen bg-[#478892] relative">
       {/* Selector de idioma en la esquina superior derecha */}
       <div className="absolute top-5 right-5 z-50">
         <LanguageSelector />
@@ -31,7 +31,7 @@ export default function Welcome() {
       </div>
 
       {/* Tarjeta de bienvenida */}
-      <div className="bg-white rounded-2xl shadow-xl px-8 py-8 max-w-md w-full flex flex-col gap-6 items-center">
+      <div className="bg-white rounded-2xl shadow-xl px-8 py-8 max-w-[320px] w-full flex flex-col gap-6 items-center">
         <h2 className="text-2xl font-bold text-[#52AEB9] text-center">
           {t.welcome?.title || "Welcome to Tiko!"}
         </h2>

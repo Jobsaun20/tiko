@@ -48,7 +48,7 @@ export default function Onboarding() {
   const prev = () => setStep((s) => Math.max(0, s - 1));
 
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen bg-[#52AEB9] relative">
+    <div className="flex flex-col justify-center items-center min-h-screen bg-[#478892] relative">
       {/* Flecha arriba a la izquierda */}
       <button
         className="absolute top-5 left-5 z-50 p-2 rounded-full bg-white shadow hover:bg-gray-100 transition"

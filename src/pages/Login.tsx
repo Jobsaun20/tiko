@@ -49,7 +49,7 @@ export default function Login() {
       <div className="absolute top-5 right-5 z-50">
         <LanguageSelector />
       </div>
-      <div className="bg-white rounded-2xl shadow-xl px-8 py-10 max-w-md w-full flex flex-col gap-6 items-center">
+      <div className="bg-white rounded-2xl shadow-xl px-8 py-10 max-w-[320px] w-full flex flex-col gap-6 items-center">
         <h2 className="text-2xl font-bold text-[#52AEB9] text-center mb-4">Log in</h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
           <Input
