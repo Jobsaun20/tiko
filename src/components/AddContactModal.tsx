@@ -15,6 +15,8 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/supabaseClient";
 import { useSendContactRequest } from "@/hooks/useSendContactRequest"; // <-- IMPORTANTE
 import { BookUser } from "lucide-react";
+import { useAuthContext } from "@/contexts/AuthContext"; // Ya deberías tenerlo
+
 
 interface UserSuggestion {
   id: string;
@@ -42,6 +44,7 @@ export const AddContactModal: React.FC<AddContactModalProps> = ({
   const [suggestions, setSuggestions] = useState<UserSuggestion[]>([]);
   const [selectedUser, setSelectedUser] = useState<UserSuggestion | null>(null);
   const [loading, setLoading] = useState(false);
+  const { user } = useAuthContext();
 
   useEffect(() => {
     if (editingContact) {
@@ -58,10 +61,13 @@ export const AddContactModal: React.FC<AddContactModalProps> = ({
 
   const searchUsers = async (q: string) => {
     setLoading(true);
+     if (!user?.id) return;
+
     const { data } = await supabase
       .from("users")
       .select("id,username,email")
       .or(`username.ilike.%${q}%,email.ilike.%${q}%`)
+      .neq("id", user.id) // <-- FILTRA TU PROPIO USUARIO
       .limit(10);
     setSuggestions(data || []);
     setLoading(false);
