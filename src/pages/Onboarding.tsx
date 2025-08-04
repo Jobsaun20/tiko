@@ -62,7 +62,7 @@ export default function Onboarding() {
       <div className="absolute top-5 right-5 z-50">
         <LanguageSelector />
       </div>
-      <div className="bg-white rounded-2xl shadow-2xl px-8 py-10 max-w-md w-full flex flex-col items-center relative">
+      <div className="bg-white rounded-2xl shadow-2xl px-8 py-10 max-w-[320px] w-full flex flex-col items-center relative">
         {/* Step indicator */}
         <div className="absolute top-5 right-5 flex gap-2">
           {slides.map((_, i) => (
