@@ -32,14 +32,14 @@ export const EditProfileModal = ({
   const [formData, setFormData] = useState({
     username: user?.username || "",
     email: user?.email || "user@example.com",
-    phone: user?.phone || "+41 76 123 45 67"
+    phone: user?.phone || "+34 76 123 45 67"
   });
 
   useEffect(() => {
     setFormData({
       username: user?.username || "",
       email: user?.email || "user@example.com",
-      phone: user?.phone || "+41 76 123 45 67"
+      phone: user?.phone || "+34 76 123 45 67"
     });
   }, [user]);
 
@@ -103,7 +103,7 @@ export const EditProfileModal = ({
     setFormData({
       username: user?.username || "",
       email: user?.email || "user@example.com",
-      phone: user?.phone || "+41 76 123 45 67"
+      phone: user?.phone || "+34 76 123 45 67"
     });
     setAvatarUrl(user?.avatar_url || "");
     onClose();
@@ -184,7 +184,7 @@ export const EditProfileModal = ({
                 id="phone"
                 value={formData.phone}
                 onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                placeholder="+41 76 123 45 67"
+                placeholder="+34 76 123 45 67"
               />
             </div>
           </div>

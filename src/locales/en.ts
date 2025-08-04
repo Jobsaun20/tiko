@@ -764,8 +764,8 @@ created: "created",
     removeMemberTitle: "Remove from group",
     saveChanges: "Save changes",
     addTelephoneNumber: "Enter your phone number for Bizum",
-placeholderPhone: "E.g.: +41791234567 or 079 123 45 67",
-errorPhone: "Enter a valid Swiss number (+41 or 07X).",
+placeholderPhone: "E.g.: +34 or 612345678",
+errorPhone: "Enter a valid number (+34 or 612345678).",
   }
 };
 export default en;

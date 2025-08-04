@@ -767,8 +767,8 @@ showMembers:"Ver miembros",
   
   saveChanges: "Guardar cambios",
   addTelephoneNumber:"Introduce tu número de teléfono para Bizum",
-  placeholderPhone:"Ej: +41791234567 o 079 123 45 67",
-  errorPhone:"Introduce un número suizo válido (+41 o 07X).",
+  placeholderPhone:"Ej: +34 o 612345678",
+  errorPhone:"Introduce un número válido (+34 o 612345678).",
  
   }
 };

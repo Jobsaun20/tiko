@@ -759,8 +759,8 @@ created: "erstellt",
     removeMemberTitle: "Aus der Gruppe entfernen",
     saveChanges: "Änderungen speichern",
     addTelephoneNumber: "Gib deine Telefonnummer für Bizum ein",
-placeholderPhone: "Z.B.: +41791234567 oder 079 123 45 67",
-errorPhone: "Gib eine gültige Schweizer Nummer ein (+41 oder 07X)."
+placeholderPhone: "Z.B.: +34 oder 612345678",
+errorPhone: "Gib eine gültige Nummer ein (+34 oder 612345678)."
   }
 };
 export default de;

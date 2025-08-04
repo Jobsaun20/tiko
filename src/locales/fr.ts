@@ -761,8 +761,8 @@ created: "créée",
     removeMemberTitle: "Retirer du groupe",
     saveChanges: "Enregistrer les modifications",
     addTelephoneNumber: "Saisis ton numéro de téléphone pour Bizum",
-placeholderPhone: "Ex. : +41791234567 ou 079 123 45 67",
-errorPhone: "Saisis un numéro suisse valide (+41 ou 07X).",
+placeholderPhone: "Ex. : +34791234567 ou 612345678",
+errorPhone: "Saisis un numéro valide (+34 ou 612345678).",
   }
 };
 export default fr;

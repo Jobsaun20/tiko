@@ -16,7 +16,7 @@ export default function PhoneModal({ isOpen, onClose, onSave }: {
 
   const handleSave = async () => {
     if (!isValidSwissPhone(phone)) {
-      setError(t.modal.errorPhone || "Introduce un número suizo válido (+41 o 07X).");
+      setError(t.modal.errorPhone || "Introduce un número válido (+34 o 6X).");
       return;
     }
     await onSave(normalizeSwissPhone(phone));
@@ -34,7 +34,7 @@ export default function PhoneModal({ isOpen, onClose, onSave }: {
           </DialogTitle>
         </DialogHeader>
         <Input
-          placeholder={t.modal.placeholderPhone || "Ej: +41791234567 o 079 123 45 67"}
+          placeholder={t.modal.placeholderPhone || "Ej: +34791234567 o 612345678"}
           value={phone}
           onChange={e => setPhone(e.target.value)}
           autoFocus
