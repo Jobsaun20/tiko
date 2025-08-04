@@ -20,7 +20,7 @@ export default function Welcome() {
         <img
           src="/img/logowelcome.png"
           alt="Tiko logo"
-          className="w-32 h-32 object-contain mb-3"
+          className="w-36 h-36 object-contain mb-3"
         />
         {/* <h1 className="text-white text-4xl font-bold tracking-tight mb-1">
           Pic
