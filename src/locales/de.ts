@@ -326,7 +326,7 @@ onboard: {
     seeAllInsignias: "Alle Abzeichen anzeigen",
     pendingFinesTitle:"Multas pendientes",
     seeAllPendingFines:"Ver todas las multas pendientes",
-    subtitle: "Fang an, Gerechtigkeit zu verteilen!",
+    subtitle: "Fang an Gerechtigkeit zu verteilen!",
   },
 
   // Contacts Page
