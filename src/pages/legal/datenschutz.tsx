@@ -1,5 +1,3 @@
-// pages/datenschutz.tsx
-
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 export default function Datenschutz() {
@@ -7,33 +5,24 @@ export default function Datenschutz() {
     <div className="container mx-auto max-w-3xl py-10 px-4">
       <Card>
         <CardHeader>
-          <CardTitle>Datenschutzerklärung</CardTitle>
+          <CardTitle>Política de Privacidad / Privacy Policy</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4 text-sm text-gray-700">
           <p>
-            <b>1. Allgemeines</b><br />
-            Tiko verpflichtet sich, die Privatsphäre der Nutzer zu schützen. Wir erheben und speichern nur Daten, die für die Nutzung der Plattform notwendig sind.
+            Tiko respeta la privacidad de los usuarios y cumple con el RGPD y la LOPDGDD. <br />
+            Tiko respects user privacy and complies with GDPR and LOPDGDD.
           </p>
           <p>
-            <b>2. Datenerhebung und -verarbeitung</b><br />
-            Es werden nur die von Ihnen bereitgestellten und für die Nutzung notwendigen Daten gespeichert (z.B. Name, E-Mail, Profilbild). Sie entscheiden selbst, welche Daten Sie angeben.
+            Los datos personales se usan solo para operar y mejorar el servicio. <br />
+            Personal data is used only to operate and improve the service.
           </p>
           <p>
-            <b>3. Zweck der Datenverarbeitung</b><br />
-            Die Daten werden ausschliesslich für den Betrieb und die Verbesserung der Plattform verwendet und nicht an Dritte weitergegeben.
+            El usuario tiene derecho a acceder, rectificar, eliminar o portar sus datos. <br />
+            Users have the right to access, correct, delete, or transfer their data.
           </p>
           <p>
-            <b>4. Externe Inhalte & Links</b><br />
-            Die Plattform kann Inhalte Dritter oder Links zu anderen Webseiten enthalten. Für deren Datenschutzbestimmungen übernimmt Tiko keine Verantwortung.
-          </p>
-          <p>
-            <b>5. Auskunfts- und Löschungsrecht</b><br />
-            Sie haben jederzeit das Recht, Auskunft über Ihre gespeicherten Daten zu erhalten oder deren Löschung zu verlangen.
-          </p>
-          <p>
-            <b>6. Änderungen</b><br />
-            Änderungen dieser Datenschutzerklärung werden auf der Website veröffentlicht.
-            
+            La responsabilidad sobre datos de terceros recae en el usuario. <br />
+            Responsibility for third-party data lies with the user.
           </p>
         </CardContent>
       </Card>

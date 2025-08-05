@@ -1,5 +1,3 @@
-// pages/agb.tsx
-
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 export default function AGB() {
@@ -7,32 +5,33 @@ export default function AGB() {
     <div className="container mx-auto max-w-3xl py-10 px-4">
       <Card>
         <CardHeader>
-          <CardTitle>Allgemeine Geschäftsbedingungen (AGB)</CardTitle>
+          <CardTitle>Términos y Condiciones / Terms of Use</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4 text-sm text-gray-700">
           <p>
-            <b>1. Geltungsbereich</b><br />
-            Diese AGB gelten für die Nutzung der Online-Plattform Tiko. Durch die Nutzung der Plattform akzeptieren Sie diese Bedingungen.
+            <b>1. Ámbito de aplicación / Scope</b><br />
+            Estas condiciones se aplican al uso de la app web Tiko. Al usar la app, el usuario acepta estas condiciones. <br />
+            These terms apply to the use of the Tiko web application. By using the app, you agree to these terms.
           </p>
           <p>
-            <b>2. Plattformzweck</b><br />
-            Tiko ist eine Plattform für Unterhaltung und soziale Interaktion. Tiko übernimmt keine Verantwortung für Inhalte, Bilder oder Daten, die von Nutzern erstellt oder hochgeladen werden.
+            <b>2. Uso de la plataforma / Use of the Platform</b><br />
+            Tiko proporciona una plataforma para la interacción entre usuarios. Los usuarios son responsables de los contenidos compartidos. <br />
+            Tiko offers a platform for user interaction. Users are responsible for the content they share.
           </p>
           <p>
-            <b>3. Nutzungsrechte & Pflichten</b><br />
-            Nutzer sind für die Einhaltung aller geltenden Gesetze und Vorschriften verantwortlich. Jede missbräuchliche oder rechtswidrige Nutzung der Plattform ist untersagt.
+            <b>3. Responsabilidad del usuario / User Responsibility</b><br />
+            El usuario es responsable de usar la app de forma legal y ética. Está prohibido el uso abusivo o ilegal. <br />
+            Users are responsible for legal and ethical use of the app. Abusive or illegal use is prohibited.
           </p>
           <p>
-            <b>4. Haftungsausschluss</b><br />
-            Tiko übernimmt keine Haftung für Schäden, die durch die Nutzung der Plattform oder durch Inhalte Dritter entstehen. Die Nutzung erfolgt auf eigene Gefahr.
+            <b>4. Cambios en los Términos / Changes to Terms</b><br />
+            Tiko puede modificar estas condiciones en cualquier momento. Los cambios se publicarán en la web. <br />
+            Tiko may change these terms at any time. Changes will be published on the website.
           </p>
           <p>
-            <b>5. Änderung der AGB</b><br />
-            Tiko behält sich das Recht vor, diese Bedingungen jederzeit anzupassen. Änderungen werden auf der Website veröffentlicht.
-          </p>
-          <p>
-            <b>6. Anwendbares Recht und Gerichtsstand</b><br />
-            Es gilt Schweizer Recht. Gerichtsstand ist Luzern, Schweiz.
+            <b>5. Ley aplicable / Applicable Law</b><br />
+            Se aplica la ley española. Jurisdicción: sede de la empresa. <br />
+            Spanish law applies. Jurisdiction: the company's registered office.
           </p>
         </CardContent>
       </Card>

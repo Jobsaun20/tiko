@@ -1,20 +1,20 @@
-// pages/disclaimer.tsx
-
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
-export default function Disclaimer() {
+export default function Haftungsausschluss() {
   return (
     <div className="container mx-auto max-w-3xl py-10 px-4">
       <Card>
         <CardHeader>
-          <CardTitle>Haftungsausschluss</CardTitle>
+          <CardTitle>Exención de Responsabilidad / Disclaimer</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4 text-sm text-gray-700">
           <p>
-            Tiko ist eine reine Unterhaltungsplattform. Alle Daten, Inhalte und Bilder werden von den Nutzern selbst erstellt. Für die Inhalte, Bilder oder Handlungen der Nutzer übernimmt Tiko keinerlei Verantwortung oder Haftung. Die Nutzer sind allein für den korrekten und rechtmässigen Gebrauch der Plattform verantwortlich.
+            Tiko garantiza el funcionamiento técnico dentro de sus capacidades. No se responsabiliza por fallos externos o mal uso. <br />
+            Tiko guarantees technical functionality within its capabilities. It is not responsible for external failures or misuse.
           </p>
           <p>
-            Tiko haftet nicht für Schäden oder Verluste, die durch die Nutzung der Plattform entstehen. Im Zweifelsfall wenden Sie sich bitte an unseren Support.
+            El uso de la plataforma es responsabilidad del usuario. <br />
+            Use of the platform is the responsibility of the user.
           </p>
         </CardContent>
       </Card>

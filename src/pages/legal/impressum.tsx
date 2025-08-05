@@ -1,5 +1,3 @@
-// pages/impressum.tsx
-
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 export default function Impressum() {
@@ -7,27 +5,16 @@ export default function Impressum() {
     <div className="container mx-auto max-w-3xl py-10 px-4">
       <Card>
         <CardHeader>
-          <CardTitle>Impressum</CardTitle>
+          <CardTitle>Aviso Legal / Legal Notice</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4 text-sm text-gray-700">
           <p>
-            <b>Betreiber dieser Plattform:</b><br />
-            Tiko – Eine Plattform für soziale Unterhaltung<br />
-            [info@Tiko-app.com]<br />
-            Luzern, Schweiz
+            <b>Nombre / Name:</b> Tiko<br />
+            <b>Correo electrónico / Email:</b> info@tiko.es<br />
           </p>
           <p>
-            <b>Kontakt:</b><br />
-            E-Mail: info@Tiko-app.com
-          </p>
-          <p>
-            <b>Verantwortlich für den Inhalt:</b><br />
-            [Tiko Team]<br />
-          </p>
-          <p>
-            <b>Haftungsausschluss:</b><br />
-            Trotz sorgfältiger Prüfung übernehmen wir keine Haftung für die Inhalte externer Links. Für den Inhalt der verlinkten Seiten sind ausschliesslich deren Betreiber verantwortlich.
-          
+            Responsable del contenido: Tiko. El contenido es meramente informativo y no constituye relación contractual. <br />
+            Content responsibility: Tiko. The content is for informational purposes and does not constitute a contractual relationship.
           </p>
         </CardContent>
       </Card>
