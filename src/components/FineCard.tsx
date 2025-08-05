@@ -128,7 +128,7 @@ export const FineCard = ({
       style={{ wordBreak: "break-word", overflowWrap: "anywhere", whiteSpace: "normal" }}
     >
       {/* Número y € juntos, sin espacio */}
-      {fine.amount + "€"}
+      {fine.amount + " " + "€"}
     </span>
   </div>
 </div>
