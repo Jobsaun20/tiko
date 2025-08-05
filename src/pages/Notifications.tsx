@@ -268,8 +268,12 @@ export default function Notifications() {
                             <div className="w-2 h-2 bg-red-500 rounded-full flex-shrink-0"></div>
                           )}
                         </div>
-                        <p className="text-gray-600 text-sm mb-2">{message}</p>
-                        <span className="text-xs text-gray-500">
+<p
+  className="text-gray-600 text-sm mb-2 break-words line-clamp-4 max-w-full"
+  title={message}
+>
+  {message}
+</p>                        <span className="text-xs text-gray-500">
                           {formatTime(n.created_at)}
                         </span>
                       </div>

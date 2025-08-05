@@ -30,7 +30,7 @@ export const FineCard = ({
   const isSent = userId && fine.sender_id === userId;
   const displayUser = isSent ? fine.recipient_name : fine.sender_name;
   const avatarInitial = displayUser?.charAt(0)?.toUpperCase() || "U";
-  const avatarUrl = isSent ? fine.recipient_avatar_url : fine.sender_avatar_url; // si tienes avatar_url en tus multas
+  const avatarUrl = isSent ? fine.recipient_avatar_url : fine.sender_avatar_url;
   const reason = fine.reason;
 
   // Formato importe y fecha
@@ -43,9 +43,9 @@ export const FineCard = ({
     if (fine.status === "pending") {
       return (
         <span className="flex items-center gap-1 bg-orange-50 text-orange-700 border border-orange-100 rounded-lg px-2 py-[1px] text-[11px] font-medium">
-  <Clock className="w-3 h-3" />  {/* Más pequeño */}
-  {t.fines.pending}
-</span>
+          <Clock className="w-3 h-3" />
+          {t.fines.pending}
+        </span>
       );
     }
     if (fine.status === "paid") {
@@ -83,85 +83,100 @@ export const FineCard = ({
   };
 
   return (
-  <Card className="w-full max-w-[320px] mx-auto rounded-2xl bg-white shadow-lg hover:shadow-2xl transition-shadow border border-gray-100">
-      <CardContent className="flex gap-3 px-4 py-3">
-        {/* ICONO MULTA */}
-        <div className="flex flex-col items-center pt-1">
-          <span
-  className={
-    `inline-flex items-center justify-center rounded-xl w-11 h-11 mt-1 ` +
-    (isSent ? "bg-blue-50" : "bg-pink-50")
-  }
->
-  {isSent ? (
-    <Send className="w-7 h-7" style={{ color: "#52AEB9" }} />
-  ) : (
-    <ScrollText className="w-7 h-7 text-red-400" />
-  )}
-</span>
+    <Card className="w-full max-w-[320px] mx-auto rounded-2xl bg-white shadow-lg hover:shadow-2xl transition-shadow border border-gray-100">
+  <CardContent className="flex gap-3 px-4 py-3">
+    {/* ICONO MULTA */}
+    <div className="flex flex-col items-center pt-1">
+      <span
+        className={
+          `inline-flex items-center justify-center rounded-xl w-11 h-11 mt-1 ` +
+          (isSent ? "bg-blue-50" : "bg-pink-50")
+        }
+      >
+        {isSent ? (
+          <Send className="w-7 h-7" style={{ color: "#52AEB9" }} />
+        ) : (
+          <ScrollText className="w-7 h-7 text-red-400" />
+        )}
+      </span>
+    </div>
 
-        </div>
+    {/* INFO PRINCIPAL */}
+    <div className="flex-1 min-w-0 flex flex-col">
+      {/* TEXTO PRINCIPAL ARRIBA (máx 4 líneas) */}
+      <span
+        className="text-[15px] sm:text-base font-semibold text-gray-800 mb-2 break-words line-clamp-4 leading-snug"
+        style={{ display: "block", maxWidth: "100%" }}
+        title={reason}
+      >
+        {reason}       
+      </span>
+      <div className="mt-1">
+        {getTypeBadge()}
+      </div>
+      
 
-        {/* INFO PRINCIPAL */}
-        <div className="flex-1 min-w-0 flex flex-col justify-between">
-          {/* ARRIBA: Razón y cantidad */}
-          <div className="flex justify-between items-start w-full gap-2">
-            <div className="flex flex-col min-w-0 flex-1">
-              <span className="text-[15px] sm:text-base font-semibold text-gray-800 mb-1 break-words whitespace-pre-line leading-snug">
-                {reason}
-              </span>
-              {/* NOMBRE y GRUPO */}
-              <div className="flex items-center gap-2 mb-1">
-                <Avatar className="h-7 w-7 text-xs">
-                  {/* AvatarImage si tienes URL, si no muestra fallback */}
-                  {avatarUrl && (
-                    <AvatarImage src={avatarUrl} alt={displayUser} />
-                  )}
-                  <AvatarFallback className="bg-[#52AEB9] text-white font-semibold">
-                    {avatarInitial}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="text-xs font-medium text-gray-700">{displayUser}</span>
-                {displayGroup && (
-                  <>
-                    <span className="mx-1 text-xs text-gray-400 font-normal">·</span>
-                    <span className="text-xs text-gray-400 font-normal">{displayGroup}</span>
-                  </>
-                )}
-              </div>
-            </div>
-            {/* IMPORTE */}
-            <div className="flex flex-col items-end min-w-fit ml-2">
-              <span className="text-lg font-bold text-gray-900 leading-none mb-0" style={{ whiteSpace: "nowrap" }}>
-                {amount}
-              </span>
-              {getTypeBadge()}
-            </div>
-          </div>
+      {/* BLOQUE PENALTY DEBAJO DEL TEXTO */}
+    <div className="flex flex-col items-end w-full">
+  <div
+    className="flex flex-wrap items-baseline gap-1 justify-end w-full break-words max-w-full"
+    style={{ wordBreak: "break-word" }}
+  >
+    <span className="text-xs text-gray-500 font-semibold">{t.groupRulesModal.amountLabel}:</span>
+    <span
+      className="text-3xl font-extrabold text-purple-700 leading-none ml-2"
+      style={{ wordBreak: "break-word", overflowWrap: "anywhere", whiteSpace: "normal" }}
+    >
+      {/* Número y € juntos, sin espacio */}
+      {fine.amount + "€"}
+    </span>
+  </div>
+</div>
 
-          {/* ABAJO: Estado, fecha y botón */}
-          <div className="flex justify-between items-end mt-2">
-            <div className="flex flex-col items-start">
-              {/* Estado (ausstehend/pagada) */}
-              {getStatusBadge()}
-              {/* Fecha */}
-              <span className="text-[11px] text-gray-400 mt-0.5">
-  {dateLabel}: {date && new Date(date).toLocaleDateString()}
-</span>
-            </div>
-            {/* Botón pagar */}
-            {showPayButton && fine.status === "pending" && (
-              <Button
-                onClick={onPay}
-                size="sm"
-                className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-4 py-1.5 rounded-full text-xs font-semibold shadow ml-2"
-              >
-                {t.fines.pay}
-              </Button>
+
+
+      {/* INFO: usuario, grupo, estado, fecha, badge y botón */}
+      <div className="flex flex-row items-center justify-between w-full mt-2">
+        {/* IZQUIERDA: avatar, nombre, grupo, estado, fecha */}
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <Avatar className="h-7 w-7 text-xs">
+              {avatarUrl && <AvatarImage src={avatarUrl} alt={displayUser} />}
+              <AvatarFallback className="bg-[#52AEB9] text-white font-semibold">
+                {avatarInitial}
+              </AvatarFallback>
+            </Avatar>
+            <span className="text-xs font-medium text-gray-700">{displayUser}</span>
+            {displayGroup && (
+              <>
+                <span className="mx-1 text-xs text-gray-400 font-normal">·</span>
+                <span className="text-xs text-gray-400 font-normal">{displayGroup}</span>
+              </>
             )}
           </div>
+          <div className="flex flex-col items-start">
+            {getStatusBadge()}
+            <span className="text-[11px] text-gray-400 mt-0.5">
+              {dateLabel}: {date && new Date(date).toLocaleDateString()}
+            </span>
+            
+          </div>
         </div>
-      </CardContent>
-    </Card>
+        {/* BOTÓN PAGAR */}
+        {showPayButton && fine.status === "pending" && (
+          <Button
+            onClick={onPay}
+            size="sm"
+            className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-4 py-1.5 rounded-full text-xs font-semibold shadow ml-2"
+          >
+            {t.fines.pay}
+          </Button>
+        )}
+      </div>
+    </div>
+  </CardContent>
+</Card>
+
+
   );
 };

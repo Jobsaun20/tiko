@@ -136,63 +136,64 @@ export function ChallengeCard({
   <Card className="w-full max-w-[320px] mx-auto rounded-2xl bg-white shadow-lg hover:shadow-2xl transition-shadow border border-gray-100">
   <CardHeader className="pb-2">
   <div className="flex flex-row gap-3 items-start">
-    {/* Columna icono + corona (badge) */}
+    {/* Columna icono */}
     <div className="flex flex-col items-center min-w-[48px] mr-1 pt-1">
       <div className="relative inline-block">
         <span className="inline-flex items-center justify-center rounded-xl w-12 h-12 bg-purple-100">
           <Zap className="w-7 h-7 text-purple-500" />
         </span>
-       
       </div>
     </div>
-    {/* Columna texto alineada a la izquierda */}
-    <div className="flex flex-col flex-1 min-w-0 justify-center">
+    {/* Columna principal */}
+    <div className="flex flex-1 flex-col min-w-0">
       {/* Título */}
-      <CardTitle className="flex items-center gap-2 text-lg sm:text-xl font-bold pl-0">
-        {challenge.title}
-      </CardTitle>
+      <CardTitle
+  className="text-lg sm:text-xl font-bold break-words line-clamp-4 max-w-full"
+  title={challenge.title}
+>
+  {challenge.title}
+</CardTitle>
       {/* Descripción */}
       {challenge.description && (
-        <div className="text-xs sm:text-sm text-gray-600 mt-1 mb-1 pl-0">
+        <div
+          className="text-xs sm:text-sm text-gray-600 mt-1 mb-1 line-clamp-2 break-words max-w-full"
+          title={challenge.description}
+        >
           {challenge.description}
         </div>
       )}
-      {/* Erstellt von */}
-      <div className="text-xs text-gray-500 mb-1 pl-0">
+      {/* Created by */}
+      <div className="text-xs text-gray-500">
         {t.challengeCard.createdBy}{" "}
         <span className="text-gray-700">
           {getParticipantDisplay({ user_id: challenge.creator_id }).name}
         </span>
       </div>
-    </div>
-    {/* Columna lateral derecha (penalty, cantidad, status, papelera) */}
-    <div className="flex flex-col items-end sm:items-end min-w-fit ml-2">
-      <div className="text-xs text-gray-800 mb-0.5">
-        {t.challengeCard.penalty}
-      </div>
-      <div className="text-3xl font-extrabold text-purple-700 leading-none mb-0 sm:mb-2">
-        € {challenge.amount}
-      </div>
-      {/* STATUS debajo del precio */}
+      {/* STATUS debajo de created by */}
       <div className="mt-1 mb-1">
         {getStatusBadge(challenge.status)}
       </div>
-      {/* Papelera solo si finished y creator */}
-      {challenge.status === "finished" && isCreator(currentUserId) && (
-        <Button
-          size="icon"
-          variant="destructive"
-          className="w-9 h-9 mt-1"
-          disabled={deleting}
-          onClick={handleDelete}
-          title={t.challengeCard.deleteChallenge}
-        >
-          <Trash2 className="w-5 h-5" />
-        </Button>
-      )}
+      {/* Precio abajo, alineado a la izquierda */}
+      {/* Bloque de precio con "Penalty:" */}
+<div className="flex flex-col items-end w-full">
+  <div
+    className="flex flex-wrap items-baseline gap-1 justify-end w-full break-words max-w-full"
+    style={{ wordBreak: "break-word" }}
+  >
+    <span className="text-xs text-gray-500 font-semibold">{t.challengeCard.penalty}:</span>
+    <span
+      className="text-3xl font-extrabold text-purple-700 leading-none ml-2"
+      style={{ wordBreak: "break-word", overflowWrap: "anywhere", whiteSpace: "normal" }}
+    >
+      {/* Número y € juntos, sin espacio */}
+      {challenge.amount + " "+"€"}
+    </span>
+  </div>
+</div>
     </div>
   </div>
 </CardHeader>
+
 
 
   <CardContent>
