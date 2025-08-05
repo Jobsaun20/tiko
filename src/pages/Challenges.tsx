@@ -167,7 +167,7 @@ export default function ChallengesPage() {
           </Button>
 
           {/* Barra de búsqueda redondeada */}
-          <div className="relative w-full max-w-[320px] mx-auto sm:w-72 ">
+          {/* <div className="relative w-full max-w-[320px] mx-auto sm:w-72 ">
             <input
               type="text"
               className="border border-gray-300 rounded-full px-5 py-2 w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A259E6] text-base"
@@ -185,7 +185,7 @@ export default function ChallengesPage() {
                 <X className="w-5 h-5" />
               </button>
             )}
-          </div>
+          </div> */}
         </div>
         {/* Botón de filtro y filtro seleccionado */}
         <div className="mb-6 flex items-center gap-2">
