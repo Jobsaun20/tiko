@@ -4,6 +4,8 @@ import { LanguageProvider } from '@/contexts/LanguageContext';
 import { Toaster } from '@/components/ui/toaster';
 import ProtectedRoute from '@/components/routes/ProtectedRoute';
 import { useAuthContext } from '@/contexts/AuthContext';
+import ScrollToTop from "@/components/ScrollToTop"; // <--- Añade esta línea
+
 
 // Contextos globales
 import { BadgeModalProvider } from '@/contexts/BadgeModalContext';
@@ -198,6 +200,7 @@ function App() {
   <PWAInstallProvider>
     <BadgeModalProvider>
       <Router>
+        <ScrollToTop /> 
         <div className="App">
           <AppRoutes />
           <InstallBanner />
