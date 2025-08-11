@@ -737,7 +737,7 @@ created: "created",
         title: "Add rules to your groups",
         subtitle: "Start simple so everyone understands.",
         examples:
-          "• “Not taking out the trash” — CHF 1\n• “Arriving late” — CHF 2",
+          "• “Not taking out the trash” — 1 €\n• “Arriving late” — 2 €",
         note: "Group rules must be accepted by all members before they become valid. You can edit or delete rules at any time.",
       },
 

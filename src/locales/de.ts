@@ -733,7 +733,7 @@ created: "erstellt",
         title: "Füge Regeln zu deinen Gruppen hinzu",
         subtitle: "Starte simpel, damit es alle verstehen.",
         examples:
-          "• „Müll nicht rausbringen“ — CHF 1\n• „Zu spät kommen“ — CHF 2",
+          "• „Müll nicht rausbringen“ — 1 €\n• „Zu spät kommen“ — 2 €",
         note: "Gruppenregeln müssen von allen Mitgliedern akzeptiert werden, bevor sie gültig sind. Du kannst Regeln jederzeit bearbeiten oder löschen.",
       },
 

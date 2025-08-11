@@ -736,7 +736,7 @@ created: "creata",
         title: "Aggiungi regole ai tuoi gruppi",
         subtitle: "Inizia in modo semplice così tutti capiscono.",
         examples:
-          "• «Non portare fuori la spazzatura» — CHF 1\n• «Arrivare in ritardo» — CHF 2",
+          "• «Non portare fuori la spazzatura» — 1 €\n• «Arrivare in ritardo» — 2 €",
         note: "Le regole del gruppo devono essere accettate da tutti i membri prima di diventare valide. Puoi modificare o eliminare le regole in qualsiasi momento.",
       },
 

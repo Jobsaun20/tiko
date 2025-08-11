@@ -736,7 +736,7 @@ showMembers:"Ver miembros",
       title: "Añade reglas a tus grupos",
       subtitle: "Empieza simple para que todos lo entiendan.",
       examples:
-        "• “No sacar la basura” — CHF 1\n• “Llegar tarde” — CHF 2",
+        "• “No sacar la basura” — 1 €\n• “Llegar tarde” — 2 €",
       note: "Las reglas del grupo deben ser aceptadas por todos los miembros antes de ser validas. Podrás editar o borrar reglas cuando quieras."
     },
 
