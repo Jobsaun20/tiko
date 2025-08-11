@@ -749,12 +749,12 @@ showMembers:"Ver miembros",
     },
 
     phoneShare: {
-      title: "Activa pagos con TWINT",
-      description: "Para recibir pagos por TWINT, añade tu numero de telefono ¡NO TE PREOCUPES! Solo quien reciba tu multa podrá verlo.",
+      title: "Activa pagos con Bizum",
+      description: "Para recibir pagos por Bizum, añade tu numero de telefono ¡NO TE PREOCUPES! Solo quien reciba tu multa podrá verlo.",
       addPhone: "Agregar teléfono",
       skipNow: "Omitir por ahora",
       shareApp: "Compartir app / Invitar",
-      phoneLabel: "Tu número (TWINT)",
+      phoneLabel: "Tu número (Bizum)",
       phonePlaceholder: "+41 79 123 45 67",
       saving: "Guardando...",
       saved: "Teléfono guardado"
