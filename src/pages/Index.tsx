@@ -36,11 +36,13 @@ import { useChallenges } from "@/hooks/useChallenges";
 import { ScrollText, Zap } from "lucide-react";
 import { FineCard } from "@/components/FineCard"; // Ajusta la ruta si es distinta
 
-
+// ======== AÑADIDO: import del tutorial =========
+import IndexTutorialOverlay from "@/components/IndexTutorialOverlay";
+// ===============================================
 
 
 // URL de tu Edge Function en Supabase
-const CHECK_BADGES_URL = "https://psnxdeykxselxxtvlgzb.supabase.co/functions/v1/check_badges";
+const CHECK_BADGES_URL = "https://pyecpkccpfeuittnccat.supabase.co/functions/v1/check_badges";
 
 // Footer
 function Footer() {
@@ -62,7 +64,7 @@ function Footer() {
       "
       style={{ fontSize: "12px", letterSpacing: "0.01em" }}
     >
-      © {new Date().getFullYear()} Tiko · Plataforma de entretenimiento —{" "}
+      © {new Date().getFullYear()} DESWG · Plataforma de entretenimiento —{" "}
       <a href="/legal/agb" className="underline text-blue-500">AGB</a> ·{" "}
       <a href="/legal/datenschutz" className="underline text-blue-500">Datenschutz</a> ·{" "}
       <a href="/legal/haftungsausschluss" className="underline text-blue-500">Haftungsausschluss</a>
@@ -146,6 +148,16 @@ export default function Index() {
   const [earnedBadges, setEarnedBadges] = useState([]);
   const [badgesLoading, setBadgesLoading] = useState(true);
   
+  // ======== AÑADIDO: estado para mostrar el tutorial solo 1ª vez ========
+  const [showTutorial, setShowTutorial] = useState(false);
+  useEffect(() => {
+    if (user?.id) {
+      const key = `tutorialDone:${user.id}`;
+      const already = localStorage.getItem(key);
+      if (!already) setShowTutorial(true);
+    }
+  }, [user?.id]);
+  // ======================================================================
 
   // Colores para cada segmento
 const COLORS_FINES = ["#FF718B", "#52AEB9"];
@@ -453,7 +465,7 @@ const pendingFinesToPay = finesList.filter(
         await payFine(selectedFine.id);
         toast({
           title: t.fines.finePaid,
-          description: `Multa de ${selectedFine.amount} € pagada correctamente`,
+          description: `Multa de ${selectedFine.amount} CHF pagada correctamente`,
         });
 
         const BASE_XP = 2;
@@ -879,10 +891,21 @@ const pendingFinesToPay = finesList.filter(
       <ShareAppModal
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}
-        appUrl="https://Tikoes.vercel.app/welcome"
+        appUrl="https://deswg.vercel.app/welcome"
       />
       {/* Footer siempre al final */}
       {/* <Footer /> */}
+
+      {/* ======== AÑADIDO: Mostrar el tutorial solo 1ª vez tras login ======== */}
+      {showTutorial && user && (
+        <IndexTutorialOverlay
+          user={user}
+          profileId={profile?.id}
+          onFinish={() => setShowTutorial(false)}
+          onOpenShare={() => setShowShareModal(true)}
+        />
+      )}
+      {/* ==================================================================== */}
     </div>
   );
 }

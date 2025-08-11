@@ -700,6 +700,78 @@ created: "créée",
     newBadge: "Nouveau badge !"
   },
 
+  tutorial: {
+    header: {
+      title: "Comment fonctionne DESWG",
+      subtitle: "Tutoriel rapide",
+    },
+    progress: {
+      stepOfTotal: "Étape {current} sur {total}",
+    },
+    nav: {
+      back: "Retour",
+      next: "Suivant",
+      finish: "Terminer",
+      skipTutorial: "Ignorer le tutoriel",
+    },
+
+    steps: {
+      contact: {
+        title: "Commencez par un contact",
+        subtitle: "Ajoutez d’abord un contact. Recherchez par nom d’utilisateur ou e-mail.",
+        body: "Les contacts sont ceux avec qui vous pouvez créer des groupes, des règles, des amendes et des défis.",
+        note: "Vous pouvez ajouter des contacts depuis la page « Contacts ». Recherchez par nom d’utilisateur ou e-mail.",
+      },
+
+      group: {
+        title: "Créez votre groupe",
+        subtitle: "Les règles, amendes, etc. vivent dans les groupes.",
+        body: "Après avoir créé votre groupe, modifiez-le pour ajouter des membres.",
+        note: "Créez un groupe depuis la page « Groupes ». Vous ne pouvez ajouter que des membres déjà présents dans « Contacts ».",
+      },
+
+      rule: {
+        title: "Ajoutez des règles à vos groupes",
+        subtitle: "Commencez simple pour que tout le monde comprenne.",
+        examples:
+          "• « Ne pas sortir les poubelles » — CHF 1\n• « Arriver en retard » — CHF 2",
+        note: "Les règles du groupe doivent être acceptées par tous les membres avant d’être valides. Vous pouvez modifier ou supprimer les règles à tout moment.",
+      },
+
+      action: {
+        title: "Envoyez une amende ou un défi",
+        subtitle: "1. Depuis la barre de navigation.\n 2. Depuis les Groupes.",
+        tips:
+          "• Depuis la barre de navigation '+': choisissez le contact et envoyez (Amende / Défi).\n\n• Depuis le groupe : touchez le nom du membre pour envoyer une amende affichant le nom du groupe.\n",
+        note: "Pour recevoir des paiements, ajoutez votre numéro de téléphone dans Mon profil > Modifier le profil.",
+      },
+
+      phoneShare: {
+        title: "Activer les paiements avec TWINT",
+        description: "Pour recevoir des paiements via TWINT, ajoutez votre numéro de téléphone. PAS D’INQUIÉTUDE ! Seule la personne qui reçoit votre amende le verra.",
+        addPhone: "Ajouter le numéro",
+        skipNow: "Ignorer pour l’instant",
+        shareApp: "Partager l’app / Inviter",
+        phoneLabel: "Votre numéro (TWINT)",
+        phonePlaceholder: "+41 79 123 45 67",
+        saving: "Enregistrement...",
+        saved: "Numéro enregistré",
+      },
+
+      install: {
+        title: "Installer l’APP",
+        title2: "Recevez des notifications et accédez à DESWG en un clic",
+        installed: "L’app est déjà installée ✅",
+        installButton: "Installer",
+        instructionsSafari: "Dans Safari : touchez l’icône de partage (📤) puis « Ajouter à l’écran d’accueil ».",
+        note: "Les applications web sont sûres et fonctionnent comme un raccourci vers le site sans occuper d’espace sur votre téléphone.",
+      },
+    },
+  },
+
+
+
+
   // Common
   common: {
     goHome: "Accueil",

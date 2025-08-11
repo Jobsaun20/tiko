@@ -701,6 +701,77 @@ showMembers:"Ver miembros",
     levelUp: "¡Subiste de nivel!",
     newBadge: "¡Nueva insignia!"
   },
+
+  tutorial: {
+  header: {
+    title: "Cómo funciona DESWG",
+    subtitle: "Tutorial rápido",
+  },
+  progress: {
+    stepOfTotal: "Paso {current} de {total}"
+  },
+  nav: {
+    back: "Atrás",
+    next: "Siguiente",
+    finish: "Terminar",
+    skipTutorial: "Saltar tutorial"
+  },
+
+  steps: {
+    contact: {
+      title: "Empieza con un contacto ",
+      subtitle: "Empieza agregando un contacto. Buscalo por nombre de usuario o email.",
+      body: "Los contactos son con quienes podrás crear grupos, reglas, multas y retos.",
+      note: "Puedes añadir contactos desde la pagina 'Contactos'. Buscalos por nombre de usuario o email.",
+    },
+
+    group: {
+      title: "Crea tu grupo",
+      subtitle: "En los grupos se definen las reglas, las multas, etc.",
+      body: "Despues de crear tu grupo, editalo para agregar a los miembros.",
+      note: "Crea un grupo desde la pagina 'Grupos'. Solo puedes añadir miembros que ya estén en 'Contactos'."
+    },
+
+    rule: {
+      title: "Añade reglas a tus grupos",
+      subtitle: "Empieza simple para que todos lo entiendan.",
+      examples:
+        "• “No sacar la basura” — CHF 1\n• “Llegar tarde” — CHF 2",
+      note: "Las reglas del grupo deben ser aceptadas por todos los miembros antes de ser validas. Podrás editar o borrar reglas cuando quieras."
+    },
+
+    action: {
+      title: "Envía una multa o un reto",
+      subtitle: "1.Desde la barra de navegacion '+'.\n 2.Desde los Grupos.",
+      tips:
+        "• Desde la barra de navegacion '+': elige el contacto y envía (Multa /Reto).\n\n• Desde el grupo: toca el nombre del miembro para enviar una multa mostrando el nombre del grupo.\n",
+      note: "Para recibir pagos, añade tu numero de telefono en Mi perfil > Editar perfil."
+    },
+
+    phoneShare: {
+      title: "Activa pagos con TWINT",
+      description: "Para recibir pagos por TWINT, añade tu numero de telefono ¡NO TE PREOCUPES! Solo quien reciba tu multa podrá verlo.",
+      addPhone: "Agregar teléfono",
+      skipNow: "Omitir por ahora",
+      shareApp: "Compartir app / Invitar",
+      phoneLabel: "Tu número (TWINT)",
+      phonePlaceholder: "+41 79 123 45 67",
+      saving: "Guardando...",
+      saved: "Teléfono guardado"
+    },
+
+    install: {
+      title: "Instala la APP",
+      title2: "Recibe notificaciones y accede a DESWG con un clic",
+      installed: "La app ya está instalada ✅",
+      installButton: "Instalar",
+      instructionsSafari: "En Safari: pulsa el icono de compartir (📤) y elige 'Añadir a pantalla de inicio'.",
+      note: "Las web apps son seguras y funcionan como un acceso directo a la web sin ocupar espacio en tu telefono.",
+    }
+  }
+},
+
+
   
   // Common
   common: {

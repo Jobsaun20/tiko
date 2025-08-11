@@ -702,6 +702,78 @@ created: "created",
     levelUp: "You leveled up!",
     newBadge: "New badge!"
   },
+
+  tutorial: {
+    header: {
+      title: "How DESWG works",
+      subtitle: "Quick tutorial",
+    },
+    progress: {
+      stepOfTotal: "Step {current} of {total}",
+    },
+    nav: {
+      back: "Back",
+      next: "Next",
+      finish: "Finish",
+      skipTutorial: "Skip tutorial",
+    },
+
+    steps: {
+      contact: {
+        title: "Start with a contact",
+        subtitle: "Start by adding a contact. Search by username or email.",
+        body: "Contacts are the people you can create groups, rules, fines and challenges with.",
+        note: "You can add contacts from the 'Contacts' page. Search by username or email.",
+      },
+
+      group: {
+        title: "Create your group",
+        subtitle: "Rules, fines, etc. live inside groups.",
+        body: "After creating your group, edit it to add members.",
+        note: "Create a group from the 'Groups' page. You can only add members who are already in 'Contacts'.",
+      },
+
+      rule: {
+        title: "Add rules to your groups",
+        subtitle: "Start simple so everyone understands.",
+        examples:
+          "• “Not taking out the trash” — CHF 1\n• “Arriving late” — CHF 2",
+        note: "Group rules must be accepted by all members before they become valid. You can edit or delete rules at any time.",
+      },
+
+      action: {
+        title: "Send a fine or a challenge",
+        subtitle: "1. From the navigation bar '+'.\n 2. From Groups.",
+        tips:
+          "• From the navigation bar '+': pick the contact and send (Fine / Challenge).\n\n• From the group: tap the member's name to send a fine showing the group's name.\n",
+        note: "To receive payments, add your phone number in My Profile > Edit profile.",
+      },
+
+      phoneShare: {
+        title: "Enable payments with TWINT",
+        description: "To receive payments via TWINT, add your phone number. DON'T WORRY! Only the person you fine will see it.",
+        addPhone: "Add phone number",
+        skipNow: "Skip for now",
+        shareApp: "Share app / Invite",
+        phoneLabel: "Your number (TWINT)",
+        phonePlaceholder: "+41 79 123 45 67",
+        saving: "Saving...",
+        saved: "Phone saved",
+      },
+
+      install: {
+        title: "Install the APP",
+        title2: "Get notifications and access DESWG with one tap",
+        installed: "The app is already installed ✅",
+        installButton: "Install",
+        instructionsSafari: "In Safari: tap the share icon (📤) and choose 'Add to Home Screen'.",
+        note: "Web apps are safe and work like a shortcut to the website without taking space on your phone.",
+      },
+    },
+  },
+
+
+
   
   // Common
   common: {

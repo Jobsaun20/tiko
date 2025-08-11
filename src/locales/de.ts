@@ -698,6 +698,78 @@ created: "erstellt",
     newBadge: "Neues Abzeichen!"
   },
 
+
+  tutorial: {
+    header: {
+      title: "So funktioniert DESWG",
+      subtitle: "Kurzes Tutorial",
+    },
+    progress: {
+      stepOfTotal: "Schritt {current} von {total}",
+    },
+    nav: {
+      back: "Zurück",
+      next: "Weiter",
+      finish: "Fertig",
+      skipTutorial: "Tutorial überspringen",
+    },
+
+    steps: {
+      contact: {
+        title: "Starte mit einem Kontakt",
+        subtitle: "Füge zuerst einen Kontakt hinzu. Suche nach Benutzername oder E-Mail.",
+        body: "Mit Kontakten kannst du Gruppen, Regeln, Bussen und Challenges erstellen.",
+        note: "Du kannst Kontakte auf der Seite „Kontakte“ hinzufügen. Suche nach Benutzername oder E-Mail.",
+      },
+
+      group: {
+        title: "Erstelle deine Gruppe",
+        subtitle: "In Gruppen werden Regeln, Bussen usw. festgelegt.",
+        body: "Nachdem du die Gruppe erstellt hast, bearbeite sie, um Mitglieder hinzuzufügen.",
+        note: "Erstelle eine Gruppe auf der Seite „Gruppen“. Du kannst nur Mitglieder hinzufügen, die bereits in „Kontakte“ sind.",
+      },
+
+      rule: {
+        title: "Füge Regeln zu deinen Gruppen hinzu",
+        subtitle: "Starte simpel, damit es alle verstehen.",
+        examples:
+          "• „Müll nicht rausbringen“ — CHF 1\n• „Zu spät kommen“ — CHF 2",
+        note: "Gruppenregeln müssen von allen Mitgliedern akzeptiert werden, bevor sie gültig sind. Du kannst Regeln jederzeit bearbeiten oder löschen.",
+      },
+
+      action: {
+        title: "Sende eine Busse oder eine Challenge",
+        subtitle: "1. Über die Navigationsleiste '+'.\n 2. Über die Gruppen.",
+        tips:
+          "• Über die Navigationsleiste '+': Kontakt auswählen und senden (Busse / Challenge).\n\n• In der Gruppe: Tippe auf den Namen des Mitglieds, um eine Busse zu senden, die den Gruppennamen anzeigt.\n",
+        note: "Um Zahlungen zu erhalten, füge deine Telefonnummer unter Mein Profil > Profil bearbeiten hinzu.",
+      },
+
+      phoneShare: {
+        title: "Zahlungen mit TWINT aktivieren",
+        description: "Um Zahlungen via TWINT zu erhalten, füge deine Telefonnummer hinzu. KEINE SORGE! Nur die von dir gebüsste Person sieht sie.",
+        addPhone: "Telefonnummer hinzufügen",
+        skipNow: "Jetzt überspringen",
+        shareApp: "App teilen / Einladen",
+        phoneLabel: "Deine Nummer (TWINT)",
+        phonePlaceholder: "+41 79 123 45 67",
+        saving: "Speichern...",
+        saved: "Telefonnummer gespeichert",
+      },
+
+      install: {
+        title: "App installieren",
+        title2: "Erhalte Mitteilungen und öffne DESWG mit einem Tipp",
+        installed: "Die App ist bereits installiert ✅",
+        installButton: "Installieren",
+        instructionsSafari: "In Safari: Tippe auf das Teilen-Symbol (📤) und wähle „Zum Home-Bildschirm hinzufügen“.",
+        note: "Web-Apps sind sicher und funktionieren wie eine Verknüpfung zur Website, ohne Speicher auf deinem Telefon zu belegen.",
+      },
+    },
+  },
+
+
+
   // Common
   common: {
     goHome: "Startseite",
