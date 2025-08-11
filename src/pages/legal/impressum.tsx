@@ -10,7 +10,7 @@ export default function Impressum() {
         <CardContent className="space-y-4 text-sm text-gray-700">
           <p>
             <b>Nombre / Name:</b> Tiko<br />
-            <b>Correo electrónico / Email:</b> info@tiko.es<br />
+            <b>Correo electrónico / Email:</b> info.tikoes@gmail.com<br />
           </p>
           <p>
             Responsable del contenido: Tiko. El contenido es meramente informativo y no constituye relación contractual. <br />
