@@ -746,7 +746,7 @@ created: "created",
         subtitle: "1. From the navigation bar '+'.\n 2. From Groups.",
         tips:
           "• From the navigation bar '+': pick the contact and send (Fine / Challenge).\n\n• From the group: tap the member's name to send a fine showing the group's name.\n",
-        note: "To receive payments, add your phone number in My Profile > Edit profile.",
+note: "• Fine: sent for breaking a rule.\n • Challenge: temporary challenges proposed to one or more contacts."
       },
 
       phoneShare: {

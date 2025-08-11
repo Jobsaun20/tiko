@@ -743,7 +743,7 @@ created: "créée",
         subtitle: "1. Depuis la barre de navigation.\n 2. Depuis les Groupes.",
         tips:
           "• Depuis la barre de navigation '+': choisissez le contact et envoyez (Amende / Défi).\n\n• Depuis le groupe : touchez le nom du membre pour envoyer une amende affichant le nom du groupe.\n",
-        note: "Pour recevoir des paiements, ajoutez votre numéro de téléphone dans Mon profil > Modifier le profil.",
+note: "• Amende : envoyée en cas de non-respect d’une règle.\n • Défi : défis temporaires proposés à un ou plusieurs contacts."
       },
 
       phoneShare: {

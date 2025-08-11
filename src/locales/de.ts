@@ -742,7 +742,7 @@ created: "erstellt",
         subtitle: "1. Über die Navigationsleiste '+'.\n 2. Über die Gruppen.",
         tips:
           "• Über die Navigationsleiste '+': Kontakt auswählen und senden (Busse / Challenge).\n\n• In der Gruppe: Tippe auf den Namen des Mitglieds, um eine Busse zu senden, die den Gruppennamen anzeigt.\n",
-        note: "Um Zahlungen zu erhalten, füge deine Telefonnummer unter Mein Profil > Profil bearbeiten hinzu.",
+note: "• Busse: wird bei Regelverstoss versendet.\n • Challenge: zeitlich begrenzte Herausforderungen, vorgeschlagen an einen oder mehrere Kontakte."
       },
 
       phoneShare: {

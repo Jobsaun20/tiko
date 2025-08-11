@@ -745,7 +745,7 @@ showMembers:"Ver miembros",
       subtitle: "1.Desde la barra de navegacion '+'.\n 2.Desde los Grupos.",
       tips:
         "• Desde la barra de navegacion '+': elige el contacto y envía (Multa /Reto).\n\n• Desde el grupo: toca el nombre del miembro para enviar una multa mostrando el nombre del grupo.\n",
-      note: "Para recibir pagos, añade tu numero de telefono en Mi perfil > Editar perfil."
+      note: "• Multa: se envia por incumplir una regla.\n • Reto: son desafíos puntuales propuestos a uno o mas contactos"
     },
 
     phoneShare: {

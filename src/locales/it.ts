@@ -745,7 +745,7 @@ created: "creata",
         subtitle: "1. Dalla barra di navigazione.\n 2. Dai Gruppi.",
         tips:
           "• Dalla barra di navigazione '+': scegli il contatto e invia (Multa / Sfida).\n\n• Dal gruppo: tocca il nome del membro per inviare una multa mostrando il nome del gruppo.\n",
-        note: "Per ricevere pagamenti, aggiungi il tuo numero di telefono in Il mio profilo > Modifica profilo.",
+note: "• Multa: inviata quando si infrange una regola.\n • Sfida: sfide temporanee proposte a uno o più contatti;"
       },
 
       phoneShare: {
