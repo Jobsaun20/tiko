@@ -176,7 +176,7 @@ export default function IndexTutorialOverlay({
                   subtitle={t.tutorial?.steps?.rule?.subtitle || "Empieza simple para que todos lo entiendan."}
                   lines={splitLines(
                     t.tutorial?.steps?.rule?.examples ||
-                      "• “Sacar la basura martes” — CHF 1\n• “Turno de platos” — CHF 1"
+                      "• “Sacar la basura martes” — € 1\n• “Turno de platos” — € 1"
                   )}
                   note={t.tutorial?.steps?.rule?.note || "Podrás editar o borrar reglas cuando quieras."}
                 />
@@ -192,7 +192,7 @@ export default function IndexTutorialOverlay({
                   )}
                   note={
                     t.tutorial?.steps?.action?.note ||
-                    "Para recibir pagos, añade tu +41… en Perfil → Pagos (TWINT)."
+                    "Para recibir pagos, añade tu numero en Perfil."
                   }
                 />
               )}
@@ -210,7 +210,7 @@ export default function IndexTutorialOverlay({
                       </h3>
                       <p className="text-sm text-slate-600 mt-0.5">
                         {t.tutorial?.steps?.phoneShare?.description ||
-                          "Para recibir pagos por TWINT, añade tu +41…. Puedes hacerlo ahora o más tarde."}
+                          "Para recibir pagos por Bizum, añade tu +41…. Puedes hacerlo ahora o más tarde."}
                       </p>
                     </div>
                   </div>
